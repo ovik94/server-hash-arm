@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const gApi = require("../google-client/google-api");
-const formatter = require("../google-client/utils/formatter-table-data");
+const transformRowsInArray = require("../google-client/utils/transform-rows-in-array");
 
 router.get("/list", async function (req, res, next) {
   const userData = await gApi.getUserData();
-  const data = await formatter(userData);
+  const data = await transformRowsInArray(userData);
 
   return res.json({ status: "OK", data });
 });

@@ -24,6 +24,14 @@ class GoogleApi {
 
     return data.values;
   };
+
+  getCheckListData = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "checkList" });
+
+    console.log(data, 'data');
+    return data.values;
+  };
 }
 
 module.exports = new GoogleApi();

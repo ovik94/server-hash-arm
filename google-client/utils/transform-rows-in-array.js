@@ -1,4 +1,4 @@
-const formatterTableData = (data) => {
+const transformRowsInArray = (data) => {
   const items = [];
   const heads = data[0];
   const rows = data.slice(1);
@@ -16,4 +16,4 @@ const formatterTableData = (data) => {
   return items;
 };
 
-module.exports = formatterTableData;
+module.exports = transformRowsInArray;
