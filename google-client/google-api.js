@@ -29,7 +29,13 @@ class GoogleApi {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "checkList" });
 
-    console.log(data, 'data');
+    return data.values;
+  };
+
+  getPackagingData = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "packaging" });
+
     return data.values;
   };
 }
