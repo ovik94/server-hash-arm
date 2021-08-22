@@ -39,9 +39,9 @@ class GoogleApi {
     return data.values;
   };
 
-  getPackagingData = async () => {
+  getContractorsInfo = async (id) => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "packaging" });
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: id });
 
     return data.values;
   };

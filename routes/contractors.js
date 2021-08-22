@@ -9,8 +9,9 @@ router.get("/", async function (req, res, next) {
   return res.json({ status: "OK", data });
 });
 
-router.get("/packaging", async function (req, res, next) {
-  const userData = await gApi.getPackagingData();
+router.get("/info", async function (req, res, next) {
+  const { query } = req;
+  const userData = await gApi.getContractorsInfo(query.id);
   const data = await transformRowsInArray(userData);
 
   return res.json({ status: "OK", data });

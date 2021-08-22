@@ -1,3 +1,5 @@
+const transformValue = require('./transform-value');
+
 const transformRowsInArray = (data) => {
   const items = [];
   const heads = data[0];
@@ -7,7 +9,7 @@ const transformRowsInArray = (data) => {
     const item = {};
     row.forEach((value, index) => {
       const key = heads[index];
-      item[key] = value;
+      item[key] = transformValue(value);
     });
 
     items.push(item);
