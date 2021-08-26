@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
-const tbot = require('./telegram-bot/tbot');
 
 const isProduction = process.env.NODE_ENV === 'production';
 

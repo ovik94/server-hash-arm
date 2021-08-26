@@ -45,6 +45,13 @@ class GoogleApi {
 
     return data.values;
   };
+
+  getInstructionsData = async (id) => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'instructions' });
+
+    return data.values;
+  };
 }
 
 module.exports = new GoogleApi();
