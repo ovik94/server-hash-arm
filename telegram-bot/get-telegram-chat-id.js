@@ -1,5 +1,7 @@
+// 285450225 тестовый чат
+
 const chats = {
-  packaging: 285450225
+  packaging: 426805914
 };
 
 module.exports = id => chats[id];
