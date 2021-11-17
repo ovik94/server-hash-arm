@@ -36,23 +36,18 @@ router.get("/bar-balance", async function (req, res, next) {
 
   if (data.length > 0) {
     data.forEach((item, index) => {
-      table.cell("Позиция", index + 1, easyTable.string());
+      table.cell("#", index + 1, easyTable.string());
       table.cell("Название", item.name, easyTable.string());
-      table.cell("Остаток", `${item.balance} ${item.unit}`, easyTable.string());
+      table.cell("Ост.", `${item.balance}${item.unit}`, easyTable.string());
       table.newRow();
     });
   }
 
-  await tbot.sendMessage(getTelegramChatId("balance"), table.toString());
-
-  // if (data.length > 0) {
-  //   let message = "";
-  //   data.forEach((item, index) => {
-  //     message += `${index + 1}) ${item.name} осталось ${item.balance} ${item.unit} \n`;
-  //   });
-
-  //   await tbot.sendMessage(getTelegramChatId("balance"), message);
-  // }
+  await tbot.sendMessage(
+    getTelegramChatId("balance"),
+    `<pre>${table.toString()}</pre>`,
+    { parse_mode: 'HTML' }
+  );
 
   return res.json({ status: "OK", data });
 });
