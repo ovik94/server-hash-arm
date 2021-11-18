@@ -54,24 +54,27 @@ class iikoWebApi {
       .catch((error) => console.log(error));
   }
 
-  login = async () => {
-    if (this.sessionCookie) {
-      return;
-    }
+  login = async () => this.createRequest('login', {}, { login: this.loginName, password: this.password })
+    .then(response => response)
+    .catch(error => console.log(error));
 
-    return this.createRequest('login', {},{ login: this.loginName, password: this.password })
-      .catch(error => console.log(error));
-  }
+  isAuthorized = async () => this.createRequest('auth')
+    .then(response => {
+      if (response) {
+        return response.authorized;
+      }
+    })
+    .catch(error => console.log(error));
 
   getBarBalance = async () => {
-    await this.login();
+    const isAuthorized = await this.isAuthorized();
 
-    if (this.sessionCookie) {
-      return this.createRequest('storeBalance')
-        .then((response) => response.data[1].balanceItems)
+    if (!isAuthorized) {
+      await this.login();
     }
 
-    return null;
+    return await this.createRequest('storeBalance')
+      .then((response) => response.data[1].balanceItems);
   };
 }
 
