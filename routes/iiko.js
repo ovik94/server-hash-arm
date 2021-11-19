@@ -19,9 +19,10 @@ router.get("/bar-balance", async function (req, res, next) {
     balance: item.amount,
   }));
 
-  const data = [];
+  const data = [{ name: '--- Крепкий алкоголь ---', category: 'Крепкий алкоголь' }];
 
   for (const product of transformData) {
+
     for (const item of allowedAmounts) {
       if (item.names.includes(product.name)) {
         if (product.balance < item.minBalance) {
@@ -32,14 +33,31 @@ router.get("/bar-balance", async function (req, res, next) {
     }
   }
 
+  data.sort((a, b) => {
+    if (a.category > b.category) {
+      return -1;
+    }
+
+    if (a.category < b.category) {
+      return 1;
+    }
+
+    return 0;
+  });
+
   const table = new easyTable();
 
   if (data.length > 0) {
     data.forEach((item, index) => {
-      table.cell("#", index + 1, easyTable.string());
-      table.cell("Название", item.name, easyTable.string());
-      table.cell("Ост.", `${item.balance}${item.unit}`, easyTable.string());
-      table.newRow();
+      if (item.balance !== undefined) {
+        table.cell("Название", item.name, easyTable.string());
+        table.cell("Ост.", `${item.balance}${item.unit}`, easyTable.string());
+        table.newRow();
+      } else {
+        table.cell("Название", item.name, easyTable.string());
+        table.cell("Ост.", '----', easyTable.string());
+        table.newRow();
+      }
     });
   }
 
