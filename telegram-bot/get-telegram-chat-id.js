@@ -2,7 +2,7 @@
 
 const chats = {
   packaging: -426805914,
-  balance: 285450225
+  balance: -728262999
 };
 
 module.exports = id => chats[id];
