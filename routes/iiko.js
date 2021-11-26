@@ -1,11 +1,14 @@
 const router = require("express").Router();
+const easyTable = require("easy-table");
 const iikoWebApi = require("../iiko-web/api");
+const gApi = require("../google-client/google-api");
+const transformRowsInArray = require("../google-client/utils/transform-rows-in-array");
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
-const allowedAmounts = require("../routes/iiko-data/allowed-amounts-bar");
-const easyTable = require("easy-table");
 
 router.get("/bar-balance", async function (req, res, next) {
+  const { doNotSendInTelegram } = req.query;
+
   const productsBalance = await iikoWebApi.getBarBalance();
 
   const filteredProduct = productsBalance.filter(
@@ -21,15 +24,14 @@ router.get("/bar-balance", async function (req, res, next) {
 
   const data = [{ name: '--- Крепкий алкоголь ---', category: 'Крепкий алкоголь' }];
 
-  for (const product of transformData) {
+  const amountsValues = await gApi.getAllowedAmounts();
+  const allowedAmounts = await transformRowsInArray(amountsValues);
 
-    for (const item of allowedAmounts) {
-      if (item.names.includes(product.name)) {
-        if (product.balance < item.minBalance) {
-          data.push(product);
-          break;
-        }
-      }
+  for (const product of transformData) {
+    const productMinBalance = allowedAmounts.find(storeProduct => storeProduct.name === product.name);
+
+    if (productMinBalance && product.balance < productMinBalance.minBalance) {
+      data.push(product);
     }
   }
 
@@ -61,11 +63,13 @@ router.get("/bar-balance", async function (req, res, next) {
     });
   }
 
-  await tbot.sendMessage(
-    getTelegramChatId("balance"),
-    `<pre>${table.toString()}</pre>`,
-    { parse_mode: 'HTML' }
-  );
+  if (!doNotSendInTelegram) {
+    await tbot.sendMessage(
+      getTelegramChatId("balance"),
+      `<pre>${table.toString()}</pre>`,
+      { parse_mode: 'HTML' }
+    );
+  }
 
   return res.json({ status: "OK", data });
 });

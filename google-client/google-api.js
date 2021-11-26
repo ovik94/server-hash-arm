@@ -46,9 +46,16 @@ class GoogleApi {
     return data.values;
   };
 
-  getInstructionsData = async (id) => {
+  getInstructionsData = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'instructions' });
+
+    return data.values;
+  };
+
+  getAllowedAmounts = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'allowed-amounts-bar' });
 
     return data.values;
   };
