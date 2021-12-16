@@ -12,6 +12,10 @@ const RequestConfigList = {
   storeBalance: {
     method: 'get',
     pathTemplate: '/api/lite-stock/store-balance'
+  },
+  menu: {
+    method: 'get',
+    pathTemplate: '/api/external-menu/953'
   }
 };
 
@@ -76,6 +80,17 @@ class iikoWebApi {
     return await this.createRequest('storeBalance')
       .then((response) => response.data[1].balanceItems);
   };
+
+  getMenu = async () => {
+    const isAuthorized = await this.isAuthorized();
+
+    if (!isAuthorized) {
+      await this.login();
+    }
+
+    return await this.createRequest('menu')
+      .then((response) => response.data.itemCategories);
+  }
 }
 
 module.exports = new iikoWebApi();

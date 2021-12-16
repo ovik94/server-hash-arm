@@ -6,6 +6,43 @@ const transformRowsInArray = require("../google-client/utils/transform-rows-in-a
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 
+router.get("/menu", async function (req, res, next) {
+  const menu = await iikoWebApi.getMenu();
+
+  const map = {
+    potables: ['Напитки', 'Вино', 'Водка', 'Виски', 'Газировки', 'Лимонады', 'Пиво', 'Соки', 'Коньяк', 'Вода', 'Компоты', 'Ром', 'Шампанское'],
+    salads: ['Салаты'],
+    snacks: ['Холодные закуски', 'Жареные баклажаны', 'Пхали', 'Пивная закуска', 'Хачапури', 'Пиде', 'Ламаджо', 'Выпечка и горячие закуски'],
+    hotter: ['Хоровац', 'Хоровац и Кебабы', 'Горячие блюда', 'Хинкали'],
+    sideDishes: ['Гарниры', 'Картофель'],
+    banquetMenu: ['Банкетное меню']
+  }
+
+  const result = {
+    potables: [],
+    salads: [],
+    snacks: [],
+    hotter: [],
+    sideDishes: [],
+    banquetMenu: []
+  };
+
+  menu.forEach(categoryData => {
+    for (const key in map) {
+      const categoryNames = map[key];
+
+      if (categoryNames.includes(categoryData.name)) {
+        const items = categoryData.items.map(item => ({ title: item.name, price: item.itemSizes[0].price, weight: item.itemSizes[0].portionWeightGrams }))
+        result[key].push(...items);
+        break;
+      }
+    }
+  })
+
+
+  return res.json({ status: "OK", data: result });
+});
+
 router.get("/bar-balance", async function (req, res, next) {
   const { doNotSendInTelegram } = req.query;
 
