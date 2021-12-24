@@ -15,7 +15,7 @@ const RequestConfigList = {
   },
   menu: {
     method: 'get',
-    pathTemplate: '/api/external-menu/953'
+    pathTemplate: '/api/external-menu/3341'
   }
 };
 
