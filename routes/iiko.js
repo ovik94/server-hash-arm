@@ -2,12 +2,14 @@ const router = require("express").Router();
 const easyTable = require("easy-table");
 const iikoWebApi = require("../iiko-web/api");
 const gApi = require("../google-client/google-api");
-const transformRowsInArray = require("../google-client/utils/transform-rows-in-array");
+const transformKeyValue = require("../google-client/utils/transform-key-value");
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 
 router.get("/menu", async function (req, res, next) {
   const menu = await iikoWebApi.getMenu();
+  const optionsValues = await gApi.getBanquetOptions();
+  const options = await transformKeyValue(optionsValues, 'number');
 
   const map = {
     potables: ['Напитки', 'Вино', 'Водка', 'Виски', 'Газировки', 'Лимонады', 'Пиво', 'Соки', 'Коньяк', 'Вода', 'Компоты', 'Ром', 'Шампанское'],
@@ -19,12 +21,15 @@ router.get("/menu", async function (req, res, next) {
   }
 
   const result = {
-    potables: [],
-    salads: [],
-    snacks: [],
-    hotter: [],
-    sideDishes: [],
-    banquetMenu: []
+    menu: {
+      potables: [],
+      salads: [],
+      snacks: [],
+      hotter: [],
+      sideDishes: [],
+      banquetMenu: []
+    },
+    options
   };
 
   menu.forEach(categoryData => {
@@ -33,7 +38,7 @@ router.get("/menu", async function (req, res, next) {
 
       if (categoryNames.includes(categoryData.name)) {
         const items = categoryData.items.map(item => ({ title: item.name, price: item.itemSizes[0].price, weight: item.itemSizes[0].portionWeightGrams }))
-        result[key].push(...items);
+        result.menu[key].push(...items);
         break;
       }
     }

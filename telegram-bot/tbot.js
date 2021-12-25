@@ -14,6 +14,8 @@ class TBot {
   createBot = () => new TelegramBot(this.botToken, { polling: true });
 
   sendMessage = async (chatId, message, options) => this.bot.sendMessage(chatId, message, options).then((response) => response);
+
+  sendDocument = async (chatId, data, options, docOptions) => this.bot.sendDocument(chatId, data, options, docOptions).then((response) => response);
 }
 
 module.exports = new TBot();

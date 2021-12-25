@@ -59,6 +59,13 @@ class GoogleApi {
 
     return data.values;
   };
+
+  getBanquetOptions = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'banquet-options' });
+
+    return data.values;
+  };
 }
 
 module.exports = new GoogleApi();
