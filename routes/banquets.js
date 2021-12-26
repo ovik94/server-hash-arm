@@ -34,7 +34,8 @@ router.post("/save", async function (req, res, next) {
     date: formatterDate(new Date(body.date), 'dd.MM.yyyy HH:mm'),
     menu,
     sum: body.sum,
-    totalAmount: body.totalAmount
+    totalAmount: body.totalAmount,
+    admin: body.admin
   }
 
   if (body.sale) {
