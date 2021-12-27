@@ -48,13 +48,28 @@ router.post("/save", async function (req, res, next) {
     });
   }
 
-  const message = `<b>Резерв банкета. Принял адмимнистратор ${data.admin}</b>
-<i>Имя: ${data.name}</i>
-<i>Номер телефона: ${data.phone}</i>
-<i>Количество гостей: ${data.personsCount}</i>
-<i>Дата: ${data.date}</i>
+  let message = `<b>Резерв банкета. Принял адмимнистратор ${data.admin}</b>
+Имя: <i>${data.name}</i>
+Номер телефона: <i>${data.phone}</i>
+Количество гостей: <i>${data.personsCount}</i>
+Дата: <i>${data.date}</i>
+
 <pre>${table.toString()}</pre>
-`;
+Сумма заказа: <b>${data.sum}</b> ₽`;
+
+  if (data.sale) {
+    message += `
+Скидка: <b>${data.sale}%</b>`;
+  }
+
+  if (data.serviceFee) {
+    message += `
+Процент за обслуживание: <b>${data.serviceFee}%</b>`;
+  }
+
+  message += `
+
+Итого: <strong>${data.totalAmount} ₽</strong>`;
 
   await tbot.sendMessage(
     getTelegramChatId("banquets"),
