@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "set IIKO_LOGIN=rafik&&set IIKO_PASS=rafikrafik&& node server.js",
     "build": "webpack --mode production"
   },
   "author": "",
@@ -17,8 +17,7 @@
     "express": "^4.17.1",
     "googleapis": "^66.0.0",
     "jsonschema": "^1.4.0",
-    "node-telegram-bot-api": "^0.51.0",
-    "pdf-creator-node": "^2.2.4"
+    "node-telegram-bot-api": "^0.51.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^9.1.0",
