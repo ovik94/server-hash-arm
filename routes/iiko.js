@@ -3,6 +3,7 @@ const easyTable = require("easy-table");
 const iikoWebApi = require("../iiko-web/api");
 const gApi = require("../google-client/google-api");
 const transformKeyValue = require("../google-client/utils/transform-key-value");
+const transformRowsInArray = require("../google-client/utils/transform-rows-in-array");
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 
