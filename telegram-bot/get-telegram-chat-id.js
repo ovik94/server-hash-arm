@@ -1,9 +1,10 @@
 // 285450225 тестовый чат
-
+// -1001753909293 тестовый канал
 const chats = {
   packaging: -426805914,
   balance: -728262999,
-  banquets: -646921975
+  banquets: -646921975,
+  channel: -1001753909293
 };
 
 module.exports = id => chats[id];

@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "googleapis": "^66.0.0",
     "jsonschema": "^1.4.0",
+    "moment": "^2.29.1",
     "node-telegram-bot-api": "^0.51.0"
   },
   "devDependencies": {

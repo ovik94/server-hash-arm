@@ -8,13 +8,15 @@ class TBot {
 
     // this.bot.on('message', (msg) => {
     //   const chatId = msg.chat.id;
-    //   console.log(chatId, 'chatId');
+    //   console.log(msg, 'msg');
     // });
   }
 
   createBot = () => new TelegramBot(this.botToken, { polling: true });
 
   sendMessage = async (chatId, message, options) => this.bot.sendMessage(chatId, message, options).then((response) => response);
+
+  sendPhoto = async (chatId, fileId, options) => this.bot.sendPhoto(chatId, fileId, options).then((response) => response);
 
   sendDocument = async (chatId, data, options, docOptions) => this.bot.sendDocument(chatId, data, options, docOptions).then((response) => response);
 }
