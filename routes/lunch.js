@@ -57,7 +57,7 @@ router.get("/menu-for-today-vk", async function (req, res, next) {
       'photo-211214337_457239166'
     ],
     2: [
-      '',
+      'photo-211214337_457239170',
       'photo-211214337_457239150',
       'photo-211214337_457239152',
       'photo-211214337_457239153',
