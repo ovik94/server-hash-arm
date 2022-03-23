@@ -19,6 +19,8 @@ class TBot {
   sendPhoto = async (chatId, fileId, options) => this.bot.sendPhoto(chatId, fileId, options).then((response) => response);
 
   sendDocument = async (chatId, data, options, docOptions) => this.bot.sendDocument(chatId, data, options, docOptions).then((response) => response);
+
+  getChat = async (chatName) => this.bot.getChat(chatName).then((response) => response);
 }
 
 module.exports = new TBot();
