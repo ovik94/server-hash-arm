@@ -27,7 +27,7 @@ router.get("/menu-for-today", async function (req, res, next) {
       'AgACAgIAAxkBAAIBY2IfN6jsoW3Fj6GninpzbPf5thrBAALDtzEbblr4SDPOKH22YVluAQADAgADeQADIwQ',
       'AgACAgIAAxkBAAIBZGIfN7F3swn3MC_7bPna5uEQicLrAALEtzEbblr4SDIRsGkOGkxnAQADAgADeQADIwQ'
     ],
-    4: [
+    0: [
       'AgACAgIAAxkBAAIBZWIfN8RhnQNL7p8uDgFbxSgCkRinAALFtzEbblr4SKPe-reZNPCLAQADAgADeQADIwQ',
       'AgACAgIAAxkBAAIBZmIfN9OCKiCX84JrektwdBPb3NtFAALGtzEbblr4SNRcmC1iA5EdAQADAgADeQADIwQ',
       'AgACAgIAAxkBAAIBZ2IfN931_KDOuUR0a07sm6muGqKEAALHtzEbblr4SL5MaGeaKa-ZAQADAgADeQADIwQ',
@@ -70,7 +70,7 @@ router.get("/menu-for-today-vk", async function (req, res, next) {
       'photo-211214337_457239158',
       'photo-211214337_457239156'
     ],
-    4: [
+    0: [
       'photo-211214337_457239160',
       'photo-211214337_457239159',
       'photo-211214337_457239162',
@@ -85,8 +85,6 @@ router.get("/menu-for-today-vk", async function (req, res, next) {
   let status = 'OK';
 
   if (!holiday) {
-    console.log(week % 4, 'week % 4');
-    console.log(week, 'week');
     axios.post('https://broadcast.vkforms.ru/api/v2/broadcast?token=api_87768_YKQjQvoekX1ri4HGHKYRG4Wi', {
       message: {
         message: 'Меню бизнес-ланча на сегодня',
