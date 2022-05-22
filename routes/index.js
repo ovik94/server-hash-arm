@@ -8,4 +8,7 @@ router.use('/api/banquets', require('./banquets'));
 router.use('/api/iiko', require('./iiko'));
 router.use('/api/lunch', require('./lunch'));
 
+router.use('/api/app/dailyReport', require('./daily-report'));
+router.use('/api/app/expenses', require('./expense'));
+
 module.exports = router;

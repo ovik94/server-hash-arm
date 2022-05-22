@@ -4,10 +4,40 @@ const app = express();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+const logResponseBody = (req, res, next) => {
+  const oldWrite = res.write
+  const oldEnd = res.end;
+
+  const chunks = [];
+
+  res.write = (chunk, ...args) => {
+    chunks.push(chunk);
+    return oldWrite.apply(res, [chunk, ...args]);
+  };
+
+  res.end = (chunk, ...args) => {
+    if (chunk) {
+      chunks.push(chunk);
+    }
+    const body = Buffer.concat(chunks).toString('utf8');
+    console.info('RESPONSE:',`${req.method}-${req.url}`, body );
+    return oldEnd.apply(res, [chunk, ...args]);
+  };
+
+  next();
+}
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(logResponseBody);
+app.use((req, res, next) => {
+  console.info('REQUEST:', `${req.method}-${req.url}`);
+  next();
+});
+
 
 app.use(require('./routes'));
+
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

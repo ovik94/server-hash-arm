@@ -1,5 +1,6 @@
 const { google } = require("googleapis");
 const { getAuthClient } = require("./auth-client");
+const { v4: uuidv4 } = require('uuid');
 
 class GoogleApi {
   constructor() {
@@ -19,7 +20,7 @@ class GoogleApi {
   };
 
   getUserData = async () => {
-    const api = await this.apiClient; 
+    const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "user" });
 
     return data.values;
@@ -65,6 +66,141 @@ class GoogleApi {
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'banquet-options' });
 
     return data.values;
+  };
+
+  getDailyReports = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'dailyReports' });
+
+    return data.values;
+  };
+
+  getExpenses = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'expenses' });
+
+    return data.values;
+  };
+
+  addReport = async ({ date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
+    const api = await this.apiClient;
+
+    const id = uuidv4();
+
+    const request = {
+      spreadsheetId: this.spreadsheet,
+      range: 'dailyReports',
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [
+          [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
+        ]
+      }
+    };
+
+    const { data } = await api.values.append(request);
+
+    return data;
+  };
+
+  updateReport = async ({ id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
+    const api = await this.apiClient;
+
+    const { data: ids } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: 'dailyReports!A:A'
+    });
+
+    let currentRowIndex = '';
+    ids.values.forEach((value, index) => {
+      if (value[0] === id) {
+        currentRowIndex = index + 1;
+      }
+    });
+
+    let result;
+
+    if (currentRowIndex) {
+      const request = {
+        spreadsheetId: this.spreadsheet,
+        range: `dailyReports!A${currentRowIndex}:I${currentRowIndex}`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [
+            [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
+          ]
+        }
+      };
+
+      const { data } = await api.values.update(request);
+      result = data;
+    }
+
+    return result;
+  };
+
+  addExpense = async ({ date, sum, comment, category }) => {
+    const api = await this.apiClient;
+
+    const id = uuidv4();
+
+    const request = {
+      spreadsheetId: this.spreadsheet,
+      range: 'expenses',
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [
+          [id, date, sum, comment, JSON.stringify(category)]
+        ]
+      }
+    };
+
+    const { data } = await api.values.append(request);
+
+    return data;
+  };
+
+  deleteExpense = async (id) => {
+    const api = await this.apiClient;
+
+    const { data: ids } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: 'expenses!A:A'
+    });
+
+    let currentRowIndex = null;
+    ids.values.forEach((value, index) => {
+      if (value[0] === id) {
+        currentRowIndex = index;
+      }
+    });
+
+    let result;
+    if (currentRowIndex) {
+      const batchUpdateRequest = {
+        requests: [{
+          deleteDimension: {
+            range: {
+              sheetId: 1327890270,
+              dimension: "ROWS",
+              startIndex: currentRowIndex,
+              endIndex: currentRowIndex + 1
+            }
+          }
+        }]
+      }
+
+      const request = {
+        spreadsheetId: this.spreadsheet,
+        resource: batchUpdateRequest
+      };
+
+      const { data } = await api.batchUpdate(request);
+      result = data;
+    }
+
+
+    return result;
   };
 }
 
