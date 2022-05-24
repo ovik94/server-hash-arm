@@ -1,6 +1,7 @@
 const { google } = require("googleapis");
 const { getAuthClient } = require("./auth-client");
 const { v4: uuidv4 } = require('uuid');
+const transformRowsInArray = require("./utils/transform-rows-in-array");
 
 class GoogleApi {
   constructor() {
@@ -79,7 +80,7 @@ class GoogleApi {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'expenses' });
 
-    return data.values;
+    return transformRowsInArray(data.values);
   };
 
   addReport = async ({ date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
@@ -99,6 +100,30 @@ class GoogleApi {
     };
 
     const { data } = await api.values.append(request);
+
+
+    const getExpenses = await this.getExpenses();
+
+    if (getExpenses.length) {
+      const batchUpdateRequest = {
+        requests: [{
+          deleteDimension: {
+            range: {
+              sheetId: 1327890270,
+              dimension: "ROWS",
+              startIndex: 1
+            }
+          }
+        }]
+      }
+
+      const batchRequest = {
+        spreadsheetId: this.spreadsheet,
+        resource: batchUpdateRequest
+      };
+
+      await api.batchUpdate(batchRequest);
+    }
 
     return data;
   };
@@ -139,10 +164,8 @@ class GoogleApi {
     return result;
   };
 
-  addExpense = async ({ date, sum, comment, category }) => {
+  addExpense = async ({ id, sum, comment, category }) => {
     const api = await this.apiClient;
-
-    const id = uuidv4();
 
     const request = {
       spreadsheetId: this.spreadsheet,
@@ -150,7 +173,7 @@ class GoogleApi {
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [
-          [id, date, sum, comment, JSON.stringify(category)]
+          [id, sum, comment, JSON.stringify(category)]
         ]
       }
     };

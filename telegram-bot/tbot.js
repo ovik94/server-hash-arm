@@ -8,7 +8,7 @@ class TBot {
 
     // this.bot.on('message', (msg) => {
     //   const chatId = msg.chat.id;
-    //   console.log(msg, 'msg');
+    //   console.log(msg, 'msg', chatId);
     // });
   }
 
