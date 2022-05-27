@@ -2,11 +2,15 @@ const { google } = require("googleapis");
 const { getAuthClient } = require("./auth-client");
 const { v4: uuidv4 } = require('uuid');
 const transformRowsInArray = require("./utils/transform-rows-in-array");
+const transformColumnsInArray = require("./utils/transform-columns-in-array");
+const transformKeyValue = require("./utils/transform-key-value");
+const appendRequest = require("./utils/get-append-request");
+const getDeleteBatchRequest = require("./utils/get-delete-batch-request");
 
 class GoogleApi {
   constructor() {
     this.spreadsheet = "19SzDsUOYi8rii9hE-rsGKN7ri-Qnb_70NBGMIgSwDu0";
-
+    this.financialSpreadsheet = "1gzaOkbhiYrqfPnAtnVULoLIAR79YygFP3XqRNdFHR4M";
     this.apiClient = this.getApiClient();
   }
 
@@ -24,56 +28,56 @@ class GoogleApi {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "user" });
 
-    return data.values;
+    return transformRowsInArray(data.values);
   };
 
   getCheckListData = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "checkList" });
 
-    return data.values;
+    return transformColumnsInArray(data.values);
   };
 
   getContractorsData = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "contractors" });
 
-    return data.values;
+    return transformRowsInArray(data.values);
   };
 
   getContractorsInfo = async (id) => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: id });
 
-    return data.values;
+    return transformRowsInArray(data.values);
   };
 
   getInstructionsData = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'instructions' });
 
-    return data.values;
+    return transformRowsInArray(data.values);
   };
 
   getAllowedAmounts = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'allowed-amounts-bar' });
 
-    return data.values;
+    return transformRowsInArray(data.values);
   };
 
   getBanquetOptions = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'banquet-options' });
 
-    return data.values;
+    return transformKeyValue(data.values, 'number');
   };
 
   getDailyReports = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'dailyReports' });
 
-    return data.values;
+    return transformRowsInArray(data.values);
   };
 
   getExpenses = async () => {
@@ -83,49 +87,45 @@ class GoogleApi {
     return transformRowsInArray(data.values);
   };
 
+  getCounterparties = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'counterparties' });
+
+    return transformRowsInArray(data.values);
+  };
+
   addReport = async ({ date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
     const api = await this.apiClient;
 
     const id = uuidv4();
 
-    const request = {
-      spreadsheetId: this.spreadsheet,
-      range: 'dailyReports',
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [
-          [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
-        ]
-      }
-    };
-
-    const { data } = await api.values.append(request);
+    // const { data } = await api.values.append(appendRequest({
+    //   sheet: this.spreadsheet,
+    //   range: 'dailyReports',
+    //   values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
+    // }));
 
 
     const getExpenses = await this.getExpenses();
 
     if (getExpenses.length) {
-      const batchUpdateRequest = {
-        requests: [{
-          deleteDimension: {
-            range: {
-              sheetId: 1327890270,
-              dimension: "ROWS",
-              startIndex: 1
-            }
-          }
-        }]
-      }
-
-      const batchRequest = {
-        spreadsheetId: this.spreadsheet,
-        resource: batchUpdateRequest
-      };
-
-      await api.batchUpdate(batchRequest);
+      // await api.batchUpdate(getDeleteBatchRequest({
+      //   sheet: this.spreadsheet,
+      //   sheetId: 1327890270
+      // }));
     }
 
-    return data;
+    for (const expense of expenses) {
+      await api.values.append(appendRequest({
+        sheet: this.financialSpreadsheet,
+        range: 'Архив',
+        values: [date, expense.title, 'Наличные', expense.sum, '', expense.comment]
+      }));
+    }
+
+
+    return false;
+    // return data;
   };
 
   updateReport = async ({ id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
@@ -146,18 +146,12 @@ class GoogleApi {
     let result;
 
     if (currentRowIndex) {
-      const request = {
-        spreadsheetId: this.spreadsheet,
+      const { data } = await api.values.update(appendRequest({
+        sheet: this.spreadsheet,
         range: `dailyReports!A${currentRowIndex}:I${currentRowIndex}`,
-        valueInputOption: 'USER_ENTERED',
-        resource: {
-          values: [
-            [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
-          ]
-        }
-      };
+        values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
+      }));
 
-      const { data } = await api.values.update(request);
       result = data;
     }
 
@@ -167,18 +161,11 @@ class GoogleApi {
   addExpense = async ({ id, sum, comment, category }) => {
     const api = await this.apiClient;
 
-    const request = {
-      spreadsheetId: this.spreadsheet,
+    const { data } = await api.values.append(appendRequest({
+      sheet: this.spreadsheet,
       range: 'expenses',
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [
-          [id, sum, comment, JSON.stringify(category)]
-        ]
-      }
-    };
-
-    const { data } = await api.values.append(request);
+      values: [id, sum, comment, JSON.stringify(category)]
+    }));
 
     return data;
   };
@@ -200,28 +187,15 @@ class GoogleApi {
 
     let result;
     if (currentRowIndex) {
-      const batchUpdateRequest = {
-        requests: [{
-          deleteDimension: {
-            range: {
-              sheetId: 1327890270,
-              dimension: "ROWS",
-              startIndex: currentRowIndex,
-              endIndex: currentRowIndex + 1
-            }
-          }
-        }]
-      }
+      const { data } = await api.batchUpdate(getDeleteBatchRequest({
+        sheet: this.spreadsheet,
+        sheetId: 1327890270,
+        startIndex: currentRowIndex,
+        endIndex: currentRowIndex + 1
+      }));
 
-      const request = {
-        spreadsheetId: this.spreadsheet,
-        resource: batchUpdateRequest
-      };
-
-      const { data } = await api.batchUpdate(request);
       result = data;
     }
-
 
     return result;
   };

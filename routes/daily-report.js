@@ -6,11 +6,8 @@ const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 const createTbotMessage = require('./daily-report/createTbotMessage');
 
 router.get("/reports", async function (req, res, next) {
-  const reports = await gApi.getDailyReports();
-  const data = await transformRowsInArray(reports);
-
+  const data = await gApi.getDailyReports();
   const result = data.map(item => ({ ...item, expenses: item.expenses ? JSON.parse(item.expenses) : [] }));
-
 
   return res.json({ status: "OK", data: result });
 });

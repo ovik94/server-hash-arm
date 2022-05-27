@@ -4,9 +4,8 @@ const transformRowsInArray = require("../google-client/utils/transform-rows-in-a
 
 router.get("/list", async function (req, res, next) {
   const userData = await gApi.getUserData();
-  const data = await transformRowsInArray(userData);
 
-  return res.json({ status: "OK", data });
+  return res.json({ status: "OK", data: userData });
 });
 
 module.exports = router;

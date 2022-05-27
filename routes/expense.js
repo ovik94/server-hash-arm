@@ -12,15 +12,10 @@ router.get("/", async function (req, res, next) {
 
 router.post("/add", async function (req, res, next) {
   const { body } = req;
-  let resultStatus = 'OK';
 
   const newExpense = await gApi.addExpense(body);
 
-  if (!newExpense) {
-    resultStatus = 'ERROR'
-  }
-
-  return res.json({ status: resultStatus  });
+  return res.json({ status: newExpense ? 'OK' : 'ERROR' });
 });
 
 router.post("/delete", async function (req, res, next) {

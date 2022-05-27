@@ -5,16 +5,14 @@ const tbot = require('../telegram-bot/tbot');
 const getTelegramChatId = require('../telegram-bot/get-telegram-chat-id');
 
 router.get("/", async function (req, res, next) {
-  const userData = await gApi.getContractorsData();
-  const data = await transformRowsInArray(userData);
+  const data = await gApi.getContractorsData();
 
   return res.json({ status: "OK", data });
 });
 
 router.get("/info", async function (req, res, next) {
   const { query } = req;
-  const userData = await gApi.getContractorsInfo(query.id);
-  const data = await transformRowsInArray(userData);
+  const data = await gApi.getContractorsInfo(query.id);
 
   return res.json({ status: "OK", data });
 });

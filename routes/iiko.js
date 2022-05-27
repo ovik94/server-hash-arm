@@ -9,8 +9,7 @@ const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 
 router.get("/menu", async function (req, res, next) {
   const menu = await iikoWebApi.getMenu();
-  const optionsValues = await gApi.getBanquetOptions();
-  const options = await transformKeyValue(optionsValues, 'number');
+  const options = await gApi.getBanquetOptions();
 
   const map = {
     potables: ['Напитки', 'Вино', 'Водка', 'Виски', 'Газировки', 'Лимонады', 'Пиво', 'Соки', 'Коньяк', 'Вода', 'Компоты', 'Ром', 'Шампанское'],
@@ -67,8 +66,7 @@ router.get("/bar-balance", async function (req, res, next) {
 
   const data = [{ name: '--- Крепкий алкоголь ---', category: 'Крепкий алкоголь' }];
 
-  const amountsValues = await gApi.getAllowedAmounts();
-  const allowedAmounts = await transformRowsInArray(amountsValues);
+  const allowedAmounts = await gApi.getAllowedAmounts();
 
   for (const product of transformData) {
     const productMinBalance = allowedAmounts.find(storeProduct => storeProduct.name === product.name);
