@@ -99,33 +99,31 @@ class GoogleApi {
 
     const id = uuidv4();
 
-    // const { data } = await api.values.append(appendRequest({
-    //   sheet: this.spreadsheet,
-    //   range: 'dailyReports',
-    //   values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
-    // }));
+    const { data } = await api.values.append(appendRequest({
+      sheet: this.spreadsheet,
+      range: 'dailyReports',
+      values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
+    }));
 
 
     const getExpenses = await this.getExpenses();
 
     if (getExpenses.length) {
-      // await api.batchUpdate(getDeleteBatchRequest({
-      //   sheet: this.spreadsheet,
-      //   sheetId: 1327890270
-      // }));
-    }
-
-    for (const expense of expenses) {
-      await api.values.append(appendRequest({
-        sheet: this.financialSpreadsheet,
-        range: 'Архив',
-        values: [date, expense.title, 'Наличные', expense.sum, '', expense.comment]
+      await api.batchUpdate(getDeleteBatchRequest({
+        sheet: this.spreadsheet,
+        sheetId: 1327890270
       }));
     }
 
+    // for (const expense of expenses) {
+    //   await api.values.append(appendRequest({
+    //     sheet: this.financialSpreadsheet,
+    //     range: 'Архив',
+    //     values: [date, expense.title, 'Наличные', expense.sum, '', expense.comment]
+    //   }));
+    // }
 
-    return false;
-    // return data;
+    return data;
   };
 
   updateReport = async ({ id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
