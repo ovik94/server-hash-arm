@@ -1,11 +1,10 @@
 const { google } = require("googleapis");
 const { getAuthClient } = require("./auth-client");
-const { v4: uuidv4 } = require('uuid');
 const transformRowsInArray = require("./utils/transform-rows-in-array");
 const transformColumnsInArray = require("./utils/transform-columns-in-array");
 const transformKeyValue = require("./utils/transform-key-value");
 const appendRequest = require("./utils/get-append-request");
-const getDeleteBatchRequest = require("./utils/get-delete-batch-request");
+const { appendRow, deleteRows, updateRow } = require('./utils/tableTransformMethods');
 
 class GoogleApi {
   constructor() {
@@ -94,157 +93,121 @@ class GoogleApi {
     return transformRowsInArray(data.values);
   };
 
-  addReport = async ({ date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
+  getExpenseIds = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'expenses!A:A' });
+
+    return data.values;
+  }
+
+  getFinancialOperations = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.financialSpreadsheet, range: 'Учет финансов!A:G' });
+
+    return data.values;
+  }
+
+  addReport = async (data) => {
+    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, expenses } = data;
     const api = await this.apiClient;
 
-    const id = uuidv4();
-
-    const { data } = await api.values.append(appendRequest({
+    await appendRow(api, {
       sheet: this.spreadsheet,
       range: 'dailyReports',
-      values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
-    }));
-
-    const getExpenses = await this.getExpenses();
-
-    if (getExpenses.length) {
-      await api.batchUpdate(getDeleteBatchRequest({
-        sheet: this.spreadsheet,
-        sheetId: 1327890270
-      }));
-    }
-
-    for (const expense of expenses) {
-      await api.values.append(appendRequest({
-        sheet: this.financialSpreadsheet,
-        range: 'Учет финансов',
-        values: [expense.id, date, expense.category.title, 'Наличные', expense.sum.replace('.', ','), expense.counterparty || '', expense.comment || '']
-      }));
-    }
-
-    return data;
+      values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, JSON.stringify(expenses)]
+    });
   };
 
-  updateReport = async ({ id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses }) => {
+  addFinancialOperation = async (values) => {
+    const api = await this.apiClient;
+    await appendRow(api, { sheet: this.financialSpreadsheet, range: 'Учет финансов', values })
+  };
+
+  updateFinancialOperation = async (id, values, financeOperations) => {
+    const api = await this.apiClient;
+    const date = values[0];
+    const title = values[1];
+    const comment = values[5];
+
+    const currentFinanceRowIndex = financeOperations.findIndex(row => {
+      let result;
+      if (id) {
+        result = row[0] === id;
+      } else {
+        result = row[1] === date && row[2] === title && row[6] === comment;
+      }
+      return result;
+    }) + 1;
+    if (currentFinanceRowIndex) {
+      await updateRow(api, {
+        sheet: this.financialSpreadsheet,
+        range: `Учет финансов!B${currentFinanceRowIndex}:G${currentFinanceRowIndex}`,
+        values
+      })
+    }
+  }
+
+  deleteFinancialOperation = async (id) => {
     const api = await this.apiClient;
 
-    const { data: ids } = await api.values.get({
-      spreadsheetId: this.spreadsheet,
-      range: 'dailyReports!A:I'
-    });
+    const ids = await this.getFinancialOperations();
 
-    let currentRowIndex = '';
-    let oldExpenses = [];
+    const currentFinanceRowIndex = ids.findIndex(row => row[0] === id);
+    if (currentFinanceRowIndex >= 0) {
+      await deleteRows(api, {
+        sheet: this.financialSpreadsheet,
+        sheetId: 0,
+        startIndex: currentFinanceRowIndex,
+        endIndex: currentFinanceRowIndex + 1
+      });
+    }
+  }
 
-    ids.values.forEach((value, index) => {
-      if (value[0] === id) {
-        currentRowIndex = index + 1;
-        oldExpenses = JSON.parse(value[8]);
-      }
-    });
+  updateReport = async (data) => {
+    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, expenses } = data;
+    const api = await this.apiClient;
 
-    let result;
+    const reports = await this.getDailyReports();
+    const reportRowIndex = reports.findIndex(item => item.id === id) + 2;
 
-    if (currentRowIndex) {
-      const { data } = await api.values.update(appendRequest({
+    if (reportRowIndex) {
+      await updateRow(api, {
         sheet: this.spreadsheet,
-        range: `dailyReports!A${currentRowIndex}:I${currentRowIndex}`,
-        values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, JSON.stringify(expenses)]
-      }));
-
-      result = data;
+        range: `dailyReports!A${reportRowIndex}:J${reportRowIndex}`,
+        values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, JSON.stringify(expenses)]
+      });
     }
-
-    const idsToDelete = [];
-    oldExpenses.forEach(i => {
-      if (!expenses.find(expense => expense.id === i.id)) {
-        idsToDelete.push(i.id);
-      }
-    });
-
-    const { data: idsFinancial } = await api.values.get({
-      spreadsheetId: this.financialSpreadsheet,
-      range: 'Учет финансов!A:A'
-    });
-
-    for (const expense of expenses) {
-      if (oldExpenses.find(exp => exp.id === expense.id)) {
-        const currentFinanceRowIndex = idsFinancial.values.findIndex(row => row[0] === expense.id) + 1;
-
-        if (currentFinanceRowIndex) {
-          await api.values.update(appendRequest({
-            sheet: this.financialSpreadsheet,
-            range: `Учет финансов!B${currentFinanceRowIndex}:G${currentFinanceRowIndex}`,
-            values: [date, expense.category.title, 'Наличные', expense.sum.replace('.', ','), expense.counterparty || '', expense.comment || '']
-          }));
-        }
-      } else {
-        await api.values.append(appendRequest({
-          sheet: this.financialSpreadsheet,
-          range: 'Учет финансов',
-          values: [expense.id, date, expense.category.title, 'Наличные', expense.sum.replace('.', ','), expense.counterparty || '', expense.comment || '']
-        }));
-      }
-    }
-
-    if (idsToDelete.length) {
-      for (const id of idsToDelete) {
-        const index = idsFinancial.values.findIndex(row => row[0] === id);
-
-        if (index >= 0) {
-          await api.batchUpdate(getDeleteBatchRequest({
-            sheet: this.financialSpreadsheet,
-            sheetId: 0,
-            startIndex: index,
-            endIndex: index + 1
-          }));
-        }
-      }
-    }
-
-    return result;
   };
 
   addExpense = async ({ id, sum, comment, category, counterparty }) => {
     const api = await this.apiClient;
 
-    const { data } = await api.values.append(appendRequest({
+    await appendRow(api, {
       sheet: this.spreadsheet,
       range: 'expenses',
       values: [id, sum, comment, JSON.stringify(category), counterparty]
-    }));
-
-    return data;
+    });
   };
 
   deleteExpense = async (id) => {
     const api = await this.apiClient;
 
-    const { data: ids } = await api.values.get({
-      spreadsheetId: this.spreadsheet,
-      range: 'expenses!A:A'
-    });
-
-    let currentRowIndex = null;
-    ids.values.forEach((value, index) => {
-      if (value[0] === id) {
-        currentRowIndex = index;
+    if (id) {
+      const ids = await this.getExpenseIds()
+      const currentRowIndex = ids.findIndex((value) => value[0] === id);
+      if (currentRowIndex >= 0) {
+        await deleteRows(api, {
+          sheet: this.spreadsheet,
+          sheetId: 1327890270,
+          startIndex: currentRowIndex,
+          endIndex: currentRowIndex + 1
+        });
+      } else {
+        throw new Error('Не найден расход с таким id');
       }
-    });
-
-    let result;
-    if (currentRowIndex) {
-      const { data } = await api.batchUpdate(getDeleteBatchRequest({
-        sheet: this.spreadsheet,
-        sheetId: 1327890270,
-        startIndex: currentRowIndex,
-        endIndex: currentRowIndex + 1
-      }));
-
-      result = data;
+    } else {
+      await deleteRows(api, { sheet: this.spreadsheet, sheetId: 1327890270 });
     }
-
-    return result;
   };
 }
 

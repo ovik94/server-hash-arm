@@ -1,5 +1,5 @@
 const createTbotMessage = (data, type = 'add') => {
-  const { date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, expenses } = data;
+  const { date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, expenses } = data;
   let message = `<b>${type === 'add' ? 'Отчет' : 'Обновление отчета'} за ${date}.</b>
 <b>Aдмимнистратор: ${adminName}</b>
  
@@ -17,8 +17,12 @@ const createTbotMessage = (data, type = 'add') => {
 
   expenses.forEach(item => {
     message += `
-${item.category.title}: ${item.sum} ₽ ${item.comment ? '(' + (item.comment) + ')' : ''}`
-  });
+${item.category.title}: ${item.sum} ₽ ${item.comment ? '(' + (item.comment) + ')' : ''}
+`});
+
+  message += `
+
+Сдано наличных: <b>${totalCash} ₽</b>`
 
   return message;
 }
