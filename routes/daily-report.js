@@ -7,9 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const receiptsOperationValues = {
   ipCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ИП' },
-  ipAcquiring: { title: 'Эквайринг ИП', type: 'Альфа р/c ИП', counterparty: 'Альфа-Банк' },
   oooCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ООО' },
-  oooAcquiring: { title: 'Эквайринг ООО', type: 'Альфа р/c ООО', counterparty: 'Альфа-Банк' }
 };
 
 router.get("/reports", async function (req, res, next) {
