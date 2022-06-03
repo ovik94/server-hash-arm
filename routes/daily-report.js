@@ -47,8 +47,8 @@ router.post("/add", async function (req, res, next) {
       await gApi.deleteExpense();
     }
 
-    // const message = createTbotMessage(body);
-    // await tbot.sendMessage(getTelegramChatId("reports"), message, { parse_mode: 'HTML' });
+    const message = createTbotMessage(body);
+    await tbot.sendMessage(getTelegramChatId("reports"), message, { parse_mode: 'HTML' });
   } catch (err) {
     return res.json({ status: 'ERROR', message: err.message });
   }
@@ -104,8 +104,8 @@ router.post("/update", async function (req, res, next) {
       }
     }
 
-    // const message = createTbotMessage(body, 'update');
-    // await tbot.sendMessage(getTelegramChatId("reports"), message, { parse_mode: 'HTML' });
+    const message = createTbotMessage(body, 'update');
+    await tbot.sendMessage(getTelegramChatId("reports"), message, { parse_mode: 'HTML' });
   } catch (err) {
     return res.json({ status: 'ERROR', message: err.message });
   }
