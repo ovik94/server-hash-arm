@@ -20,6 +20,15 @@ router.get("/reports", async function (req, res, next) {
   }
 });
 
+router.get("/clear", async function (req, res, next) {
+  try {
+    await gApi.clearReport();
+    return res.json({ status: "OK" });
+  } catch (err) {
+    return res.json({ status: 'ERROR', message: err.message });
+  }
+});
+
 router.post("/add", async function (req, res, next) {
   const { body } = req;
   const id = uuidv4();

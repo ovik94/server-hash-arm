@@ -179,6 +179,18 @@ class GoogleApi {
     }
   };
 
+  clearReport = async () => {
+    const api = await this.apiClient;
+    const reports = await this.getDailyReports()
+
+    await deleteRows(api, {
+      sheet: this.spreadsheet,
+      sheetId: 877273327,
+      startIndex: 1,
+      endIndex: reports.length - 30
+    });
+  }
+
   addExpense = async ({ id, sum, comment, category, counterparty }) => {
     const api = await this.apiClient;
 
