@@ -12,4 +12,6 @@ router.use('/api/lunch', require('./lunch'));
 router.use('/api/app/dailyReport', require('./daily-report'));
 router.use('/api/app/expenses', require('./expense'));
 
+router.use('/api/iiko-cloud', require('./iiko-cloud'));
+
 module.exports = router;
