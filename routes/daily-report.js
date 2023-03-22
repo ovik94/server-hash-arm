@@ -4,16 +4,44 @@ const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 const createTbotMessage = require('./daily-report/createTbotMessage');
 const { v4: uuidv4 } = require("uuid");
+const { isAfter, isBefore } = require('date-fns');
 
 const receiptsOperationValues = {
   ipCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ИП' },
   oooCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ООО' },
 };
 
+const transformedDate = (date) => {
+  const dateArray = date.split('.');
+  const day = Number(dateArray[0]) + 1;
+  const month = Number(dateArray[1]) - 1;
+  const year = Number(dateArray[2]);
+  return new Date(year, month, day);
+};
+
 router.get("/reports", async function (req, res, next) {
   try {
     const data = await gApi.getDailyReports();
-    const result = data.map(item => ({ ...item, expenses: item.expenses ? JSON.parse(item.expenses) : [] }));
+    let result = data.map(item => ({ ...item, expenses: item.expenses ? JSON.parse(item.expenses) : [] }));
+
+    if (req.query.from) {
+      result = result.filter(item => {
+        if (item.date === req.query.from) {
+          return true;
+        }
+        return isAfter(transformedDate(item.date), transformedDate(req.query.from));
+      });
+    }
+
+    if (req.query.to) {
+      result = result.filter(item => {
+        if (item.date === req.query.to) {
+          return true;
+        }
+        return isBefore(transformedDate(item.date), transformedDate(req.query.to));
+      });
+    }
+
     return res.json({ status: "OK", data: result });
   } catch (err) {
     return res.json({ status: 'ERROR', message: err.message });

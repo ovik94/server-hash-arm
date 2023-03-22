@@ -181,7 +181,7 @@ class GoogleApi {
 
   clearReport = async () => {
     const api = await this.apiClient;
-    const reports = await this.getDailyReports()
+    const reports = await this.getDailyReports();
 
     await deleteRows(api, {
       sheet: this.spreadsheet,
