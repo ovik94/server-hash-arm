@@ -14,7 +14,7 @@ const createTbotMessage = (data, type = 'add') => {
 Эквайринг: <i>${oooAcquiring} ₽</i>
 
 <b>Яндек.Еда и Деливери</b>
-<i>${yandex} ₽</i>
+<i>${yandex || '0'} ₽</i>
 
 Расходы:`;
 
