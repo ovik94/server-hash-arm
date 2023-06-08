@@ -3,8 +3,10 @@ const gApi = require("../google-client/google-api");
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 const createTbotMessage = require('./daily-report/createTbotMessage');
+const tbotMessageDeliveries = require('./daily-report/tbotMessageDeliveries');
 const { v4: uuidv4 } = require("uuid");
-const { isAfter, isBefore } = require('date-fns');
+const { isAfter, isBefore, format } = require('date-fns');
+const iikoCloudApi = require("../iiko-cloud/api");
 
 const receiptsOperationValues = {
   ipCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ИП' },
@@ -82,9 +84,27 @@ router.post("/add", async function (req, res, next) {
       await gApi.deleteExpense();
     }
 
-    const message = createTbotMessage(body);
-    await tbot.sendMessage(getTelegramChatId("reports"), message, { parse_mode: 'HTML' });
+    const deliveries = await iikoCloudApi.getDeliveries(`${format(new Date(), 'yyyy-MM-dd')} 00:00:00.123`);
+    const deliveryData = { items: [], sumAmount: 0, sumCount: 0 };
+
+    Object.keys(deliveries).forEach(item => {
+      const value = deliveries[item];
+      const amount = Math.floor(value.reduce((acc, current) => acc + current.sum, 0));
+      deliveryData.items.push({
+        label: value[0].source?.name,
+        count: value.length,
+        value: amount
+      });
+      deliveryData.sumAmount += amount;
+      deliveryData.sumCount += value.length;
+    });
+
+    const mainMessage = createTbotMessage(body);
+    const deliveryMessage = tbotMessageDeliveries(deliveryData);
+    await tbot.sendMessage(getTelegramChatId("reports"), mainMessage, { parse_mode: 'HTML' });
+    await tbot.sendMessage(getTelegramChatId("reports"), deliveryMessage, { parse_mode: 'HTML' });
   } catch (err) {
+    console.log(err, 'err');
     return res.json({ status: 'ERROR', message: err.message });
   }
 

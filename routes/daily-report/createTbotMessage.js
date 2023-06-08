@@ -18,7 +18,7 @@ const createTbotMessage = (data, type = 'add') => {
 
 Расходы:`;
 
-  expenses.forEach(item => {
+  (expenses || []).forEach(item => {
     message += `
 ${item.category.title}: ${item.sum} ₽ ${item.comment ? '(' + (item.comment) + ')' : ''}
 `});

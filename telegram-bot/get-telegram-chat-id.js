@@ -5,7 +5,8 @@ const chats = {
   balance: -728262999,
   banquets: -646921975,
   channel: -1001587358376,
-  reports: -1001645753783
+  reports: -1001645753783,
+  test: 285450225
 };
 
 module.exports = id => chats[id];
