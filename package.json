@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "set IIKO_LOGIN=rafik&&set IIKO_PASS=rafikrafik&&set IIKO_API_LOGIN=41184e33&& node server.js",
+    "dev": "node server.js",
     "build": "webpack --mode production"
   },
   "author": "",
