@@ -1,5 +1,5 @@
 const createTbotMessage = (data) => {
-  let message = '';
+  let message = 'ДОСТАВКА';
 
   data.items.forEach(item => {
     message += `

@@ -3,10 +3,12 @@ const gApi = require("../google-client/google-api");
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 const createTbotMessage = require('./daily-report/createTbotMessage');
+const tbotMessageLunchSales = require('./daily-report/tbotMessageLunchSales');
 const tbotMessageDeliveries = require('./daily-report/tbotMessageDeliveries');
 const { v4: uuidv4 } = require("uuid");
 const { isAfter, isBefore, format } = require('date-fns');
 const iikoCloudApi = require("../iiko-cloud/api");
+const iikoServerApi = require("../iiko-server/api");
 
 const receiptsOperationValues = {
   ipCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ИП' },
@@ -99,10 +101,14 @@ router.post("/add", async function (req, res, next) {
       deliveryData.sumCount += value.length;
     });
 
+    const lunchSales = await iikoServerApi.getLunchSales(format(new Date(), 'yyyy-MM-dd'));
+
     const mainMessage = createTbotMessage(body);
     const deliveryMessage = tbotMessageDeliveries(deliveryData);
+    const lunchSalesMessage = tbotMessageLunchSales(lunchSales[0]);
     await tbot.sendMessage(getTelegramChatId("reports"), mainMessage, { parse_mode: 'HTML' });
     await tbot.sendMessage(getTelegramChatId("reports"), deliveryMessage, { parse_mode: 'HTML' });
+    await tbot.sendMessage(getTelegramChatId("reports"), lunchSalesMessage, { parse_mode: 'HTML' });
   } catch (err) {
     console.log(err, 'err');
     return res.json({ status: 'ERROR', message: err.message });
