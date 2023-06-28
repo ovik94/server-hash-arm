@@ -48,7 +48,7 @@ class iikoServerApi {
       if (error.status === 401 && !error.config.__isRetryRequest) {
         return this.createRequest('auth', undefined, { login: this.login, pass: this.pass })
           .then((response) => {
-            error.config.headers = { ...error.config.headers, Cookie: `key=${response}`}
+            error.config.headers = { ...error.config.headers, Cookie: `key=${response}` }
             error.config.__isRetryRequest = true;
             return this.instance(error.config);
           });
@@ -63,31 +63,56 @@ class iikoServerApi {
     .catch(error => console.log(error));
 
 
-  getLunchSales = async (dateFrom, dateTo) => this.getOlapReport({
-      reportType: "SALES",
-      buildSummary: true,
-      groupByRowFields: [
-        "Mounth",
-        "OpenDate.Typed",
-        "DishCategory"
-      ],
-      aggregateFields: [
-        "DishDiscountSumInt",
-        "UniqOrderId"
-      ],
-      filters: {
-        "OpenDate.Typed": {
-          filterType: "DateRange",
-          periodType: "CUSTOM",
-          from: dateFrom,
-          to: dateTo
-        },
-        DishCategory: {
-          filterType: "IncludeValues",
-          values: ["Бизнес-ланч"]
-        }
+  getDeliverySales = async (dateFrom, dateTo) => this.getOlapReport({
+    reportType: "SALES",
+    buildSummary: true,
+    groupByRowFields: [
+      "Delivery.MarketingSource",
+      "OpenDate.Typed",
+      "Delivery.SourceKey",
+      "Delivery.ServiceType"
+    ],
+    aggregateFields: [
+      "DishDiscountSumInt",
+      "UniqOrderId"
+    ],
+    filters: {
+      "OpenDate.Typed": {
+        filterType: "DateRange",
+        periodType: "CUSTOM",
+        from: dateFrom,
+        to: dateTo
       }
-    })
+    }
+  })
+    .then(response => response)
+    .catch(error => console.log(error));
+
+  getLunchSales = async (dateFrom, dateTo) => this.getOlapReport({
+    reportType: "SALES",
+    buildSummary: true,
+    groupByRowFields: [
+      "Mounth",
+      "OpenDate.Typed",
+      "DishCategory"
+    ],
+    aggregateFields: [
+      "DishDiscountSumInt",
+      "UniqOrderId"
+    ],
+    filters: {
+      "OpenDate.Typed": {
+        filterType: "DateRange",
+        periodType: "CUSTOM",
+        from: dateFrom,
+        to: dateTo
+      },
+      DishCategory: {
+        filterType: "IncludeValues",
+        values: ["Бизнес-ланч"]
+      }
+    }
+  })
     .then(response => response)
     .catch(error => console.log(error));
 }

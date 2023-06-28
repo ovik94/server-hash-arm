@@ -86,25 +86,11 @@ router.post("/add", async function (req, res, next) {
       await gApi.deleteExpense();
     }
 
-    const deliveries = await iikoCloudApi.getDeliveries(`${format(new Date(), 'yyyy-MM-dd')} 00:00:00.123`);
-    const deliveryData = { items: [], sumAmount: 0, sumCount: 0 };
-
-    Object.keys(deliveries).forEach(item => {
-      const value = deliveries[item];
-      const amount = Math.floor(value.reduce((acc, current) => acc + current.sum, 0));
-      deliveryData.items.push({
-        label: value[0].source?.name,
-        count: value.length,
-        value: amount
-      });
-      deliveryData.sumAmount += amount;
-      deliveryData.sumCount += value.length;
-    });
-
+    const deliverySales = await iikoServerApi.getDeliverySales(format(new Date(), 'yyyy-MM-dd'));
     const lunchSales = await iikoServerApi.getLunchSales(format(new Date(), 'yyyy-MM-dd'));
 
     const mainMessage = createTbotMessage(body);
-    const deliveryMessage = tbotMessageDeliveries(deliveryData);
+    const deliveryMessage = tbotMessageDeliveries(deliverySales);
     const lunchSalesMessage = tbotMessageLunchSales(lunchSales[0]);
     await tbot.sendMessage(getTelegramChatId("reports"), mainMessage, { parse_mode: 'HTML' });
     await tbot.sendMessage(getTelegramChatId("reports"), deliveryMessage, { parse_mode: 'HTML' });
