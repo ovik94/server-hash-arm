@@ -85,11 +85,11 @@ class iikoCloudApi {
       const data = response.ordersByOrganizations[0].orders.map(item => {
         const { order } = item;
         const orderType = order.orderType;
-        const paymentType = order.payments[0].paymentType;
+        const paymentType = order.payments ? order.payments[0].paymentType : null;
         const marketingSource = order.marketingSource;
         let source;
 
-        if (paymentType.id === YandexPaymentTypeId && !marketingSource) {
+        if (paymentType && paymentType.id === YandexPaymentTypeId && !marketingSource) {
           source = { id: 'yandex', name: orderType.name };
         }
 
