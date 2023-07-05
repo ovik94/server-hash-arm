@@ -2,13 +2,11 @@ const router = require("express").Router();
 const gApi = require("../google-client/google-api");
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
-const createTbotMessage = require('./daily-report/createTbotMessage');
-const tbotMessageLunchSales = require('./daily-report/tbotMessageLunchSales');
-const tbotMessageDeliveries = require('./daily-report/tbotMessageDeliveries');
 const { v4: uuidv4 } = require("uuid");
 const { isAfter, isBefore, format } = require('date-fns');
-const iikoCloudApi = require("../iiko-cloud/api");
 const iikoServerApi = require("../iiko-server/api");
+
+const { createImageFromHtml } = require("../create-image-from-html/create-image-from-html");
 
 const receiptsOperationValues = {
   ipCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ИП' },
@@ -21,6 +19,41 @@ const transformedDate = (date) => {
   const month = Number(dateArray[1]) - 1;
   const year = Number(dateArray[2]);
   return new Date(year, month, day);
+};
+
+const sendReportToTelegram = async (body) => {
+  const deliverySales = await iikoServerApi.getDeliverySales(format(new Date(), 'yyyy-MM-dd'));
+  const lunchSales = await iikoServerApi.getLunchSales(format(new Date(), 'yyyy-MM-dd'));
+
+  const serviceTypes = {
+    COURIER: 'Курьером',
+    PICKUP: 'Самовывоз'
+  };
+
+  const filteredDeliveriesData = deliverySales
+    .filter(deliveryItem => !!deliveryItem['Delivery.ServiceType'])
+    .map(item => ({
+      source: item['Delivery.MarketingSource'] || 'По звонку',
+      type: serviceTypes[item['Delivery.ServiceType']],
+      orderCount: item.UniqOrderId,
+      sum: item.DishDiscountSumInt
+    }));
+
+  const totalAmount = filteredDeliveriesData.reduce((sum, current) => sum + current.sum, 0);
+  const total = filteredDeliveriesData.reduce((sum, current) => sum + current.orderCount, 0);
+
+  const image = await createImageFromHtml({
+    ...body,
+    expenses: body.expenses.map(item => ({ ...item, title: item.category.title })),
+    type: body.type === 'add' ? 'Отчет' : 'Обновление отчета',
+    yandex: body.yandex || '0',
+    deliveries: filteredDeliveriesData,
+    totalDeliveries: total,
+    totalDeliveriesSum: totalAmount,
+    ...lunchSales[0]
+  });
+
+  await tbot.sendPhoto(getTelegramChatId("test"), image, undefined, { contentType: 'image/jpeg' });
 };
 
 router.get("/reports", async function (req, res, next) {
@@ -86,15 +119,7 @@ router.post("/add", async function (req, res, next) {
       await gApi.deleteExpense();
     }
 
-    const deliverySales = await iikoServerApi.getDeliverySales(format(new Date(), 'yyyy-MM-dd'));
-    const lunchSales = await iikoServerApi.getLunchSales(format(new Date(), 'yyyy-MM-dd'));
-
-    const mainMessage = createTbotMessage(body);
-    const deliveryMessage = tbotMessageDeliveries(deliverySales);
-    const lunchSalesMessage = tbotMessageLunchSales(lunchSales[0]);
-    await tbot.sendMessage(getTelegramChatId("reports"), mainMessage, { parse_mode: 'HTML' });
-    await tbot.sendMessage(getTelegramChatId("reports"), deliveryMessage, { parse_mode: 'HTML' });
-    await tbot.sendMessage(getTelegramChatId("reports"), lunchSalesMessage, { parse_mode: 'HTML' });
+    await sendReportToTelegram(body);
   } catch (err) {
     console.log(err, 'err');
     return res.json({ status: 'ERROR', message: err.message });
@@ -151,8 +176,7 @@ router.post("/update", async function (req, res, next) {
       }
     }
 
-    const message = createTbotMessage(body, 'update');
-    await tbot.sendMessage(getTelegramChatId("reports"), message, { parse_mode: 'HTML' });
+    await sendReportToTelegram(body);
   } catch (err) {
     return res.json({ status: 'ERROR', message: err.message });
   }

@@ -19,6 +19,7 @@
     "jsonschema": "^1.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "node-html-to-image": "^3.3.0",
     "node-telegram-bot-api": "^0.51.0",
     "uuid": "^8.3.2"
   },
