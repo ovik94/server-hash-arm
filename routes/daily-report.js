@@ -53,7 +53,7 @@ const sendReportToTelegram = async (body) => {
     ...lunchSales[0]
   });
 
-  await tbot.sendPhoto(getTelegramChatId("test"), image, undefined, { contentType: 'image/jpeg' });
+  await tbot.sendPhoto(getTelegramChatId("reports"), image, undefined, { contentType: 'image/jpeg' });
 };
 
 router.get("/reports", async function (req, res, next) {
