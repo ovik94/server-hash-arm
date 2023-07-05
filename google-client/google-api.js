@@ -3,8 +3,16 @@ const { getAuthClient } = require("./auth-client");
 const transformRowsInArray = require("./utils/transform-rows-in-array");
 const transformColumnsInArray = require("./utils/transform-columns-in-array");
 const transformKeyValue = require("./utils/transform-key-value");
-const appendRequest = require("./utils/get-append-request");
 const { appendRow, deleteRows, updateRow } = require('./utils/tableTransformMethods');
+const { isAfter, isBefore } = require("date-fns");
+
+const transformedDate = (date) => {
+  const dateArray = date.split('.');
+  const day = Number(dateArray[0]) + 1;
+  const month = Number(dateArray[1]) - 1;
+  const year = Number(dateArray[2]);
+  return new Date(year, month, day);
+};
 
 class GoogleApi {
   constructor() {
@@ -72,11 +80,31 @@ class GoogleApi {
     return transformKeyValue(data.values, 'number');
   };
 
-  getDailyReports = async () => {
+  getDailyReports = async (from, to) => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'dailyReports' });
+    const reports = transformRowsInArray(data.values);
+    let result = reports.map(item => ({ ...item, expenses: item.expenses ? JSON.parse(item.expenses) : [] }));
 
-    return transformRowsInArray(data.values);
+    if (from) {
+      result = result.filter(item => {
+        if (item.date === from) {
+          return true;
+        }
+        return isAfter(transformedDate(item.date), transformedDate(from));
+      });
+    }
+
+    if (to) {
+      result = result.filter(item => {
+        if (item.date === to) {
+          return true;
+        }
+        return isBefore(transformedDate(item.date), transformedDate(to));
+      });
+    }
+
+    return result;
   };
 
   getExpenses = async () => {

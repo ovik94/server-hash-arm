@@ -86,10 +86,61 @@ module.exports = `<html lang="en">
             margin-bottom: 16px;
         }
 
-        .deliveries_title, .lunch_title {
+        .deliveries_title, .lunch_title, .revenue_title {
             margin-bottom: 8px;
         }
 
+        .revenue {
+            padding-bottom: 48px;
+        }
+        
+        .progressBar {
+            position: relative;
+            margin-top: 54px;
+        }
+
+        .progressBar_default {
+            width: 100%;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid rgb(0, 0, 0, 0.3);
+        }
+
+        .progressBar_success {
+            width: {{progress}};
+            height: 10px;
+            background-color: rgb(180,132,132);
+            border-radius: 8px;
+            border: 1px solid rgb(0, 0, 0, 0);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .progressBar_start_date {
+            position: absolute;
+            left: 0;
+            top: 40px;
+        }
+
+        .progressBar_end_date {
+            position: absolute;
+            right: 0;
+            top: 40px;
+        }
+
+        .progressBar_current_date {
+            position: absolute;
+            left: {{progress}};
+            top: 16px;
+        }
+
+        .revenue_value {
+            position: absolute;
+            left: {{progress}};
+            top: -40px;
+        }
         table {
             background-color: #E7E7E7;
             padding: 16px;
@@ -236,6 +287,21 @@ module.exports = `<html lang="en">
                 <div class="lunch_item">
                     <div class="lunch_item_title"><span>Количество чеков</span></div>
                     <span class="primaryColor">{{UniqOrderId}} шт</span>
+                </div>
+            </div>
+            
+            <div class="revenue">
+                <div class="revenue_title">
+                    <span class="font18">Выручка за месяц:</span>
+                </div>
+                <div class="line"></div>
+                <div class="progressBar">
+                    <div class="progressBar_default"></div>
+                    <div class="progressBar_success"></div>
+                    <div class="progressBar_start_date"><span class="font16">{{progressBarStartDate}}</span></div>
+                    <div class="progressBar_current_date"><span class="font16">{{progressBarCurrentDate}}</span></div>
+                    <div class="progressBar_end_date"><span class="font16">{{progressBarEndDate}}</span></div>
+                    <div class="revenue_value"><span class="font24 primaryColor">{{revenue}} ₽</span></div>
                 </div>
             </div>
         </div>

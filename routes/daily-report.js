@@ -3,7 +3,7 @@ const gApi = require("../google-client/google-api");
 const tbot = require("../telegram-bot/tbot");
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 const { v4: uuidv4 } = require("uuid");
-const { isAfter, isBefore, format } = require('date-fns');
+const { format, startOfMonth, endOfMonth, getDate, getDaysInMonth } = require('date-fns');
 const iikoServerApi = require("../iiko-server/api");
 
 const { createImageFromHtml } = require("../create-image-from-html/create-image-from-html");
@@ -11,14 +11,6 @@ const { createImageFromHtml } = require("../create-image-from-html/create-image-
 const receiptsOperationValues = {
   ipCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ИП' },
   oooCash: { title: 'Поступления наличные средства', type: 'Наличные', comment: 'по ООО' },
-};
-
-const transformedDate = (date) => {
-  const dateArray = date.split('.');
-  const day = Number(dateArray[0]) + 1;
-  const month = Number(dateArray[1]) - 1;
-  const year = Number(dateArray[2]);
-  return new Date(year, month, day);
 };
 
 const sendReportToTelegram = async (body) => {
@@ -41,6 +33,18 @@ const sendReportToTelegram = async (body) => {
 
   const totalAmount = filteredDeliveriesData.reduce((sum, current) => sum + current.sum, 0);
   const total = filteredDeliveriesData.reduce((sum, current) => sum + current.orderCount, 0);
+  const progressBarStartDate = format(startOfMonth(new Date()), 'dd.MM');
+  const progressBarEndDate = format(endOfMonth(new Date()), 'dd.MM');
+  const progressBarCurrentDate = format(new Date(), 'dd.MM');
+  const currentDay = getDate(new Date());
+  const dayOfMonth = getDaysInMonth(new Date());
+  const progress = Math.round(currentDay / dayOfMonth * 100);
+  const reports = await gApi.getDailyReports(
+    format(startOfMonth(new Date()), 'dd.MM.yyyy'),
+    format(new Date(), 'dd.MM.yyyy')
+  );
+  const revenue = reports.reduce((sum, current) => sum + Number(current.totalSum), 0);
+
 
   const image = await createImageFromHtml({
     ...body,
@@ -50,7 +54,12 @@ const sendReportToTelegram = async (body) => {
     deliveries: filteredDeliveriesData,
     totalDeliveries: total,
     totalDeliveriesSum: totalAmount,
-    ...lunchSales[0]
+    ...lunchSales[0],
+    progressBarStartDate,
+    progressBarCurrentDate,
+    progressBarEndDate,
+    revenue,
+    progress: `${progress}%`
   });
 
   await tbot.sendPhoto(getTelegramChatId("reports"), image, undefined, { contentType: 'image/jpeg' });
@@ -58,28 +67,9 @@ const sendReportToTelegram = async (body) => {
 
 router.get("/reports", async function (req, res, next) {
   try {
-    const data = await gApi.getDailyReports();
-    let result = data.map(item => ({ ...item, expenses: item.expenses ? JSON.parse(item.expenses) : [] }));
+    const data = await gApi.getDailyReports(req.query.from, req.query.to);
 
-    if (req.query.from) {
-      result = result.filter(item => {
-        if (item.date === req.query.from) {
-          return true;
-        }
-        return isAfter(transformedDate(item.date), transformedDate(req.query.from));
-      });
-    }
-
-    if (req.query.to) {
-      result = result.filter(item => {
-        if (item.date === req.query.to) {
-          return true;
-        }
-        return isBefore(transformedDate(item.date), transformedDate(req.query.to));
-      });
-    }
-
-    return res.json({ status: "OK", data: result });
+    return res.json({ status: "OK", data });
   } catch (err) {
     return res.json({ status: 'ERROR', message: err.message });
   }
@@ -132,7 +122,7 @@ router.post("/update", async function (req, res, next) {
   const { body } = req;
 
   try {
-    const reports = await gApi.getDailyReports();
+    const reports = await gApi.getDailyReports(req.query.from, req.query.to);
     const oldExpenses = JSON.parse((reports.find(report => report.id === body.id) || {}).expenses || '');
     const operations = await gApi.getFinancialOperations();
 
