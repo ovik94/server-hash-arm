@@ -264,14 +264,14 @@ module.exports = `<html lang="en">
                         <td>{{source}}</td>
                         <td>{{type}}</td>
                         <td>{{orderCount}}</td>
-                        <td>{{sum}}</td>
+                        <td>{{sum}} ₽</td>
                     </tr>
                     {{/each}}
                     <tr>
                         <td></td>
                         <td></td>
                         <td>{{totalDeliveries}}</td>
-                        <td class="primaryColor">{{totalDeliveriesSum}}</td>
+                        <td class="primaryColor">{{totalDeliveriesSum}} ₽</td>
                     </tr>
                 </table>
             </div>
