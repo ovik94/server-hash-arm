@@ -18,9 +18,8 @@ const Templates = {
  */
 const createImageFromHtml = async (content, type = 'REPORT') => {
   const puppeteerArgs = {
-    args: [ '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--headless', '--no-zygote', '--disable-gpu' ],
-    headless: true,
-    ignoreHTTPSErrors: true
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    executablePath: '/usr/bin/chromium-browser'
   };
 
   return await nodeHtmlToImage({
