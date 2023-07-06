@@ -5,6 +5,7 @@ const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 const { v4: uuidv4 } = require("uuid");
 const { format, startOfMonth, endOfMonth, getDate, getDaysInMonth } = require('date-fns');
 const iikoServerApi = require("../iiko-server/api");
+const iikoCloudApi = require("../iiko-cloud/api");
 
 const { createImageFromHtml } = require("../create-image-from-html/create-image-from-html");
 
@@ -14,8 +15,16 @@ const receiptsOperationValues = {
 };
 
 const sendReportToTelegram = async (body) => {
+  const currentDate = format(new Date(), 'yyyy-MM-dd');
+  const currentFormattedDate = `${format(new Date(), 'yyyy-MM-dd')} 00:00:00.123`;
+
   const deliverySales = await iikoServerApi.getDeliverySales(format(new Date(), 'yyyy-MM-dd'));
   const lunchSales = await iikoServerApi.getLunchSales(format(new Date(), 'yyyy-MM-dd'));
+  const reserveIds = await iikoCloudApi.getReserveListIds(currentFormattedDate) || [];
+  const prepays = await iikoCloudApi.getCurrentPrepays(reserveIds).then(data => data.filter(prepay => {
+    const prepayDate = format(new Date(prepay.timestamp), 'yyyy-MM-dd');
+    return prepayDate === currentDate
+  }))
 
   const serviceTypes = {
     COURIER: 'Курьером',
@@ -59,7 +68,8 @@ const sendReportToTelegram = async (body) => {
     progressBarCurrentDate,
     progressBarEndDate,
     revenue,
-    progress: `${progress}%`
+    progress: `${progress}%`,
+    prepays
   });
 
   await tbot.sendPhoto(getTelegramChatId("reports"), image, undefined, { contentType: 'image/jpeg' });

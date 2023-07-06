@@ -7,29 +7,22 @@ const RequestConfigList = {
     method: 'post',
     pathTemplate: '/api/1/access_token'
   },
-  deliveries: {
+  reservesList: {
     method: 'post',
-    pathTemplate: '/api/1/deliveries/by_delivery_date_and_status'
+    pathTemplate: '/api/1/reserve/restaurant_sections_workload'
+  },
+  reserveDataById: {
+    method: 'post',
+    pathTemplate: '/api/1/reserve/status_by_id'
   },
 };
-
-const YandexPaymentTypeId = '2c7f0ed3-ba6e-4c79-87ce-c000f0ffd127';
-const OrderTypesMap = {
-  'courier': '76067ea3-356f-eb93-9d14-1fa00d082c4e',
-  'pickup': '5b1508f9-fe5b-d6af-cb8d-043af587d5c2'
-}
-
-const MarketingSourceMap = {
-  '85d37f70-bd17-4c6b-a8d1-d7e1ad2448ef': 'android',
-  'a18845e2-caa1-4432-b9df-be64e6617814': 'site',
-  '18b16c38-7141-44e9-b827-8ef0a9acc0ef': 'ios'
-}
 
 class iikoCloudApi {
   constructor() {
     this.apiLogin = process.env.IIKO_API_LOGIN;
     this.host = 'api-ru.iiko.services';
-    this.organizationIds = 'dd2e6895-5b76-44fd-ac21-5a5f8ecf5f9d';
+    this.organizationId = 'dd2e6895-5b76-44fd-ac21-5a5f8ecf5f9d';
+    this.restaurantSectionId = '69f18ace-efac-4318-87bf-0572a17c17fd';
     this.instance = axios.create();
 
     this.addInterceptor();
@@ -72,59 +65,24 @@ class iikoCloudApi {
     });
   };
 
-  getDeliveries = async (date) => this.createRequest('deliveries', {
-    organizationIds: [this.organizationIds],
-    deliveryDateFrom: date,
-    statuses: ["Closed", "CookingCompleted"]
-  })
-    .then(response => {
-      if (!response.ordersByOrganizations.length) {
-        return {}
-      }
+  getReserveListIds = async (date) => this.createRequest('reservesList', {
+    restaurantSectionIds: [this.restaurantSectionId],
+    dateFrom: date
+  }).then(response => response.reserves.map(item => item.id));
 
-      const data = response.ordersByOrganizations[0].orders.map(item => {
-        const { order } = item;
-        const orderType = order.orderType;
-        const paymentType = order.payments ? order.payments[0].paymentType : null;
-        const marketingSource = order.marketingSource;
-        let source;
-
-        if (paymentType && paymentType.id === YandexPaymentTypeId && !marketingSource) {
-          source = { id: 'yandex', name: orderType.name };
-        }
-
-        if (orderType.id === OrderTypesMap.courier && !marketingSource) {
-          source = { id: 'regularDelivery', name: orderType.name }
-        }
-
-        if (orderType.id === OrderTypesMap.pickup && !marketingSource) {
-          source = { id: 'regularPickup', name: orderType.name }
-        }
-
-        if (orderType.id === OrderTypesMap.courier && marketingSource) {
-          source = {
-            id: MarketingSourceMap[marketingSource.id]  ? MarketingSourceMap[marketingSource.id] : 'sourceDelivery',
-            name: `${orderType.name} из ${marketingSource.name}`
-          }
-        }
-
-        if (orderType.id === OrderTypesMap.pickup && marketingSource) {
-          source = {
-            id: MarketingSourceMap[marketingSource.id]  ? MarketingSourceMap[marketingSource.id] : 'sourcePickup',
-            name: `${orderType.name} из ${marketingSource.name}`
-          };
-        }
-
-        return {
-          id: item.id,
-          source,
-          sum: item.order.sum
-        }
-      });
-
-      return groupBy(data, (value) => value.source.id);
-    })
-    .catch(error => console.log(error));
+  getCurrentPrepays = async (reserveIds) => this.createRequest('reserveDataById', {
+    organizationId: this.organizationId,
+    reserveIds,
+  }).then(response => {
+    return (response.reserves || [])
+      .filter(item => item.reserve.order && item.reserve.order.payments[0].isPrepay)
+      .map(({ reserve, timestamp }) => ({
+        timestamp,
+        guestsCount: reserve.order.guestsInfo.count,
+        paymentType: reserve.order.payments[0].paymentType.name,
+        sum: reserve.order.payments[0].sum
+      }));
+  });
 }
 
 module.exports = new iikoCloudApi();

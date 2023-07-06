@@ -44,11 +44,11 @@ module.exports = `<html lang="en">
             margin-bottom: 16px;
         }
 
-        .receipt, .expenses {
+        .receipt, .expenses, .prepays {
             margin-bottom: 24px;
         }
 
-        .receipt_item, .receipt_total, .expenses_item, .lunch_item {
+        .receipt_item, .receipt_total, .expenses_item, .prepays_item, .lunch_item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
@@ -73,7 +73,7 @@ module.exports = `<html lang="en">
             text-align: right;
         }
 
-        .expenses_item_subtitle {
+        .expenses_item_subtitle, .prepays_item_subtitle {
             flex-grow: 2;
             margin-left: 24px;
             opacity: 0.8;
@@ -86,7 +86,7 @@ module.exports = `<html lang="en">
             margin-bottom: 16px;
         }
 
-        .deliveries_title, .lunch_title, .revenue_title {
+        .deliveries_title, .lunch_title, .revenue_title, .prepays_title {
             margin-bottom: 8px;
         }
 
@@ -233,6 +233,24 @@ module.exports = `<html lang="en">
                     </div>
                 </div>
             </div>
+            {{#if prepays}}
+            <div class="prepays">
+                <div class="prepays_title">
+                    <span class="font18">Предоплаты:</span>
+                </div>
+                <div class="line"></div>
+                
+                {{#each prepays}}
+                <div class="prepays_item">
+                    <div class="prepays_item_title"><span>{{paymentType}}</span></div>
+                    <div class="prepays_item_subtitle">
+                        <span class="subtitle">{{guestsCount}} чел.</span>
+                    </div>
+                    <span class="primaryColor">{{sum}} ₽</span>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
             <div class="expenses">
                 <div class="expenses_title">
                     <span class="font18">Расходы:</span>
