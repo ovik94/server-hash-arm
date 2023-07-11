@@ -136,13 +136,13 @@ class GoogleApi {
   }
 
   addReport = async (data) => {
-    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, expenses } = data;
+    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, expenses } = data;
     const api = await this.apiClient;
 
     await appendRow(api, {
       sheet: this.spreadsheet,
       range: 'dailyReports',
-      values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, JSON.stringify(expenses)]
+      values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, JSON.stringify(expenses)]
     });
   };
 
@@ -201,8 +201,8 @@ class GoogleApi {
     if (reportRowIndex) {
       await updateRow(api, {
         sheet: this.spreadsheet,
-        range: `dailyReports!A${reportRowIndex}:J${reportRowIndex}`,
-        values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, JSON.stringify(expenses)]
+        range: `dailyReports!A${reportRowIndex}:K${reportRowIndex}`,
+        values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, JSON.stringify(expenses)]
       });
     }
   };

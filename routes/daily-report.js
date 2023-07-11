@@ -119,7 +119,7 @@ router.post("/add", async function (req, res, next) {
       await gApi.deleteExpense();
     }
 
-    await sendReportToTelegram(body);
+    await sendReportToTelegram({ ...body, type: 'add' });
   } catch (err) {
     console.log(err, 'err');
     return res.json({ status: 'ERROR', message: err.message });
@@ -133,7 +133,8 @@ router.post("/update", async function (req, res, next) {
 
   try {
     const reports = await gApi.getDailyReports(req.query.from, req.query.to);
-    const oldExpenses = JSON.parse((reports.find(report => report.id === body.id) || {}).expenses || '');
+    const reportExpenses = (reports.find(report => report.id === body.id) || {}).expenses;
+    const oldExpenses = typeof reportExpenses === 'object' ? reportExpenses : JSON.parse(reportExpenses || '');
     const operations = await gApi.getFinancialOperations();
 
     await gApi.updateReport(body);
@@ -176,9 +177,9 @@ router.post("/update", async function (req, res, next) {
       }
     }
 
-    await sendReportToTelegram(body);
+    await sendReportToTelegram({ ...body, type: 'update' });
   } catch (err) {
-    return res.json({ status: 'ERROR', message: err.message });
+    return res.json({ status: 'ERROR', message: err });
   }
 
   return res.json({ status: 'OK' });
