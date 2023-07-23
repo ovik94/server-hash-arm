@@ -75,11 +75,12 @@ class iikoCloudApi {
     reserveIds,
   }).then(response => {
     return (response.reserves || [])
-      .filter(item => item.reserve.order && item.reserve.order?.payments[0]?.isPrepay)
+      .filter(item => item.reserve.order && item.reserve.order.payments &&
+        item.reserve.order.payments.length && item.reserve.order.payments[0].isPrepay)
       .map(({ reserve, timestamp }) => ({
         timestamp,
         guestsCount: reserve.order.guestsInfo.count,
-        paymentType: reserve.order?.payments[0]?.paymentType.name,
+        paymentType: reserve.order && reserve.order.payments && reserve.order?.payments[0]?.paymentType.name,
         sum: reserve.order?.payments[0]?.sum
       }));
   });
