@@ -38,6 +38,13 @@ class GoogleApi {
     return transformRowsInArray(data.values);
   };
 
+  getFortune = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "fortune" });
+
+    return transformRowsInArray(data.values);
+  };
+
   getCheckListData = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "checkList" });
