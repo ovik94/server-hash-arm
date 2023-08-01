@@ -38,9 +38,9 @@ class GoogleApi {
     return transformRowsInArray(data.values);
   };
 
-  getFortune = async () => {
+  getFortune = async (type) => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "fortune" });
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: type });
 
     return transformRowsInArray(data.values);
   };
