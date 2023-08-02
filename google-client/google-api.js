@@ -38,13 +38,6 @@ class GoogleApi {
     return transformRowsInArray(data.values);
   };
 
-  getFortune = async (type) => {
-    const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: type });
-
-    return transformRowsInArray(data.values);
-  };
-
   getCheckListData = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "checkList" });
@@ -254,6 +247,41 @@ class GoogleApi {
       }
     } else {
       await deleteRows(api, { sheet: this.spreadsheet, sheetId: 1327890270 });
+    }
+  };
+
+  getFortune = async (type) => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: type });
+
+    return transformRowsInArray(data.values);
+  };
+
+  fortuneReduce = async (data) => {
+    const { type, id } = data;
+    const api = await this.apiClient;
+
+    const fortuneList = await this.getFortune(type);
+    const currentFortuneRowIndex = fortuneList.findIndex(item => item.id === id) + 2;
+    const currentFortune = fortuneList.find(item => item.id === id);
+
+    if (!currentFortune) {
+      throw new Error('Не найден приз');
+    }
+
+    const { count, text, color } = currentFortune;
+    let newCount = 0;
+
+    if (Number(count)) {
+      newCount = Number(count || 1) - 1;
+    }
+
+    if (currentFortuneRowIndex && count) {
+      await updateRow(api, {
+        sheet: this.spreadsheet,
+        range: `${type}!A${currentFortuneRowIndex}:D${currentFortuneRowIndex}`,
+        values: [id, newCount, text, color]
+      });
     }
   };
 }
