@@ -9,6 +9,7 @@ router.use('/api/banquets', require('./banquets'));
 router.use('/api/iiko', require('./iiko'));
 router.use('/api/lunch', require('./lunch'));
 router.use('/api/fortune', require('./fortune'));
+router.use('/api/statement', require('./statement'));
 
 router.use('/api/app/dailyReport', require('./daily-report'));
 router.use('/api/app/expenses', require('./expense'));

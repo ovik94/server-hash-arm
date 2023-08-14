@@ -5,6 +5,7 @@ const transformColumnsInArray = require("./utils/transform-columns-in-array");
 const transformKeyValue = require("./utils/transform-key-value");
 const { appendRow, deleteRows, updateRow } = require('./utils/tableTransformMethods');
 const { isAfter, isBefore } = require("date-fns");
+const createComment = require('../google-client/utils/createFinanceOperationCommentDate');
 
 const transformedDate = (date) => {
   const dateArray = date.split('.');
@@ -128,15 +129,20 @@ class GoogleApi {
     return data.values;
   }
 
-  getFinancialOperations = async () => {
-    const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.financialSpreadsheet, range: 'Учет финансов!A:G' });
-
-    return data.values;
-  }
-
   addReport = async (data) => {
-    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, expenses } = data;
+    const {
+      id,
+      date,
+      adminName,
+      ipCash,
+      ipAcquiring,
+      oooCash,
+      oooAcquiring,
+      totalSum,
+      totalCash,
+      yandex,
+      expenses
+    } = data;
     const api = await this.apiClient;
 
     await appendRow(api, {
@@ -145,51 +151,6 @@ class GoogleApi {
       values: [id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, JSON.stringify(expenses)]
     });
   };
-
-  addFinancialOperation = async (values) => {
-    const api = await this.apiClient;
-    await appendRow(api, { sheet: this.financialSpreadsheet, range: 'Учет финансов', values })
-  };
-
-  updateFinancialOperation = async (id, values, financeOperations) => {
-    const api = await this.apiClient;
-    const date = values[0];
-    const title = values[1];
-    const comment = values[5];
-
-    const currentFinanceRowIndex = financeOperations.findIndex(row => {
-      let result;
-      if (id) {
-        result = row[0] === id;
-      } else {
-        result = row[1] === date && row[2] === title && row[6] === comment;
-      }
-      return result;
-    }) + 1;
-    if (currentFinanceRowIndex) {
-      await updateRow(api, {
-        sheet: this.financialSpreadsheet,
-        range: `Учет финансов!B${currentFinanceRowIndex}:G${currentFinanceRowIndex}`,
-        values
-      })
-    }
-  }
-
-  deleteFinancialOperation = async (id) => {
-    const api = await this.apiClient;
-
-    const ids = await this.getFinancialOperations();
-
-    const currentFinanceRowIndex = ids.findIndex(row => row[0] === id);
-    if (currentFinanceRowIndex >= 0) {
-      await deleteRows(api, {
-        sheet: this.financialSpreadsheet,
-        sheetId: 0,
-        startIndex: currentFinanceRowIndex,
-        endIndex: currentFinanceRowIndex + 1
-      });
-    }
-  }
 
   updateReport = async (data) => {
     const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, expenses } = data;
@@ -283,6 +244,143 @@ class GoogleApi {
         values: [id, newCount, text, color]
       });
     }
+  };
+
+  getFinancialOperations = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.financialSpreadsheet, range: 'Учет финансов!A:G' });
+
+    return data.values;
+  }
+
+  addFinancialOperation = async (values) => {
+    const api = await this.apiClient;
+    await appendRow(api, { sheet: this.financialSpreadsheet, range: 'Учет финансов', values })
+  };
+
+  updateFinancialOperation = async (id, values, financeOperations) => {
+    const api = await this.apiClient;
+    const date = values[0];
+    const title = values[1];
+    const comment = values[5];
+
+    const currentFinanceRowIndex = financeOperations.findIndex(row => {
+      let result;
+      if (id) {
+        result = row[0] === id;
+      } else {
+        result = row[1] === date && row[2] === title && row[6] === comment;
+      }
+      return result;
+    }) + 1;
+    if (currentFinanceRowIndex) {
+      await updateRow(api, {
+        sheet: this.financialSpreadsheet,
+        range: `Учет финансов!B${currentFinanceRowIndex}:G${currentFinanceRowIndex}`,
+        values
+      })
+    }
+  }
+
+  deleteFinancialOperation = async (id) => {
+    const api = await this.apiClient;
+
+    const ids = await this.getFinancialOperations();
+
+    const currentFinanceRowIndex = ids.findIndex(row => row[0] === id);
+    if (currentFinanceRowIndex >= 0) {
+      await deleteRows(api, {
+        sheet: this.financialSpreadsheet,
+        sheetId: 0,
+        startIndex: currentFinanceRowIndex,
+        endIndex: currentFinanceRowIndex + 1
+      });
+    }
+  }
+
+  getFinancialCounterparties = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({
+      spreadsheetId: this.financialSpreadsheet,
+      range: 'Справочник!M3:N100'
+    });
+
+    return transformRowsInArray(data.values);
+  };
+
+  getFinancialOperationTypes = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({
+      spreadsheetId: this.financialSpreadsheet,
+      range: 'Справочник!B3:K100'
+    });
+
+    return transformRowsInArray(data.values);
+  };
+
+  addStatementOperation = async (operations, paymentType) => {
+    const paymentTypes = { ip: 'Альфа р/c ИП', ooo: 'Альфа р/c ООО' };
+
+    const counterparties = await this.getFinancialCounterparties()
+      .then(data => data.map(item => ({
+        counterparty: item['Контрагент'],
+        includes: item['Совпадение']
+      })));
+
+    const operationTypes = await this.getFinancialOperationTypes()
+      .then(data => data.map(item => ({
+          type: item['Статьи ДДС'],
+          operationType: item['Тип операции'],
+          paymentOperation: item['Тип оплаты'],
+          name: item['Контрагент, Назначение платежа']
+        })).filter(item => item.paymentOperation?.includes(paymentTypes[paymentType]))
+      );
+
+    const processedOperations = [];
+
+    for (let operation of operations) {
+      const counterparty = counterparties.find(item => {
+        return item.includes === operation.name
+      });
+
+      let type;
+
+      operationTypes.forEach(typeItem => {
+        if (typeItem.name) {
+          const items = typeItem.name.split(';');
+
+          items.forEach(purpose => {
+            if (purpose === operation.name || operation.purposeOfPayment.includes(purpose)) {
+              type = typeItem?.type;
+            }
+          });
+        }
+      });
+
+      if (!counterparty) {
+        processedOperations.push({ status: 'COUNTERPARTY_FAIL', operation });
+      } else if (!type) {
+        processedOperations.push({ status: 'OPERATION_FAIL', operation });
+      } else {
+        const hasSbp = operation.purposeOfPayment.includes('СБП');
+        const hasEquaringIp = type === 'Эквайринг ИП';
+        const hasEquaringOOO = type === 'Эквайринг ООО';
+        const comment = hasSbp || hasEquaringIp || hasEquaringOOO ? createComment(operation, type) : '';
+
+        await this.addFinancialOperation([
+          '',
+          operation.date,
+          type,
+          paymentTypes[paymentType],
+          operation.incoming || operation.expense,
+          counterparty?.counterparty,
+          comment
+        ]);
+        processedOperations.push({ status: 'SUCCESS', operation });
+      }
+    }
+
+    return processedOperations;
   };
 }
 

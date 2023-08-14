@@ -52,8 +52,7 @@ const sendReportToTelegram = async (body) => {
     format(startOfMonth(new Date()), 'dd.MM.yyyy'),
     format(new Date(), 'dd.MM.yyyy')
   );
-  const revenue = reports.reduce((sum, current) => sum + Number(current.totalSum), 0);
-
+  const revenue = reports.reduce((sum, current) => Math.floor(Number(sum) + Number(current.totalSum)), 0);
 
   const image = await createImageFromHtml({
     ...body,
