@@ -218,6 +218,13 @@ class GoogleApi {
     return transformRowsInArray(data.values);
   };
 
+  getFeedbackList = async () => {
+    const api = await this.apiClient;
+    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: 'feedback' });
+
+    return transformRowsInArray(data.values);
+  };
+
   fortuneReduce = async (data) => {
     const { type, id } = data;
     const api = await this.apiClient;
@@ -345,17 +352,26 @@ class GoogleApi {
 
       let type;
 
-      operationTypes.forEach(typeItem => {
+      for (const operationType in operationTypes) {
+        const typeItem = operationTypes[operationType];
+
         if (typeItem.name) {
           const items = typeItem.name.split(';');
 
-          items.forEach(purpose => {
+          for (const key in items) {
+            const purpose = items[key];
+
             if (purpose === operation.name || operation.purposeOfPayment.includes(purpose)) {
               type = typeItem?.type;
+              break;
             }
-          });
+          }
+
+          if (type) {
+            break;
+          }
         }
-      });
+      }
 
       if (!counterparty) {
         processedOperations.push({ status: 'COUNTERPARTY_FAIL', operation });
@@ -382,6 +398,11 @@ class GoogleApi {
 
     return processedOperations;
   };
+
+
+  sendFeedback = async (data) => {
+
+  }
 }
 
 module.exports = new GoogleApi();
