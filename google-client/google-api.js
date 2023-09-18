@@ -401,7 +401,28 @@ class GoogleApi {
 
 
   sendFeedback = async (data) => {
+    const api = await this.apiClient;
+    const values = [];
+    const feedbackResponses = await api.values.get({ spreadsheetId: this.spreadsheet, range: "feedbackResponses" });
+    const columnsValues = await feedbackResponses.data.values[0];
 
+    for (const requestData of data) {
+      if (!requestData.hasSubOptions) {
+        const index = columnsValues.findIndex(item => item === requestData.title)
+        values[index] = requestData.response;
+      } else {
+        requestData.response.forEach((option) => {
+          const columnIndex = columnsValues.findIndex(item => item === option.label);
+          values[columnIndex] = option.value;
+        })
+      }
+    }
+
+    await appendRow(api, {
+      sheet: this.spreadsheet,
+      range: 'feedbackResponses',
+      values
+    });
   }
 }
 

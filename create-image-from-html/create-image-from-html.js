@@ -1,12 +1,15 @@
 const nodeHtmlToImage = require("node-html-to-image");
 const reportHtml = require('./report-template');
+const feedbackHtml = require('./feedback-template');
 
 const TemplateTypes = {
   REPORT: 'REPORT',
+  FEEDBACK: 'FEEDBACK'
 };
 
 const Templates = {
-  REPORT: reportHtml
+  REPORT: reportHtml,
+  FEEDBACK: feedbackHtml
 }
 
 /**
