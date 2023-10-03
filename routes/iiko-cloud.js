@@ -4,7 +4,7 @@ const { format } = require("date-fns");
 
 router.get("/reserve-list", async function (req, res, next) {
   try {
-    const reserves = await iikoCloudApi.getReserveList(req.query.date);
+    const reserves = await iikoCloudApi.getReserveListIds(req.query.date);
 
     return res.json({ status: "OK", data: reserves  });
   } catch (err) {

@@ -178,7 +178,7 @@ router.post("/update", async function (req, res, next) {
 
     await sendReportToTelegram({ ...body, type: 'update' });
   } catch (err) {
-    return res.json({ status: 'ERROR', message: err });
+    return res.json({ status: 'ERROR', message: err.message });
   }
 
   return res.json({ status: 'OK' });

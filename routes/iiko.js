@@ -2,50 +2,29 @@ const router = require("express").Router();
 const easyTable = require("easy-table");
 const iikoWebApi = require("../iiko-web/api");
 const gApi = require("../google-client/google-api");
-const transformKeyValue = require("../google-client/utils/transform-key-value");
-const transformRowsInArray = require("../google-client/utils/transform-rows-in-array");
 const tbot = require("../telegram-bot/tbot");
+
 const getTelegramChatId = require("../telegram-bot/get-telegram-chat-id");
 
 router.get("/menu", async function (req, res, next) {
   const menu = await iikoWebApi.getMenu();
   const options = await gApi.getBanquetOptions();
 
-  const map = {
-    potables: ['Напитки', 'Вино', 'Водка', 'Виски', 'Газировки', 'Лимонады', 'Пиво', 'Соки', 'Коньяк', 'Вода', 'Компоты', 'Ром', 'Шампанское'],
-    salads: ['Салаты'],
-    snacks: ['Холодные закуски', 'Жареные баклажаны', 'Пхали', 'Пивная закуска', 'Выпечка и горячие закуски'],
-    hotter: ['Хоровац', 'Хоровац и Кебабы', 'Горячие блюда', 'Хинкали', 'Хачапури', 'Пиде', 'Ламаджо'],
-    sideDishes: ['Гарниры', 'Картофель'],
-    banquetMenu: ['Банкетное меню']
+  const transformedMenu = [];
+
+  for (const group of menu) {
+    transformedMenu.push({
+      name: group.name,
+      items: group.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        price: item.itemSizes[0].price
+      }))
+    })
   }
 
-  const result = {
-    menu: {
-      potables: [],
-      salads: [],
-      snacks: [],
-      hotter: [],
-      sideDishes: [],
-      banquetMenu: []
-    },
-    options
-  };
-
-  menu.forEach(categoryData => {
-    for (const key in map) {
-      const categoryNames = map[key];
-
-      if (categoryNames.includes(categoryData.name)) {
-        const items = categoryData.items.map(item => ({ title: item.name, price: item.itemSizes[0].price, weight: item.itemSizes[0].portionWeightGrams }))
-        result.menu[key].push(...items);
-        break;
-      }
-    }
-  })
-
-
-  return res.json({ status: "OK", data: result });
+  return res.json({ status: "OK", data: { options, menu: transformedMenu } });
 });
 
 router.get("/bar-balance", async function (req, res, next) {
