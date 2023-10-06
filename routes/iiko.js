@@ -14,6 +14,7 @@ router.get("/menu", async function (req, res, next) {
 
   for (const group of menu) {
     transformedMenu.push({
+      id: group.id,
       name: group.name,
       items: group.items.map(item => ({
         id: item.id,
@@ -25,6 +26,20 @@ router.get("/menu", async function (req, res, next) {
   }
 
   return res.json({ status: "OK", data: { options, menu: transformedMenu } });
+});
+
+router.get("/menuItem", async function (req, res, next) {
+  const menuItem = await iikoWebApi.getMenuItem(req.query.id);
+
+  return res.json({
+    status: "OK",
+    data: {
+      name: menuItem.name,
+      description: menuItem.description,
+      price: menuItem.itemSizes[0].price,
+      portionWeightGrams: menuItem.itemSizes[0].portionWeightGrams
+    }
+  });
 });
 
 router.get("/bar-balance", async function (req, res, next) {

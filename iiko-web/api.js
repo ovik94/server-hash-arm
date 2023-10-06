@@ -16,6 +16,10 @@ const RequestConfigList = {
   menu: {
     method: 'get',
     pathTemplate: '/api/external-menu/3341'
+  },
+  menuItem: {
+    method: 'get',
+    pathTemplate: '/api/external-menu/item/{id}'
   }
 };
 
@@ -27,11 +31,17 @@ class iikoWebApi {
     this.host = 'ip-bagdasaryan.iikoweb.ru';
   }
 
-  createRequest = async (name, params, data, options) => {
-    const url = `https://${this.host}:${RequestConfigList[name].pathTemplate}`;
+  createRequest = async (request, params, data, options) => {
+    let url = `https://${this.host}:${RequestConfigList[request.name].pathTemplate}`;
+
+    if (request.urlParams) {
+      Object.entries(request.urlParams).forEach(([key, value]) => {
+        url = url.replace(`{${key}}`, value);
+      });
+    }
 
     const config = {
-      method: RequestConfigList[name].method,
+      method: RequestConfigList[request.name].method,
       url,
       params,
       data,
@@ -58,11 +68,11 @@ class iikoWebApi {
       .catch((error) => console.log(error));
   }
 
-  login = async () => this.createRequest('login', {}, { login: this.loginName, password: this.password })
+  login = async () => this.createRequest({ name: 'login' }, {}, { login: this.loginName, password: this.password })
     .then(response => response)
     .catch(error => console.log(error));
 
-  isAuthorized = async () => this.createRequest('auth')
+  isAuthorized = async () => this.createRequest({ name: 'auth' })
     .then(response => {
       if (response) {
         return response.authorized;
@@ -77,7 +87,7 @@ class iikoWebApi {
       await this.login();
     }
 
-    return await this.createRequest('storeBalance')
+    return await this.createRequest({ name: 'storeBalance' })
       .then((response) => response.data[1].balanceItems);
   };
 
@@ -88,8 +98,21 @@ class iikoWebApi {
       await this.login();
     }
 
-    return await this.createRequest('menu')
-      .then((response) => response.data.itemCategories);
+    return await this.createRequest({ name: 'menu'} )
+      .then((response) => {
+        return response.data.itemCategories
+      });
+  }
+
+  getMenuItem = async (id) => {
+    const isAuthorized = await this.isAuthorized();
+
+    if (!isAuthorized) {
+      await this.login();
+    }
+
+    return await this.createRequest({ name: 'menuItem', urlParams: { id } } )
+      .then((response) => response.data);
   }
 }
 

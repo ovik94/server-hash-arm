@@ -11,21 +11,20 @@ router.post("/save", async function (req, res, next) {
 
   let status = 'OK';
 
-  const menu = [];
+  const transformedMenu = [];
 
-  Object.keys(body.menu).forEach(category => {
-    menu.push(...body.menu[category]);
+  body.menu.forEach(menuGroup => {
+    menuGroup.items.forEach(menuItem => transformedMenu.push({
+      title: menuItem.name,
+      price: menuItem.price,
+      count: menuItem.count
+    }))
   });
 
   const data = {
-    name: body.name,
-    phone: body.phone,
-    personsCount: body.personsCount,
+    ...body,
     date: formatterDate(new Date(body.date), 'dd.MM.yyyy HH:mm'),
-    menu,
-    sum: body.sum,
-    totalAmount: body.totalAmount,
-    admin: body.admin
+    menu: transformedMenu
   }
 
   if (body.sale) {
@@ -43,7 +42,6 @@ router.post("/save", async function (req, res, next) {
       table.cell("Название", item.title, easyTable.string());
       table.cell("Цена", item.price, easyTable.string());
       table.cell("Кол-во", item.count, easyTable.string());
-      table.cell("Вес", item.weight, easyTable.string());
       table.newRow();
     });
   }
@@ -72,7 +70,7 @@ router.post("/save", async function (req, res, next) {
 Итого: <strong>${data.totalAmount} ₽</strong>`;
 
   await tbot.sendMessage(
-    getTelegramChatId("banquets"),
+    getTelegramChatId("test"),
     message,
     { parse_mode: 'HTML' }
   ).catch(() => {
