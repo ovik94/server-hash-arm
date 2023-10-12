@@ -1,6 +1,4 @@
 const axios = require('axios');
-const { response } = require("express");
-const groupBy = require("lodash/groupBy");
 
 const RequestConfigList = {
   accessToken: {

@@ -1,22 +1,8 @@
 const router = require("express").Router();
-const gApi = require("../google-client/google-api");
+const fortuneControllers = require('../controllers/fortune');
 
-router.get("/list", async function (req, res, next) {
-  const fortuneList = await gApi.getFortune(req.query.type);
+router.get("/list", fortuneControllers.getFortuneList);
 
-  return res.json({ status: "OK", data: fortuneList.map(item => ({ ...item, count: Number(item.count) })) });
-});
-
-router.post("/reduce", async function (req, res, next) {
-  const { body } = req;
-
-  try {
-    await gApi.fortuneReduce(body);
-  } catch (err) {
-    return res.json({ status: 'ERROR', message: err.message });
-  }
-
-  return res.json({ status: 'OK' });
-});
+router.post("/reduce", fortuneControllers.reduce);
 
 module.exports = router;

@@ -11,10 +11,8 @@ router.use('/api/lunch', require('./lunch'));
 router.use('/api/fortune', require('./fortune'));
 router.use('/api/feedback', require('./feedback'));
 router.use('/api/statement', require('./statement'));
-
 router.use('/api/app/dailyReport', require('./daily-report'));
 router.use('/api/app/expenses', require('./expense'));
-
 router.use('/api/iiko-cloud', require('./iiko-cloud'));
 router.use('/api/iiko-server', require('./iiko-server'));
 

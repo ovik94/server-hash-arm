@@ -1,11 +1,6 @@
 const router = require("express").Router();
-const gApi = require("../google-client/google-api");
-const transformRowsInArray = require("../google-client/utils/transform-rows-in-array");
+const userControllers = require('../controllers/user');
 
-router.get("/list", async function (req, res, next) {
-  const userData = await gApi.getUserData();
-
-  return res.json({ status: "OK", data: userData });
-});
+router.get("/list", userControllers.getUserList);
 
 module.exports = router;
