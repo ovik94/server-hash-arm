@@ -11,7 +11,7 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        path.resolve(__dirname, "google-client", "credentials.json"),
+        path.resolve(__dirname, "src", "google-client", "credentials.json"),
       ],
     }),
   ]

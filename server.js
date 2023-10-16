@@ -1,8 +1,17 @@
 const express = require("express");
+const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
+
 const app = express();
 
 const isProduction = process.env.NODE_ENV === 'production';
+const mongoLogin = process.env.MONGO_LOGIN;
+const mongoPwd = process.env.MONGO_PWD;
+const mongoHost = process.env.MONGO_HOST;
+const mongoPort = process.env.MONGO_PORT;
+const mongoDb = process.env.MONGO_DB;
+
+mongoose.connect(`mongodb://${mongoLogin}:${mongoPwd}@${mongoHost}:${mongoPort}/${mongoDb}`)
 
 const logResponseBody = (req, res, next) => {
   const oldWrite = res.write

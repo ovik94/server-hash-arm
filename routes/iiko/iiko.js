@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const iikoControllers = require('../controllers/iiko');
+const iikoControllers = require('../../controllers/iiko');
 
 router.get("/menu", iikoControllers.getMenu);
 

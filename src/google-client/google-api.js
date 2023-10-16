@@ -32,13 +32,6 @@ class GoogleApi {
     return apiClient;
   };
 
-  getUserData = async () => {
-    const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "user" });
-
-    return transformRowsInArray(data.values);
-  };
-
   getCheckListData = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "checkList" });

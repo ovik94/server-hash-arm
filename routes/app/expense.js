@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const expenseControllers = require('../controllers/expense');
+const expenseControllers = require('../../controllers/expense');
 
 router.get("/", expenseControllers.getExpenses);
 

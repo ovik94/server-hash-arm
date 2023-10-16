@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const dailyReportsControllers = require('../controllers/daily-report');
+const dailyReportsControllers = require('../../controllers/daily-report');
 
 router.get("/reports", dailyReportsControllers.getReports);
 
