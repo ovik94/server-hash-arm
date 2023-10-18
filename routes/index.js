@@ -2,6 +2,7 @@ const router = require('express').Router();
 
 router.use('/api/user', require('./user'));
 router.use('/api/counterparties', require('./counterparties'));
+router.use('/api/v2/counterparties', require('./counterpartiesv2'));
 router.use('/api/checkList', require('./check-list'));
 router.use('/api/contractors', require('./contractors'));
 router.use('/api/instructions', require('./instructions'));
