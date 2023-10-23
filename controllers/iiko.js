@@ -3,8 +3,9 @@ const iikoWebApi = require("../src/iiko-api/iikoWebApi");
 const easyTable = require("easy-table");
 const tbot = require("../src/telegram-bot/tbot");
 const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
+const BarLimitsModel = require("../model/barLimits");
 
-async function getMenu (req, res) {
+async function getMenu(req, res) {
   const menu = await iikoWebApi.getMenu();
   const options = await gApi.getBanquetOptions();
 
@@ -26,7 +27,7 @@ async function getMenu (req, res) {
   return res.json({ status: "OK", data: { options, menu: transformedMenu } });
 }
 
-async function getMenuItem (req, res) {
+async function getMenuItem(req, res) {
   const menuItem = await iikoWebApi.getMenuItem(req.query.id);
 
   return res.json({
@@ -40,7 +41,48 @@ async function getMenuItem (req, res) {
   });
 }
 
-async function getBarBalance (req, res) {
+async function saveBarLimits(req, res) {
+  try {
+    await BarLimitsModel.deleteMany();
+    await BarLimitsModel.create(req.body.limits);
+  } catch (err) {
+    return res.json({ status: "ERROR", message: err._message });
+  }
+
+  const limits = await BarLimitsModel.find();
+
+  return res.json({ status: "OK", data: limits });
+}
+
+async function getBarNomenclature(req, res) {
+  const barNomenclature = [];
+
+  try {
+    const productsBalance = await iikoWebApi.getBarBalance();
+
+    const filteredProduct = productsBalance.filter(
+      (product) => product.product.categoryName === "Напитки" || product.product.categoryName === "Крепкий Алкоголь"
+    );
+
+    for (let product of filteredProduct) {
+      const productLimit = await BarLimitsModel.findOne({ id: product.product.id });
+
+      barNomenclature.push({
+        id: product.product.id,
+        name: product.product.name,
+        category: product.product.categoryName,
+        limit: productLimit?.limit || undefined
+      })
+    }
+  } catch (err) {
+    return res.json({ status: 'ERROR', message: err.message });
+  }
+
+
+  return res.json({ status: "OK", data: barNomenclature });
+}
+
+async function getBarBalance(req, res) {
   const { doNotSendInTelegram } = req.query;
 
   const productsBalance = await iikoWebApi.getBarBalance();
@@ -50,20 +92,20 @@ async function getBarBalance (req, res) {
   );
 
   const transformData = filteredProduct.map((item) => ({
+    id: item.product.id,
     name: item.product.name,
     category: item.product.categoryName,
-    unit: item.product.mainUnitName,
     balance: item.amount,
   }));
 
-  const data = [{ name: '--- Крепкий алкоголь ---', category: 'Крепкий алкоголь' }];
+  const data = [];
 
-  const allowedAmounts = await gApi.getAllowedAmounts();
+  const limits = await BarLimitsModel.find();
 
   for (const product of transformData) {
-    const productMinBalance = allowedAmounts.find(storeProduct => storeProduct.name === product.name);
+    const productLimit = limits.find(limit => limit.id === product.id);
 
-    if (productMinBalance && product.balance < productMinBalance.minBalance) {
+    if (productLimit?.limit && product.balance < productLimit.limit) {
       data.push(product);
     }
   }
@@ -80,23 +122,24 @@ async function getBarBalance (req, res) {
     return 0;
   });
 
-  const table = new easyTable();
-
-  if (data.length > 0) {
-    data.forEach((item, index) => {
-      if (item.balance !== undefined) {
-        table.cell("Название", item.name, easyTable.string());
-        table.cell("Ост.", `${item.balance}${item.unit}`, easyTable.string());
-        table.newRow();
-      } else {
-        table.cell("Название", item.name, easyTable.string());
-        table.cell("Ост.", '----', easyTable.string());
-        table.newRow();
-      }
-    });
-  }
 
   if (!doNotSendInTelegram) {
+    const table = new easyTable();
+
+    if (data.length > 0) {
+      data.forEach((item, index) => {
+        if (item.balance !== undefined) {
+          table.cell("Название", item.name, easyTable.string());
+          table.cell("Ост.", `${item.balance}${item.unit}`, easyTable.string());
+          table.newRow();
+        } else {
+          table.cell("Название", item.name, easyTable.string());
+          table.cell("Ост.", '----', easyTable.string());
+          table.newRow();
+        }
+      });
+    }
+
     await tbot.sendMessage(
       getTelegramChatId("balance"),
       `<pre>${table.toString()}</pre>`,
@@ -107,4 +150,4 @@ async function getBarBalance (req, res) {
   return res.json({ status: "OK", data });
 }
 
-module.exports = { getMenu, getMenuItem, getBarBalance };
+module.exports = { getMenu, getMenuItem, getBarBalance, getBarNomenclature, saveBarLimits };
