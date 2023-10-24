@@ -8,7 +8,7 @@ router.use('/api/contractors', require('./contractors'));
 router.use('/api/instructions', require('./instructions'));
 router.use('/api/banquets', require('./banquets'));
 router.use('/api/lunch', require('./lunch'));
-router.use('/api/fortune', require('./fortune'));
+router.use('/api/wheel-of-fortune', require('./wheel-of-fortune'));
 router.use('/api/feedback', require('./feedback'));
 router.use('/api/statement', require('./statement'));
 
