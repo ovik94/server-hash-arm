@@ -1,18 +1,28 @@
 const WheelOfFortuneModel = require("../model/wheelOfFortune");
 const WheelOfFortuneContentModel = require("../model/wheelOfFortuneContent");
 
-const transformedWheelOfFortune = (data) => data.map(item => ({
-    id: item._id,
-    code: item.code,
-    content: item.content.map(contentItem => ({
-      id: contentItem._id,
-      color: contentItem.color,
-      title: contentItem.title
-    })),
-    description: item.description
-  })
-);
+const transformedWheelOfFortune = (data) => ({
+  id: data._id,
+  code: data.code,
+  content: data.content.map(contentItem => ({
+    id: contentItem._id,
+    color: contentItem.color,
+    title: contentItem.title
+  })),
+  description: data.description
+});
 
+// const transformedWheelOfFortune = (data) => data.map(item => ({
+//     id: item._id,
+//     code: item.code,
+//     content: item.content.map(contentItem => ({
+//       id: contentItem._id,
+//       color: contentItem.color,
+//       title: contentItem.title
+//     })),
+//     description: item.description
+//   })
+// );
 
 async function getWheelOfFortuneList(req, res) {
   let fortuneList;
@@ -23,19 +33,28 @@ async function getWheelOfFortuneList(req, res) {
     return res.json({ status: "ERROR", message: err._message });
   }
 
-  return res.json({ status: "OK", data: transformedWheelOfFortune(fortuneList) });
+  return res.json({
+    status: "OK",
+    data: fortuneList.map(item => transformedWheelOfFortune(item))
+  });
 }
 
 async function getWheelOfFortuneData(req, res) {
   let wheelOfFortuneData;
 
   try {
-    wheelOfFortuneData = await WheelOfFortuneModel.findOne({ code: req.query.code });
+    wheelOfFortuneData = await WheelOfFortuneModel
+      .findOne({ code: req.query.code })
+      .populate('content');
   } catch (err) {
+    console.log(err, 'err');
     return res.json({ status: "ERROR", message: err._message });
   }
 
-  return res.json({ status: "OK", data: wheelOfFortuneData });
+  return res.json({
+    status: "OK",
+    data: transformedWheelOfFortune(wheelOfFortuneData)
+  });
 }
 
 async function addWheelOfFortune(req, res) {
@@ -58,7 +77,10 @@ async function addWheelOfFortune(req, res) {
 
   const fortuneList = await WheelOfFortuneModel.find().populate('content');
 
-  return res.json({ status: "OK", data: transformedWheelOfFortune(fortuneList) });
+  return res.json({
+    status: "OK",
+    data: fortuneList.map(item => transformedWheelOfFortune(item))
+  });
 }
 
 async function editWheelOfFortune(req, res) {
@@ -86,7 +108,10 @@ async function editWheelOfFortune(req, res) {
 
   const fortuneList = await WheelOfFortuneModel.find().populate('content');
 
-  return res.json({ status: "OK", data: transformedWheelOfFortune(fortuneList) });
+  return res.json({
+    status: "OK",
+    data: fortuneList.map(item => transformedWheelOfFortune(item))
+  });
 }
 
 async function deleteWheelOfFortune(req, res) {
@@ -104,7 +129,10 @@ async function deleteWheelOfFortune(req, res) {
 
   const fortuneList = await WheelOfFortuneModel.find().populate('content');
 
-  return res.json({ status: "OK", data: transformedWheelOfFortune(fortuneList) });
+  return res.json({
+    status: "OK",
+    data: fortuneList.map(item => transformedWheelOfFortune(item))
+  });
 }
 
 module.exports = {
