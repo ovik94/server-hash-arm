@@ -130,7 +130,7 @@ async function getBarBalance(req, res) {
       data.forEach((item, index) => {
         if (item.balance !== undefined) {
           table.cell("Название", item.name, easyTable.string());
-          table.cell("Ост.", `${item.balance}${item.unit}`, easyTable.string());
+          table.cell("Ост.", `${item.balance} л.`, easyTable.string());
           table.newRow();
         } else {
           table.cell("Название", item.name, easyTable.string());

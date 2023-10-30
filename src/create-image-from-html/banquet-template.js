@@ -108,7 +108,7 @@ module.exports = `<html lang="en">
       <div class="logo"></div>
       <div class="content">
         <div class="header">
-          <span class="font24">Резерв банкета на <span class="primaryColor">{{date}}</span>
+          <span class="font24">{{title}} на <span class="primaryColor">{{date}}</span>
           </span>
           <span class="font16">Администратор: <span class="primaryColor">{{admin}}</span>
           </span>
@@ -158,7 +158,7 @@ module.exports = `<html lang="en">
                 <tr>
                   <td></td>
                   <td>Процент за обслуживание:</td>
-                  <td class="font18">{{serviceFee}} %</td>
+                  <td class="font18">12 %</td>
                 </tr>
               {{/if}}
                 <tr>

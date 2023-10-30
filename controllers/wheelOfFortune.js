@@ -47,7 +47,6 @@ async function getWheelOfFortuneData(req, res) {
       .findOne({ code: req.query.code })
       .populate('content');
   } catch (err) {
-    console.log(err, 'err');
     return res.json({ status: "ERROR", message: err._message });
   }
 
