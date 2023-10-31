@@ -16,14 +16,8 @@ const tempExpensesSchema = new Schema({
     transform(doc, ret){
       ret.id = ret._id
 
-      ret.category = ret.category.map(item => {
-        const resultCategory = { ...item };
-
-        delete resultCategory._id;
-        return resultCategory;
-      });
-
-      delete ret._id
+      delete ret.category._id;
+      delete ret._id;
     }
   }
 });
