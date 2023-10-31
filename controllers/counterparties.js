@@ -1,23 +1,73 @@
-const gApi = require("../src/google-client/google-api");
+const CounterpartiesModel = require("../model/counterparties");
+
+const transformedCounterparties = (data) => data.map(field => {
+  return {
+    name: field.name,
+    type: field.type,
+    companyName: field.companyName,
+    phone: field.phone,
+    description: field.description,
+    id: field._id
+  }
+});
 
 async function getCounterparties (req, res, ) {
-  let data = await gApi.getCounterparties();
-  const { role } = req.query;
-  let result = {};
+  let counterparties;
 
-  if (role) {
-    result = data.filter(item => item.role === role);
-  } else {
-    data.forEach((item) => {
-      if (result[item.role]) {
-        result[item.role].push(item);
-      } else {
-        result[item.role] = [item];
-      }
-    })
+  try {
+    counterparties = await CounterpartiesModel.find(req.query.type ? { type: req.query.type } : {});
+  } catch (err) {
+    return res.json({ status: "ERROR", message: err._message });
   }
 
-  return res.json({ status: "OK", data: result });
+  return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
 }
 
-module.exports = { getCounterparties };
+async function addCounterparty (req, res) {
+  const newCounterparties = new CounterpartiesModel(req.body);
+
+  try {
+    await newCounterparties.save();
+  } catch (err) {
+    return res.json({ status: "ERROR", message: err._message });
+  }
+
+  const counterparties = await CounterpartiesModel.find();
+
+  return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
+}
+
+async function editCounterparty (req, res) {
+  const counterparty = await CounterpartiesModel.findById(req.body.id);
+
+  counterparty.name = req.body.name;
+  counterparty.type = req.body.type;
+  counterparty.companyName = req.body.companyName;
+  counterparty.phone = req.body.phone;
+  counterparty.description = req.body.description;
+
+  try {
+    await counterparty.save();
+  } catch (err) {
+    return res.json({ status: "ERROR", message: err._message });
+  }
+
+  const counterparties = await CounterpartiesModel.find();
+
+  return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
+}
+
+async function deleteCounterparty(req, res) {
+  try {
+    await CounterpartiesModel.deleteOne({ _id: req.body.id });
+  } catch (err) {
+    return res.json({ status: "ERROR", message: err._message });
+  }
+
+  const counterparties = await CounterpartiesModel.find();
+
+  return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
+}
+
+
+module.exports = { getCounterparties, addCounterparty, deleteCounterparty, editCounterparty };

@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
 router.use('/api/user', require('./user'));
-router.use('/api/counterparties', require('./counterparties'));
-router.use('/api/v2/counterparties', require('./counterpartiesv2'));
+router.use('/api/v2/counterparties', require('./counterparties'));
 router.use('/api/checkList', require('./check-list'));
-router.use('/api/contractors', require('./contractors'));
 router.use('/api/instructions', require('./instructions'));
 router.use('/api/banquets', require('./banquets'));
 router.use('/api/lunch', require('./lunch'));
@@ -20,5 +18,6 @@ router.use('/api/iiko-server', require('./iiko/iiko-server'));
 // app
 router.use('/api/app/dailyReport', require('./app/daily-report'));
 router.use('/api/app/expenses', require('./app/expense'));
+router.use('/api/v2/app/expenses', require('./app/expense-v2'));
 
 module.exports = router;
