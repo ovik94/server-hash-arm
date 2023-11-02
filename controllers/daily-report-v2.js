@@ -78,8 +78,7 @@ const transformedDate = (date) => {
   const day = Number(dateArray[0]) + 1;
   const month = Number(dateArray[1]) - 1;
   const year = Number(dateArray[2]);
-  return moment.tz(new Date(year, month, day), "Asia/Novosibirsk").format();
-};
+  return new Date(year, month, day);};
 
 async function getReports(req, res) {
   const { from, to } = req.query;
@@ -90,7 +89,12 @@ async function getReports(req, res) {
     reports = await DailyReportModel.find().sort({ date: 1 });
 
     if (from) {
-      reports = reports.filter(item => isEqual(item.date, transformedDate(from)) || isAfter(item.date, transformedDate(from)));
+
+      reports = reports.filter(item => {
+        console.log(item.date, 'item.date');
+        console.log(transformedDate(from), 'transformedDate(from)');
+        return isEqual(item.date, transformedDate(from)) || isAfter(item.date, transformedDate(from))
+      });
     }
 
     if (to) {
