@@ -113,7 +113,7 @@ async function saveReportsToMongo(req, res) {
       const expenses = typeof report.expenses === 'object' ? report.expenses : JSON.parse(report.expenses || '')
 
       transformedReports.push({
-        date: new Date(transformedDate(report.date)),
+        date: transformedDate(report.date),
         adminName: report.adminName,
         ipCash: report.ipCash,
         ipAcquiring: report.ipAcquiring,

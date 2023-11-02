@@ -19,6 +19,7 @@
     "jsonschema": "^1.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.43",
     "mongoose": "^7.6.1",
     "multiparty": "^4.2.3",
     "node-html-to-image": "^3.3.0",
