@@ -146,7 +146,19 @@ class GoogleApi {
   };
 
   updateReport = async (data) => {
-    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, expenses } = data;
+    const {
+      id,
+      date,
+      adminName,
+      ipCash,
+      ipAcquiring,
+      oooCash,
+      oooAcquiring,
+      totalSum,
+      totalCash,
+      yandex,
+      expenses
+    } = data;
     const api = await this.apiClient;
 
     const reports = await this.getDailyReports();

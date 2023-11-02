@@ -27,12 +27,12 @@ async function addExpense (req, res) {
 }
 
 async function deleteExpense (req, res) {
-  if (!req.body.id) {
-    return res.json({ status: 'ERROR', message: 'Не указан id расхода' });
-  }
-
   try {
-    await TempExpensesModel.deleteOne({ _id: req.body.id });
+    if (!req.body.id) {
+      await TempExpensesModel.deleteMany();
+    } else {
+      await TempExpensesModel.deleteOne({ _id: req.body.id });
+    }
   } catch (err) {
     return res.json({ status: "ERROR", message: err._message });
   }
