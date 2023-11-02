@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { format } = require("date-fns");
 const Schema = mongoose.Schema;
 
 const dailyReportSchema = new Schema({
@@ -27,6 +28,7 @@ const dailyReportSchema = new Schema({
   toJSON: {
     transform(doc, ret){
       ret.id = ret._id
+      ret.date = format(ret.date, 'dd.MM.yyyy')
       delete ret._id
     }
   }

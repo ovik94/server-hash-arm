@@ -1,13 +1,11 @@
 const gApi = require("../src/google-client/google-api");
-const { v4: uuidv4 } = require("uuid");
-const { format, startOfMonth, endOfMonth, getDate, getDaysInMonth, isAfter, isBefore } = require("date-fns");
+const { format, startOfMonth, endOfMonth, getDate, getDaysInMonth, isAfter, isBefore, isEqual } = require("date-fns");
 const { createImageFromHtml } = require("../src/create-image-from-html/create-image-from-html");
 const iikoServerApi = require("../src/iiko-api/iikoServerApi");
 const iikoCloudApi = require("../src/iiko-api/iikoCloudApi");
 const tbot = require("../src/telegram-bot/tbot");
 const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
 const DailyReportModel = require("../model/dailyReport");
-const UserModel = require("../model/user");
 
 const sendReportToTelegram = async (body) => {
   const currentDate = format(new Date(), 'yyyy-MM-dd');
@@ -91,21 +89,11 @@ async function getReports(req, res) {
     reports = await DailyReportModel.find().sort({ date: 1 });
 
     if (from) {
-      reports = reports.filter(item => {
-        if (item.date === from) {
-          return true;
-        }
-        return isAfter(transformedDate(item.date), transformedDate(from));
-      });
+      reports = reports.filter(item => isEqual(item.date, transformedDate(from)) || isAfter(item.date, transformedDate(from)));
     }
 
     if (to) {
-      reports = reports.filter(item => {
-        if (item.date === to) {
-          return true;
-        }
-        return isBefore(transformedDate(item.date), transformedDate(to));
-      });
+      reports = reports.filter(item => isEqual(item.date, transformedDate(to)) || isBefore(item.date, transformedDate(to)));
     }
 
   } catch (err) {
@@ -170,11 +158,6 @@ async function addReport(req, res) {
         await gApi.addFinancialOperation(['', body.date, value.title, value.type, body[receipt].replace('.', ','), value.counterparty || '', value.comment || '']);
       }
     }
-
-    // const getExpenses = await gApi.getExpenses();
-    // if (getExpenses.length) {
-    //   await gApi.deleteExpense();
-    // }
 
     // await sendReportToTelegram({ ...body, type: 'add' });
 
