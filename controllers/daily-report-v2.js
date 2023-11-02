@@ -6,6 +6,7 @@ const iikoCloudApi = require("../src/iiko-api/iikoCloudApi");
 const tbot = require("../src/telegram-bot/tbot");
 const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
 const DailyReportModel = require("../model/dailyReport");
+const moment = require("moment-timezone");
 
 const sendReportToTelegram = async (body) => {
   const currentDate = format(new Date(), 'yyyy-MM-dd');
@@ -77,7 +78,7 @@ const transformedDate = (date) => {
   const day = Number(dateArray[0]) + 1;
   const month = Number(dateArray[1]) - 1;
   const year = Number(dateArray[2]);
-  return new Date(year, month, day);
+  return moment.tz(new Date(year, month, day), "Asia/Novosibirsk").format();
 };
 
 async function getReports(req, res) {
