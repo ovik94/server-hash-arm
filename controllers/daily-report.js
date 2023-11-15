@@ -7,13 +7,21 @@ const iikoCloudApi = require("../src/iiko-api/iikoCloudApi");
 const tbot = require("../src/telegram-bot/tbot");
 const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
 
-const sendReportToTelegram = async (body) => {
-  const currentDate = format(new Date(), 'yyyy-MM-dd');
-  const currentFormattedDate = `${format(new Date(), 'yyyy-MM-dd')} 00:00:00.123`;
+const transformedDate = (date) => {
+  const dateArray = date.split('.');
+  const day = Number(dateArray[0]);
+  const month = Number(dateArray[1]) - 1;
+  const year = Number(dateArray[2]);
+  return new Date(year, month, day);
+};
 
-  const deliverySales = await iikoServerApi.getDeliverySales(format(new Date(), 'yyyy-MM-dd'));
-  const lunchSales = await iikoServerApi.getLunchSales(format(new Date(), 'yyyy-MM-dd'));
-  const reserveIds = await iikoCloudApi.getReserveListIds(currentFormattedDate) || [];
+const sendReportToTelegram = async (body) => {
+  const currentDate = format(transformedDate(body.date), 'yyyy-MM-dd');
+  const currentFormattedDate = `${format(transformedDate(body.date), 'yyyy-MM-dd')} 00:00:00.123`;
+
+  const deliverySales = await iikoServerApi.getDeliverySales(currentDate, currentDate);
+  const lunchSales = await iikoServerApi.getLunchSales(currentDate, currentDate);
+  const reserveIds = await iikoCloudApi.getReserveListIds(currentFormattedDate, currentFormattedDate) || [];
   const prepays = await iikoCloudApi.getCurrentPrepays(reserveIds).then(data => data.filter(prepay => {
     const prepayDate = format(new Date(prepay.timestamp), 'yyyy-MM-dd');
     return prepayDate === currentDate
@@ -64,6 +72,7 @@ const sendReportToTelegram = async (body) => {
     prepays
   });
 
+  console.log(await tbot, 'tbot');
   await tbot.sendPhoto(getTelegramChatId("reports"), image, undefined, { contentType: 'image/jpeg' });
 };
 

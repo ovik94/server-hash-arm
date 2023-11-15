@@ -63,9 +63,10 @@ class iikoCloudApi {
     });
   };
 
-  getReserveListIds = async (date) => this.createRequest('reservesList', {
+  getReserveListIds = async (dateFrom, dateTo) => this.createRequest('reservesList', {
     restaurantSectionIds: [this.restaurantSectionId],
-    dateFrom: date
+    dateFrom: dateFrom,
+    dateTo: dateTo
   }).then(response => response.reserves.map(item => item.id));
 
   getCurrentPrepays = async (reserveIds) => this.createRequest('reserveDataById', {

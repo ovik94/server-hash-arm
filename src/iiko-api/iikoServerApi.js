@@ -81,7 +81,8 @@ class iikoServerApi {
         filterType: "DateRange",
         periodType: "CUSTOM",
         from: dateFrom,
-        to: dateTo
+        to: dateTo,
+        includeHigh: true
       }
     }
   })
@@ -105,7 +106,8 @@ class iikoServerApi {
         filterType: "DateRange",
         periodType: "CUSTOM",
         from: dateFrom,
-        to: dateTo
+        to: dateTo,
+        includeHigh: true
       },
       DishCategory: {
         filterType: "IncludeValues",
