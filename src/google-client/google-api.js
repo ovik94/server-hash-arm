@@ -19,6 +19,7 @@ class GoogleApi {
   constructor() {
     this.spreadsheet = "19SzDsUOYi8rii9hE-rsGKN7ri-Qnb_70NBGMIgSwDu0";
     this.financialSpreadsheet = "1gzaOkbhiYrqfPnAtnVULoLIAR79YygFP3XqRNdFHR4M";
+    this.feedbackSpreadsheet = "1lhaOAZlRKhRq6fJNAqUNq7qOzbnW1ZfsYmdRelNa7PI";
     this.apiClient = this.getApiClient();
   }
 
@@ -408,7 +409,7 @@ class GoogleApi {
   sendFeedback = async (data) => {
     const api = await this.apiClient;
     const values = [];
-    const feedbackResponses = await api.values.get({ spreadsheetId: this.spreadsheet, range: "feedbackResponses" });
+    const feedbackResponses = await api.values.get({ spreadsheetId: this.feedbackSpreadsheet, range: "feedbackResponses" });
     const columnsValues = await feedbackResponses.data.values[0];
 
     for (const requestData of data) {
@@ -424,7 +425,7 @@ class GoogleApi {
     }
 
     await appendRow(api, {
-      sheet: this.spreadsheet,
+      sheet: this.feedbackSpreadsheet,
       range: 'feedbackResponses',
       values
     });
