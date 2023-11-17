@@ -10,6 +10,8 @@ router.use('/api/wheel-of-fortune', require('./wheel-of-fortune'));
 router.use('/api/feedback', require('./feedback'));
 router.use('/api/statement', require('./statement'));
 
+router.use('/api/metrics', require('./metrics'));
+
 // iiko
 router.use('/api/iiko', require('./iiko/iiko'));
 router.use('/api/iiko-cloud', require('./iiko/iiko-cloud'));
