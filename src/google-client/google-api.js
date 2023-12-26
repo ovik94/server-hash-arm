@@ -3,7 +3,11 @@ const { getAuthClient } = require("./auth-client");
 const transformRowsInArray = require("./utils/transform-rows-in-array");
 const transformColumnsInArray = require("./utils/transform-columns-in-array");
 const transformKeyValue = require("./utils/transform-key-value");
-const { appendRow, deleteRows, updateRow } = require("./utils/tableTransformMethods");
+const {
+  appendRow,
+  deleteRows,
+  updateRow,
+} = require("./utils/tableTransformMethods");
 const { isAfter, isBefore } = require("date-fns");
 const createComment = require("../google-client/utils/createFinanceOperationCommentDate");
 
@@ -36,44 +40,65 @@ class GoogleApi {
 
   getCheckListData = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "checkList" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "checkList",
+    });
 
     return transformColumnsInArray(data.values);
   };
 
   getContractorsData = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "contractors" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "contractors",
+    });
 
     return transformRowsInArray(data.values);
   };
 
   getContractorsInfo = async (id) => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: id });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: id,
+    });
 
     return transformRowsInArray(data.values);
   };
 
   getInstructionsData = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "instructions" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "instructions",
+    });
 
     return transformRowsInArray(data.values);
   };
 
   getBanquetOptions = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "banquet-options" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "banquet-options",
+    });
 
     return transformKeyValue(data.values, "number");
   };
 
   getDailyReports = async (from, to) => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "dailyReports" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "dailyReports",
+    });
     const reports = transformRowsInArray(data.values);
-    let result = reports.map((item) => ({ ...item, expenses: item.expenses ? JSON.parse(item.expenses) : [] }));
+    let result = reports.map((item) => ({
+      ...item,
+      expenses: item.expenses ? JSON.parse(item.expenses) : [],
+    }));
 
     if (from) {
       result = result.filter((item) => {
@@ -98,28 +123,48 @@ class GoogleApi {
 
   getExpenses = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "expenses" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "expenses",
+    });
 
     return transformRowsInArray(data.values);
   };
 
   getCounterparties = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "counterparties" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "counterparties",
+    });
 
     return transformRowsInArray(data.values);
   };
 
   getExpenseIds = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.spreadsheet, range: "expenses!A:A" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.spreadsheet,
+      range: "expenses!A:A",
+    });
 
     return data.values;
   };
 
   addReport = async (data) => {
-    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, expenses } =
-      data;
+    const {
+      id,
+      date,
+      adminName,
+      ipCash,
+      ipAcquiring,
+      oooCash,
+      oooAcquiring,
+      totalSum,
+      totalCash,
+      yandex,
+      expenses,
+    } = data;
     const api = await this.apiClient;
 
     await appendRow(api, {
@@ -142,8 +187,19 @@ class GoogleApi {
   };
 
   updateReport = async (data) => {
-    const { id, date, adminName, ipCash, ipAcquiring, oooCash, oooAcquiring, totalSum, totalCash, yandex, expenses } =
-      data;
+    const {
+      id,
+      date,
+      adminName,
+      ipCash,
+      ipAcquiring,
+      oooCash,
+      oooAcquiring,
+      totalSum,
+      totalCash,
+      yandex,
+      expenses,
+    } = data;
     const api = await this.apiClient;
 
     const reports = await this.getDailyReports();
@@ -215,14 +271,21 @@ class GoogleApi {
 
   getFinancialOperations = async () => {
     const api = await this.apiClient;
-    const { data } = await api.values.get({ spreadsheetId: this.financialSpreadsheet, range: "Учет финансов!A:G" });
+    const { data } = await api.values.get({
+      spreadsheetId: this.financialSpreadsheet,
+      range: "Учет финансов!A:G",
+    });
 
     return data.values;
   };
 
   addFinancialOperation = async (values) => {
     const api = await this.apiClient;
-    await appendRow(api, { sheet: this.financialSpreadsheet, range: "Учет финансов", values });
+    await appendRow(api, {
+      sheet: this.financialSpreadsheet,
+      range: "Учет финансов",
+      values,
+    });
   };
 
   updateFinancialOperation = async (id, values, financeOperations) => {
@@ -289,22 +352,26 @@ class GoogleApi {
   addStatementOperation = async (operations, paymentType) => {
     const paymentTypes = { ip: "Альфа р/c ИП", ooo: "Альфа р/c ООО" };
 
-    const counterparties = await this.getFinancialCounterparties().then((data) =>
-      data.map((item) => ({
-        counterparty: item["Контрагент"],
-        includes: item["Совпадение"],
-      }))
+    const counterparties = await this.getFinancialCounterparties().then(
+      (data) =>
+        data.map((item) => ({
+          counterparty: item["Контрагент"],
+          includes: item["Совпадение"],
+        }))
     );
 
-    const operationTypes = await this.getFinancialOperationTypes().then((data) =>
-      data
-        .map((item) => ({
-          type: item["Статьи ДДС"],
-          operationType: item["Тип операции"],
-          paymentOperation: item["Тип оплаты"],
-          name: item["Контрагент, Назначение платежа"],
-        }))
-        .filter((item) => item.paymentOperation?.includes(paymentTypes[paymentType]))
+    const operationTypes = await this.getFinancialOperationTypes().then(
+      (data) =>
+        data
+          .map((item) => ({
+            type: item["Статьи ДДС"],
+            operationType: item["Тип операции"],
+            paymentOperation: item["Тип оплаты"],
+            name: item["Контрагент, Назначение платежа"],
+          }))
+          .filter((item) =>
+            item.paymentOperation?.includes(paymentTypes[paymentType])
+          )
     );
 
     const processedOperations = [];
@@ -325,7 +392,10 @@ class GoogleApi {
           for (const key in items) {
             const purpose = items[key];
 
-            if (purpose === operation.name || operation.purposeOfPayment.includes(purpose)) {
+            if (
+              purpose === operation.name ||
+              operation.purposeOfPayment.includes(purpose)
+            ) {
               type = typeItem?.type;
               break;
             }
@@ -342,10 +412,15 @@ class GoogleApi {
       } else if (!type) {
         processedOperations.push({ status: "OPERATION_FAIL", operation });
       } else {
-        const hasSbp = operation.purposeOfPayment.includes("СБП");
+        const hasSbp =
+          operation.purposeOfPayment.includes("СБП") &&
+          operation.purposeOfPayment.includes("Возм. по согл.");
         const hasEquaringIp = type === "Эквайринг ИП";
         const hasEquaringOOO = type === "Эквайринг ООО";
-        const comment = hasSbp || hasEquaringIp || hasEquaringOOO ? createComment(operation, type) : "";
+        const comment =
+          hasSbp || hasEquaringIp || hasEquaringOOO
+            ? createComment(operation, type)
+            : "";
 
         await this.addFinancialOperation([
           "",
@@ -374,11 +449,15 @@ class GoogleApi {
 
     for (const requestData of data) {
       if (!requestData.hasSubOptions) {
-        const index = columnsValues.findIndex((item) => item === requestData.title);
+        const index = columnsValues.findIndex(
+          (item) => item === requestData.title
+        );
         values[index] = requestData.response;
       } else {
         requestData.response.forEach((option) => {
-          const columnIndex = columnsValues.findIndex((item) => item === option.label);
+          const columnIndex = columnsValues.findIndex(
+            (item) => item === option.label
+          );
           values[columnIndex] = option.value;
         });
       }
@@ -395,7 +474,10 @@ class GoogleApi {
     const { date, lunch, delivery } = data;
     const api = await this.apiClient;
     const values = [date];
-    const metricsTable = await api.values.get({ spreadsheetId: this.metricsSpreadsheet, range: "metrics" });
+    const metricsTable = await api.values.get({
+      spreadsheetId: this.metricsSpreadsheet,
+      range: "metrics",
+    });
     const metrics = transformRowsInArray(metricsTable.data.values);
     const columnsValues = await metricsTable.data.values[0];
 
@@ -407,30 +489,32 @@ class GoogleApi {
     const transformedDelivery = [];
 
     for (const deliveryItem of delivery) {
-      transformedDelivery.push({ 
+      transformedDelivery.push({
         title: `Кол-во ${deliveryItem.type.toLowerCase()} ${deliveryItem.source.toLowerCase()}`,
-        value: deliveryItem.orderCount
+        value: deliveryItem.orderCount,
       });
 
-      transformedDelivery.push({ 
+      transformedDelivery.push({
         title: `Сумма ${deliveryItem.type.toLowerCase()} ${deliveryItem.source.toLowerCase()}`,
-        value: deliveryItem.sum
+        value: deliveryItem.sum,
       });
     }
 
     for (const valueItem of transformedDelivery) {
-      const index = columnsValues.findIndex((item) =>  item.toLowerCase() === valueItem.title.toLowerCase());
+      const index = columnsValues.findIndex(
+        (item) => item.toLowerCase() === valueItem.title.toLowerCase()
+      );
       values[index] = valueItem.value;
     }
 
     // const metricsRowIndex = metrics.findIndex((item) => item['Дата'] === date);
 
     // if (metricsRowIndex === -1) {
-      await appendRow(api, {
-        sheet: this.metricsSpreadsheet,
-        range: "metrics",
-        values,
-      });
+    await appendRow(api, {
+      sheet: this.metricsSpreadsheet,
+      range: "metrics",
+      values,
+    });
     // } else {
     //   await updateRow(api, {
     //     sheet: this.metricsSpreadsheet,

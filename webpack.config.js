@@ -1,12 +1,13 @@
-const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
-  target: 'node',
-  entry: './server.js',
+  target: "node",
+  entry: "./server.js",
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'server.bundle.js',
+    path: path.resolve(__dirname, "dist"),
+    filename: "server.bundle.js",
   },
   plugins: [
     new CopyWebpackPlugin({
@@ -14,5 +15,6 @@ module.exports = {
         path.resolve(__dirname, "src", "google-client", "credentials.json"),
       ],
     }),
-  ]
+    new Dotenv(),
+  ],
 };
