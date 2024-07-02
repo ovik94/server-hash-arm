@@ -1,7 +1,16 @@
+const moment = require("moment");
+
 const createFinanceOperationCommentDate = (operation, type) => {
-  const hasSbp = operation.purposeOfPayment.includes('СБП');
-  const hasEquaringIp = type === 'Эквайринг ИП';
-  const hasEquaringOOO = type === 'Эквайринг ООО';
+  const hasSbp =
+    operation.purposeOfPayment.includes("СБП") &&
+    operation.purposeOfPayment.includes("Возм. по согл.");
+  const hasEquaringIp = type === "Эквайринг ИП";
+  const hasEquaringOOO = type === "Эквайринг ООО";
+  const hasEquaringFoodTrack = type === "Эквайринг ИП Сбер (Фудтрак)";
+
+  if (!hasSbp && !hasEquaringIp && !hasEquaringOOO && !hasEquaringFoodTrack) {
+    return "";
+  }
 
   let operationDate;
   let day;
@@ -16,7 +25,9 @@ const createFinanceOperationCommentDate = (operation, type) => {
   }
 
   if (hasEquaringIp && !hasSbp) {
-    operationDate = operation.purposeOfPayment.match(/Р.С. Р.([\s\S]*) [^К.\s]*/)[1]
+    operationDate = operation.purposeOfPayment.match(
+      /Р.С. Р.([\s\S]*) [^К.\s]*/
+    )[1];
     year = operationDate.substr(-4, 4);
     month = operationDate.substr(-6, 2);
     day = String(Number(operationDate.substr(-8, 2)) - 1);
@@ -29,15 +40,33 @@ const createFinanceOperationCommentDate = (operation, type) => {
     day = String(Number(operationDate.substr(-8, 2)) - 1);
   }
 
+  if (hasEquaringFoodTrack && !hasSbp) {
+    const merchId = operation.purposeOfPayment.match(/Мерчант №(.*?). /)[1];
+    const matchDate = operation.purposeOfPayment.match(
+      /Дата реестра (.*?). Комиссия/
+    );
+
+    operationDate = matchDate ? matchDate[1] : undefined;
+
+    // для операций по эквайрингу (не СБП) сдвигаем дату на один день назад, т.к. сбер отправляет на следующий день
+    if (merchId === "441000170828" && operationDate) {
+      operationDate = moment(operationDate, "DD.MM.YYYY")
+        .subtract(1, "days")
+        .format("DD.MM.YYYY");
+    }
+
+    return operationDate;
+  }
+
   if (operationDate.length === 7) {
-    operationDate = '0' + operationDate;
+    operationDate = "0" + operationDate;
   }
 
   if (operationDate) {
-    return `${day}.${month}.${year}`
+    return `${day}.${month}.${year}`;
   }
 
-  return '';
+  return "";
 };
 
 module.exports = createFinanceOperationCommentDate;

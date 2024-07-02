@@ -13,9 +13,8 @@ const deleteRows = async (api, options) => {
   await api.batchUpdate(getDeleteBatchRequest(options));
 };
 
-
 module.exports = {
   appendRow,
   updateRow,
-  deleteRows
+  deleteRows,
 };

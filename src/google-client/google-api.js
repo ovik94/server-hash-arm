@@ -9,7 +9,6 @@ const {
   updateRow,
 } = require("./utils/tableTransformMethods");
 const { isAfter, isBefore } = require("date-fns");
-const createComment = require("../google-client/utils/createFinanceOperationCommentDate");
 
 const transformedDate = (date) => {
   const dateArray = date.split(".");
@@ -21,8 +20,9 @@ const transformedDate = (date) => {
 
 class GoogleApi {
   constructor() {
-    this.spreadsheet = "19SzDsUOYi8rii9hE-rsGKN7ri-Qnb_70NBGMIgSwDu0";
-    this.financialSpreadsheet = "1gzaOkbhiYrqfPnAtnVULoLIAR79YygFP3XqRNdFHR4M";
+    this.spreadsheet = "19SzDsUOYi8rii9hE-rsGKN7ri-Qnb_70NBGMIgSwDu0"; // Hash-arm
+    this.hashLavashSpreadsheet = "1gzaOkbhiYrqfPnAtnVULoLIAR79YygFP3XqRNdFHR4M"; // Учет финансов v2
+    this.foodTrackSpreadsheet = "1m6cH_-JlIWUkmL8yBkpQ1ktDn3AO8lvIPDcHFmq-lHw"; // Учет финансов Фудтрак
     this.feedbackSpreadsheet = "1lhaOAZlRKhRq6fJNAqUNq7qOzbnW1ZfsYmdRelNa7PI";
     this.metricsSpreadsheet = "1Gzn-ydF43Vw5s15oS6aJm_FiovcatpQv8OjKd-e3AQA";
     this.apiClient = this.getApiClient();
@@ -36,6 +36,10 @@ class GoogleApi {
     });
 
     return apiClient;
+  };
+
+  getSpreadsheetId = () => {
+    return this.hashLavashSpreadsheet;
   };
 
   getCheckListData = async () => {
@@ -272,7 +276,7 @@ class GoogleApi {
   getFinancialOperations = async () => {
     const api = await this.apiClient;
     const { data } = await api.values.get({
-      spreadsheetId: this.financialSpreadsheet,
+      spreadsheetId: this.hashLavashSpreadsheet,
       range: "Учет финансов!A:G",
     });
 
@@ -281,8 +285,9 @@ class GoogleApi {
 
   addFinancialOperation = async (values) => {
     const api = await this.apiClient;
+
     await appendRow(api, {
-      sheet: this.financialSpreadsheet,
+      sheet: this.getSpreadsheetId(),
       range: "Учет финансов",
       values,
     });
@@ -306,7 +311,7 @@ class GoogleApi {
       }) + 1;
     if (currentFinanceRowIndex) {
       await updateRow(api, {
-        sheet: this.financialSpreadsheet,
+        sheet: this.hashLavashSpreadsheet,
         range: `Учет финансов!B${currentFinanceRowIndex}:G${currentFinanceRowIndex}`,
         values,
       });
@@ -321,121 +326,12 @@ class GoogleApi {
     const currentFinanceRowIndex = ids.findIndex((row) => row[0] === id);
     if (currentFinanceRowIndex >= 0) {
       await deleteRows(api, {
-        sheet: this.financialSpreadsheet,
+        sheet: this.hashLavashSpreadsheet,
         sheetId: 0,
         startIndex: currentFinanceRowIndex,
         endIndex: currentFinanceRowIndex + 1,
       });
     }
-  };
-
-  getFinancialCounterparties = async () => {
-    const api = await this.apiClient;
-    const { data } = await api.values.get({
-      spreadsheetId: this.financialSpreadsheet,
-      range: "Справочник!M3:N100",
-    });
-
-    return transformRowsInArray(data.values);
-  };
-
-  getFinancialOperationTypes = async () => {
-    const api = await this.apiClient;
-    const { data } = await api.values.get({
-      spreadsheetId: this.financialSpreadsheet,
-      range: "Справочник!B3:K100",
-    });
-
-    return transformRowsInArray(data.values);
-  };
-
-  addStatementOperation = async (operations, paymentType) => {
-    const paymentTypes = { ip: "Альфа р/c ИП", ooo: "Альфа р/c ООО" };
-
-    const counterparties = await this.getFinancialCounterparties().then(
-      (data) =>
-        data.map((item) => ({
-          counterparty: item["Контрагент"],
-          includes: item["Совпадение"],
-        }))
-    );
-
-    const operationTypes = await this.getFinancialOperationTypes().then(
-      (data) =>
-        data
-          .map((item) => ({
-            type: item["Статьи ДДС"],
-            operationType: item["Тип операции"],
-            paymentOperation: item["Тип оплаты"],
-            name: item["Контрагент, Назначение платежа"],
-          }))
-          .filter((item) =>
-            item.paymentOperation?.includes(paymentTypes[paymentType])
-          )
-    );
-
-    const processedOperations = [];
-
-    for (let operation of operations) {
-      const counterparty = counterparties.find((item) => {
-        return item.includes === operation.name;
-      });
-
-      let type;
-
-      for (const operationType in operationTypes) {
-        const typeItem = operationTypes[operationType];
-
-        if (typeItem.name) {
-          const items = typeItem.name.split(";");
-
-          for (const key in items) {
-            const purpose = items[key];
-
-            if (
-              purpose === operation.name ||
-              operation.purposeOfPayment.includes(purpose)
-            ) {
-              type = typeItem?.type;
-              break;
-            }
-          }
-
-          if (type) {
-            break;
-          }
-        }
-      }
-
-      if (!counterparty) {
-        processedOperations.push({ status: "COUNTERPARTY_FAIL", operation });
-      } else if (!type) {
-        processedOperations.push({ status: "OPERATION_FAIL", operation });
-      } else {
-        const hasSbp =
-          operation.purposeOfPayment.includes("СБП") &&
-          operation.purposeOfPayment.includes("Возм. по согл.");
-        const hasEquaringIp = type === "Эквайринг ИП";
-        const hasEquaringOOO = type === "Эквайринг ООО";
-        const comment =
-          hasSbp || hasEquaringIp || hasEquaringOOO
-            ? createComment(operation, type)
-            : "";
-
-        await this.addFinancialOperation([
-          "",
-          operation.date,
-          type,
-          paymentTypes[paymentType],
-          operation.incoming || operation.expense,
-          counterparty?.counterparty,
-          comment,
-        ]);
-        processedOperations.push({ status: "SUCCESS", operation });
-      }
-    }
-
-    return processedOperations;
   };
 
   sendFeedback = async (data) => {
@@ -525,4 +421,4 @@ class GoogleApi {
   };
 }
 
-module.exports = new GoogleApi();
+module.exports = GoogleApi;

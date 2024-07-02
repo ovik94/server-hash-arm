@@ -1,37 +1,80 @@
+const statementContolller = require("../src/google-client/controllers/statement");
 const gApi = require("../src/google-client/google-api");
+
 const { getExcelFile } = require("../utils/get-excel-file");
+
+const CompanyNames = {
+  ipHashLavash: "БАГДАСАРЯН РАФИК СРАПИОНОВИЧ (ИП)",
+  oooHashLavash: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "ХАШЛАВАШ"',
+  ipFoodTrack: "ИНДИВИДУАЛЬНЫЙ ПРЕДПРИНИМАТЕЛЬ БАГДАСАРЯН РАФИК СРАПИОНОВИЧ",
+};
+
+const PaymentsOperations = {
+  ipHashLavash: "Альфа р/c ИП",
+  oooHashLavash: "Альфа р/c ООО",
+  ipFoodTrack: "Сбербанк р/с",
+};
+
+const parseAlfaStatement = (data, companyType) => {
+  const company = data[2][1];
+
+  if (companyType && company !== CompanyNames[companyType]) {
+    throw new Error("Выписка не соответствует выбранной компании");
+  }
+
+  return data
+    .slice(12)
+    .map((item) => ({
+      date: item[0],
+      expense: item[2],
+      incoming: item[3],
+      name: item[4],
+      purposeOfPayment: item[10],
+    }))
+    .reverse();
+};
+
+const parseSberStatement = (data, companyType) => {
+  const company = data[5][12];
+
+  if (companyType && company !== CompanyNames[companyType]) {
+    throw new Error("Выписка не соответствует выбранной компании");
+  }
+
+  return data.slice(11, -9).map((item) => ({
+    date: item[1],
+    expense: item[9]?.replace(",", "").replace(".", ","),
+    incoming: item[13]?.replace(",", "").replace(".", ","),
+    name: (item[13] ? item[4] : item[8])
+      ?.replace("\n", "")
+      .replace(/[^a-zA-ZА-Яа-яЁё ]/g, ""),
+    purposeOfPayment: item[20],
+  }));
+};
 
 async function process(req, res) {
   try {
-    let paymentType;
-    const operations = await getExcelFile(req).then(({ data, type }) => {
-      const CompanyNames = {
-        ip: "БАГДАСАРЯН РАФИК СРАПИОНОВИЧ (ИП)",
-        ooo: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "ХАШЛАВАШ"',
-      };
+    let companyName;
 
-      paymentType = type;
-      const company = data[2][1];
+    const operations = await getExcelFile(req).then(({ data, companyType }) => {
+      companyName = companyType;
 
-      if (company !== CompanyNames[type]) {
-        throw new Error("Выписка не соответствует выбранной компании");
+      if (companyType === "ipHashLavash" || companyType === "oooHashLavash") {
+        return parseAlfaStatement(data, companyType);
       }
 
-      return data
-        .slice(12)
-        .map((item) => ({
-          date: item[0],
-          expense: item[2],
-          incoming: item[3],
-          name: item[4],
-          purposeOfPayment: item[10],
-        }))
-        .reverse();
+      if (companyType === "ipFoodTrack") {
+        return parseSberStatement(data, companyType);
+      }
     });
 
-    const processedOperations = await gApi.addStatementOperation(operations, paymentType);
+    const processedOperations = await statementContolller.addStatementOperation(
+      operations,
+      PaymentsOperations[companyName]
+    );
     return res.json({ status: "OK", data: processedOperations });
   } catch (err) {
+    console.log(err, "err");
     return res.json({ status: "ERROR", message: err.message });
   }
 }

@@ -1,20 +1,27 @@
-const getDeleteBatchRequest = ({ sheet, sheetId, startIndex = 1, endIndex = undefined }) => {
+const getDeleteBatchRequest = ({
+  sheet,
+  sheetId,
+  startIndex = 1,
+  endIndex = undefined,
+}) => {
   const batchUpdateRequest = {
-    requests: [{
-      deleteDimension: {
-        range: {
-          sheetId,
-          dimension: "ROWS",
-          startIndex,
-          endIndex
-        }
-      }
-    }]
-  }
+    requests: [
+      {
+        deleteDimension: {
+          range: {
+            sheetId,
+            dimension: "ROWS",
+            startIndex,
+            endIndex,
+          },
+        },
+      },
+    ],
+  };
 
   return {
     spreadsheetId: sheet,
-    resource: batchUpdateRequest
+    resource: batchUpdateRequest,
   };
 };
 
