@@ -1,4 +1,4 @@
-const statementContolller = require("../src/google-client/controllers/statement");
+const { statementContolller } = require("../src/google-client/controllers");
 const gApi = require("../src/google-client/google-api");
 
 const { getExcelFile } = require("../utils/get-excel-file");

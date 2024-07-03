@@ -1,6 +1,6 @@
-const gApi = require("../src/google-client/google-api");
 const { format } = require("date-fns");
 const iikoServerApi = require("../src/iiko-api/iikoServerApi");
+const { metricsController } = require("../src/google-client/controllers");
 
 const transformedDate = (date) => {
   const dateArray = date.split(".");
@@ -30,9 +30,15 @@ async function saveMetrics(req, res) {
   try {
     const currentDate = format(transformedDate(req.body.date), "yyyy-MM-dd");
 
-    const deliverySales = await iikoServerApi.getDeliverySales(currentDate, currentDate);
+    const deliverySales = await iikoServerApi.getDeliverySales(
+      currentDate,
+      currentDate
+    );
     const filteredDeliveriesData = transformDeliverySales(deliverySales);
-    const lunchSales = await iikoServerApi.getLunchSales(currentDate, currentDate);
+    const lunchSales = await iikoServerApi.getLunchSales(
+      currentDate,
+      currentDate
+    );
 
     const data = {
       date: currentDate,
@@ -45,7 +51,7 @@ async function saveMetrics(req, res) {
         : undefined,
     };
 
-    await gApi.saveMetrics(data);
+    await metricsController.saveMetrics(data);
 
     return res.json({ status: "OK", data });
   } catch (err) {

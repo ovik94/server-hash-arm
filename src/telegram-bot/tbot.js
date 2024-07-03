@@ -4,7 +4,7 @@ class TBot {
   constructor() {
     this.botToken = "1097913088:AAHQdx2MFTyT7ALFF2vLbWn9UVUVe0uQVvQ";
 
-    this.bot = this.createBot();
+    // this.bot = this.createBot();
 
     // this.bot.on('message', (msg) => {
     //   const chatId = msg.chat.id;

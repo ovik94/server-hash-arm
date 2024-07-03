@@ -1,4 +1,4 @@
-const gApi = require("../src/google-client/google-api");
+const { banquetController } = require("../src/google-client/controllers");
 const iikoWebApi = require("../src/iiko-api/iikoWebApi");
 const easyTable = require("easy-table");
 const tbot = require("../src/telegram-bot/tbot");
@@ -7,7 +7,7 @@ const BarLimitsModel = require("../model/barLimits");
 
 async function getMenu(req, res) {
   const menu = await iikoWebApi.getMenu();
-  const options = await gApi.getBanquetOptions();
+  const options = await banquetController.getBanquetOptions();
 
   const transformedMenu = [];
 
@@ -15,13 +15,13 @@ async function getMenu(req, res) {
     transformedMenu.push({
       id: group.id,
       name: group.name,
-      items: group.items.map(item => ({
+      items: group.items.map((item) => ({
         id: item.id,
         name: item.name,
         description: item.description,
-        price: item.itemSizes[0].price
-      }))
-    })
+        price: item.itemSizes[0].price,
+      })),
+    });
   }
 
   return res.json({ status: "OK", data: { options, menu: transformedMenu } });
@@ -36,8 +36,8 @@ async function getMenuItem(req, res) {
       name: menuItem.name,
       description: menuItem.description,
       price: menuItem.itemSizes[0].price,
-      portionWeightGrams: menuItem.itemSizes[0].portionWeightGrams
-    }
+      portionWeightGrams: menuItem.itemSizes[0].portionWeightGrams,
+    },
   });
 }
 
@@ -61,23 +61,26 @@ async function getBarNomenclature(req, res) {
     const productsBalance = await iikoWebApi.getBarBalance();
 
     const filteredProduct = productsBalance.filter(
-      (product) => product.product.categoryName === "Напитки" || product.product.categoryName === "Крепкий Алкоголь"
+      (product) =>
+        product.product.categoryName === "Напитки" ||
+        product.product.categoryName === "Крепкий Алкоголь"
     );
 
     for (let product of filteredProduct) {
-      const productLimit = await BarLimitsModel.findOne({ id: product.product.id });
+      const productLimit = await BarLimitsModel.findOne({
+        id: product.product.id,
+      });
 
       barNomenclature.push({
         id: product.product.id,
         name: product.product.name,
         category: product.product.categoryName,
-        limit: productLimit?.limit || undefined
-      })
+        limit: productLimit?.limit || undefined,
+      });
     }
   } catch (err) {
-    return res.json({ status: 'ERROR', message: err.message });
+    return res.json({ status: "ERROR", message: err.message });
   }
-
 
   return res.json({ status: "OK", data: barNomenclature });
 }
@@ -88,7 +91,9 @@ async function getBarBalance(req, res) {
   const productsBalance = await iikoWebApi.getBarBalance();
 
   const filteredProduct = productsBalance.filter(
-    (product) => product.product.categoryName === "Напитки" || product.product.categoryName === "Крепкий Алкоголь"
+    (product) =>
+      product.product.categoryName === "Напитки" ||
+      product.product.categoryName === "Крепкий Алкоголь"
   );
 
   const transformData = filteredProduct.map((item) => ({
@@ -103,7 +108,7 @@ async function getBarBalance(req, res) {
   const limits = await BarLimitsModel.find();
 
   for (const product of transformData) {
-    const productLimit = limits.find(limit => limit.id === product.id);
+    const productLimit = limits.find((limit) => limit.id === product.id);
 
     if (productLimit?.limit && product.balance < productLimit.limit) {
       data.push(product);
@@ -122,7 +127,6 @@ async function getBarBalance(req, res) {
     return 0;
   });
 
-
   if (!doNotSendInTelegram) {
     const table = new easyTable();
 
@@ -134,7 +138,7 @@ async function getBarBalance(req, res) {
           table.newRow();
         } else {
           table.cell("Название", item.name, easyTable.string());
-          table.cell("Ост.", '----', easyTable.string());
+          table.cell("Ост.", "----", easyTable.string());
           table.newRow();
         }
       });
@@ -143,11 +147,17 @@ async function getBarBalance(req, res) {
     await tbot.sendMessage(
       getTelegramChatId("balance"),
       `<pre>${table.toString()}</pre>`,
-      { parse_mode: 'HTML' }
+      { parse_mode: "HTML" }
     );
   }
 
   return res.json({ status: "OK", data });
 }
 
-module.exports = { getMenu, getMenuItem, getBarBalance, getBarNomenclature, saveBarLimits };
+module.exports = {
+  getMenu,
+  getMenuItem,
+  getBarBalance,
+  getBarNomenclature,
+  saveBarLimits,
+};
