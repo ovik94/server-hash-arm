@@ -1,14 +1,7 @@
 const { format } = require("date-fns");
 const iikoServerApi = require("../src/iiko-api/iikoServerApi");
 const { metricsController } = require("../src/google-client/controllers");
-
-const transformedDate = (date) => {
-  const dateArray = date.split(".");
-  const day = Number(dateArray[0]);
-  const month = Number(dateArray[1]) - 1;
-  const year = Number(dateArray[2]);
-  return new Date(year, month, day);
-};
+const transformedDate = require("../src/google-client/controllers/utils/transform-date");
 
 const transformDeliverySales = (data) => {
   const serviceTypes = {
