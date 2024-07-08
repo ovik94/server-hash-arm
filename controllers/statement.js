@@ -1,5 +1,6 @@
 const { getExcelFile } = require("../utils/get-excel-file");
 const { statementController } = require("../src/google-client/controllers");
+const { transformStatementAmount } = require("./utils");
 
 const CompanyNames = {
   ipHashLavash: "БАГДАСАРЯН РАФИК СРАПИОНОВИЧ (ИП)",
@@ -24,8 +25,8 @@ const parseAlfaStatement = (data, companyType) => {
     .slice(12)
     .map((item) => ({
       date: item[0],
-      expense: item[2],
-      incoming: item[3],
+      expense: transformStatementAmount(item[2]),
+      incoming: transformStatementAmount(item[3]),
       name: item[4],
       purposeOfPayment: item[10],
     }))
@@ -41,8 +42,8 @@ const parseSberStatement = (data, companyType) => {
 
   return data.slice(11, -9).map((item) => ({
     date: item[1],
-    expense: item[9]?.replace(",", "").replace(".", ","),
-    incoming: item[13]?.replace(",", "").replace(".", ","),
+    expense: transformStatementAmount(item[9]),
+    incoming: transformStatementAmount(item[13]),
     name: (item[13] ? item[4] : item[8])
       ?.replace("\n", "")
       .replace(/[^a-zA-ZА-Яа-яЁё ]/g, ""),
