@@ -1,5 +1,4 @@
 const { isAfter, isBefore } = require("date-fns");
-
 const GoogleApi = require("../google-api");
 const transformRowsInArray = require("../utils/transform-rows-in-array");
 const transformDate = require("./utils/transform-date");

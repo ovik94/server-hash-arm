@@ -2,6 +2,7 @@ const GoogleApi = require("../google-api");
 const transformRowsInArray = require("../utils/transform-rows-in-array");
 const createComment = require("../utils/createFinanceOperationCommentDate");
 const getOpertionType = require("./utils/get-operation-type");
+const financialOperations = require("./financial-operations");
 
 class StatementGApiController extends GoogleApi {
   getFinancialCounterparties = async () => {
@@ -56,7 +57,7 @@ class StatementGApiController extends GoogleApi {
       } else {
         const comment = createComment(operation, type);
 
-        await this.addFinancialOperation([
+        await financialOperations.addFinancialOperation([
           "",
           operation.date,
           type,

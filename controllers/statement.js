@@ -1,7 +1,5 @@
-const { statementContolller } = require("../src/google-client/controllers");
-const gApi = require("../src/google-client/google-api");
-
 const { getExcelFile } = require("../utils/get-excel-file");
+const { statementController } = require("../src/google-client/controllers");
 
 const CompanyNames = {
   ipHashLavash: "БАГДАСАРЯН РАФИК СРАПИОНОВИЧ (ИП)",
@@ -52,7 +50,7 @@ const parseSberStatement = (data, companyType) => {
   }));
 };
 
-async function process(req, res) {
+const process = async (req, res) => {
   try {
     let companyName;
 
@@ -68,7 +66,7 @@ async function process(req, res) {
       }
     });
 
-    const processedOperations = await statementContolller.addStatementOperation(
+    const processedOperations = await statementController.addStatementOperation(
       operations,
       PaymentsOperations[companyName]
     );
@@ -77,6 +75,6 @@ async function process(req, res) {
     console.log(err, "err");
     return res.json({ status: "ERROR", message: err.message });
   }
-}
+};
 
 module.exports = { process };
