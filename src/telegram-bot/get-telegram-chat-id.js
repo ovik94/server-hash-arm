@@ -6,7 +6,8 @@ const chats = {
   feedback: -646921975,
   channel: -1001587358376,
   reports: -1001645753783,
-  test: 285450225
+  test: 285450225,
+  reportsFt: -1002206269223,
 };
 
-module.exports = id => chats[id];
+module.exports = (id) => chats[id];

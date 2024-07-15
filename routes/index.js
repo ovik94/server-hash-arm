@@ -19,6 +19,6 @@ router.use("/api/iiko-server", require("./iiko/iiko-server"));
 router.use("/api/app/dailyReport", require("./app/daily-report"));
 router.use("/api/app/expenses", require("./app/expense"));
 router.use("/api/v2/app/expenses", require("./app/expense-v2"));
-router.use("/api/v2/app/dailyReport", require("./app/daily-report-v2"));
+router.use("/api/app/daily-report-ft", require("./app/daily-report-ft"));
 
 module.exports = router;
