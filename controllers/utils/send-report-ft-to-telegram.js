@@ -45,7 +45,7 @@ const sendReportFtToTelegram = async ({ type, ...data }) => {
     "REPORT_FT"
   );
 
-  await tbot.sendPhoto(getTelegramChatId("test"), image, undefined, {
+  await tbot.sendPhoto(getTelegramChatId("reportsFt"), image, undefined, {
     contentType: "image/jpeg",
   });
 };
