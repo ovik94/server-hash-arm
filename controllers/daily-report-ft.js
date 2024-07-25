@@ -1,63 +1,13 @@
 const {
-  format,
-  startOfMonth,
-  endOfMonth,
-  getDate,
-  getDaysInMonth,
-} = require("date-fns");
-const {
-  createImageFromHtml,
-} = require("../src/create-image-from-html/create-image-from-html");
-const {
   financialOperationsController,
 } = require("../src/google-client/controllers");
-const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
 const DailyReportModel = require("../model/dailyReportFT");
-const tbot = require("../src/telegram-bot/tbot");
-
-const sendReportToTelegram = async ({ type, ...data }) => {
-  const progressBarStartDate = format(startOfMonth(new Date()), "dd.MM");
-  const progressBarEndDate = format(endOfMonth(new Date()), "dd.MM");
-  const progressBarCurrentDate = format(new Date(), "dd.MM");
-  const currentDay = getDate(new Date());
-  const dayOfMonth = getDaysInMonth(new Date());
-  const progress = Math.round((currentDay / dayOfMonth) * 100);
-
-  const reports = await DailyReportModel.find({
-    date: {
-      $gte: format(startOfMonth(new Date()), "dd.MM.yyyy"),
-      $lte: format(new Date(), "dd.MM.yyyy"),
-    },
-  }).sort({ date: 1 });
-
-  const revenue = reports.reduce(
-    (sum, current) => Math.floor(Number(sum) + Number(current.totalSum)),
-    0
-  );
-
-  const image = await createImageFromHtml(
-    {
-      ...data,
-      type: type === "add" ? "Отчет" : "Обновление отчета",
-      progressBarStartDate,
-      progressBarCurrentDate,
-      progressBarEndDate,
-      revenue,
-      progress: `${progress}%`,
-    },
-    "REPORT_FT"
-  );
-
-  await tbot.sendPhoto(getTelegramChatId("reportsFt"), image, undefined, {
-    contentType: "image/jpeg",
-  });
-};
+const { sendReportFtToTelegram } = require("./utils");
 
 async function getReports(req, res) {
   const { from, to } = req.query;
 
   let reports;
-
   try {
     if (!from && !to) {
       reports = await DailyReportModel.find().sort({ date: 1 });
@@ -79,7 +29,7 @@ async function getReports(req, res) {
       }).sort({ date: 1 });
     }
   } catch (err) {
-    return res.json({ status: "ERROR", message: err._message });
+    return res.json({ status: "ERROR", message: err.message });
   }
 
   return res.json({ status: "OK", data: reports });
@@ -92,14 +42,14 @@ async function addReport(req, res) {
     const newReport = await DailyReportModel.create(body);
 
     await financialOperationsController.addFinancialOperation([
-      "",
+      newReport.id,
       body.date,
       "Поступления наличные средства Фудтрак",
       "Наличные",
       body.cash.replace(".", ","),
     ]);
 
-    await sendReportToTelegram({ ...body, type: "add" });
+    await sendReportFtToTelegram({ ...body, type: "add" });
 
     return res.json({ status: "OK", data: newReport });
   } catch (err) {
@@ -113,7 +63,7 @@ async function updateReport(req, res) {
 
   try {
     const newReport = await DailyReportModel.findOneAndUpdate(
-      { _id: req.body.id },
+      { _id: body.id },
       req.body,
       { new: true }
     );
@@ -122,7 +72,7 @@ async function updateReport(req, res) {
       await financialOperationsController.getFinancialOperations();
 
     await financialOperationsController.updateFinancialOperation(
-      undefined,
+      body.id,
       [
         body.date,
         "Поступления наличные средства Фудтрак",
@@ -132,7 +82,7 @@ async function updateReport(req, res) {
       operations
     );
 
-    await sendReportToTelegram({ ...body, type: "update" });
+    await sendReportFtToTelegram({ ...body, type: "update" });
 
     return res.json({ status: "OK", data: newReport });
   } catch (err) {
