@@ -92,7 +92,7 @@ const sendReportToTelegram = async (body) => {
     prepays,
   });
 
-  await tbot.sendPhoto(getTelegramChatId("test"), image, undefined, {
+  await tbot.sendPhoto(getTelegramChatId("reports"), image, undefined, {
     contentType: "image/jpeg",
   });
 };
