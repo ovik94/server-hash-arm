@@ -47,7 +47,7 @@ const parseSberStatement = (data, companyType) => {
     name: (item[13] ? item[4] : item[8])
       ?.replace("\n", "")
       .replace(/[^a-zA-ZА-Яа-яЁё ]/g, ""),
-    purposeOfPayment: item[20],
+    purposeOfPayment: item[21],
   }));
 };
 
