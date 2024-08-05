@@ -1,14 +1,15 @@
-const UserModel = require('../model/user');
-const RolesModel = require('../model/roles');
+const UserModel = require("../model/user");
+const RolesModel = require("../model/roles");
 
-const transformedUsers = (users, roles) => users.map(user => ({
+const transformedUsers = (users, roles) =>
+  users.map((user) => ({
     name: user.name,
     role: user.role,
-    privilege: (roles.find(role => role.name === user.role) || {}).privilege,
+    privilege: (roles.find((role) => role.name === user.role) || {}).privilege,
+    password: user.password,
     phone: user.phone,
-    id: user._id
-  })
-);
+    id: user._id,
+  }));
 
 async function getUserList(req, res) {
   let users;
@@ -87,7 +88,7 @@ async function login(req, res) {
   }
 
   if (user.password !== req.body.password) {
-    return res.json({ status: "ERROR", message: 'Неправильный пароль' });
+    return res.json({ status: "ERROR", message: "Неправильный пароль" });
   }
 
   return res.json({ status: "OK" });
