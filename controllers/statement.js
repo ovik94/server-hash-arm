@@ -1,6 +1,11 @@
 const { getExcelFile } = require("../utils/get-excel-file");
 const { statementController } = require("../src/google-client/controllers");
-const { transformStatementAmount } = require("./utils");
+const {
+  transformStatementAmount,
+  getStatementOperations,
+  getOperationType,
+  createCommentDate,
+} = require("./utils");
 
 const CompanyNames = {
   ipHashLavash: "БАГДАСАРЯН РАФИК СРАПИОНОВИЧ (ИП)",
@@ -53,6 +58,40 @@ const parseSberStatement = (data, companyType) => {
 
 const process = async (req, res) => {
   try {
+    const { operations, companyType } = req.body;
+    const counterparties =
+      await statementController.getFinancialCounterparties();
+    const operationTypes = await statementController.getFinancialOperationTypes(
+      PaymentsOperations[companyType]
+    );
+
+    for (let operationItem of operations) {
+      const { operation } = operationItem;
+      const type = await getOperationType(operation, operationTypes);
+      const comment = createCommentDate(operation, type);
+
+      const counterparty = counterparties.find(
+        (item) => item.includes === operation.name
+      );
+
+      await statementController.addStatementOperation({
+        operation,
+        counterparty,
+        type,
+        paymentOperation: PaymentsOperations[companyType],
+        comment,
+      });
+    }
+
+    return res.json({ status: "OK" });
+  } catch (err) {
+    console.log(err, "err");
+    return res.json({ status: "ERROR", message: err.message });
+  }
+};
+
+const load = async (req, res) => {
+  try {
     let companyName;
 
     const operations = await getExcelFile(req).then(({ data, companyType }) => {
@@ -67,15 +106,16 @@ const process = async (req, res) => {
       }
     });
 
-    const processedOperations = await statementController.addStatementOperation(
+    const result = await getStatementOperations(
       operations,
       PaymentsOperations[companyName]
     );
-    return res.json({ status: "OK", data: processedOperations });
+
+    return res.json({ status: "OK", data: result });
   } catch (err) {
     console.log(err, "err");
     return res.json({ status: "ERROR", message: err.message });
   }
 };
 
-module.exports = { process };
+module.exports = { process, load };

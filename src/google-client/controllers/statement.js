@@ -1,7 +1,5 @@
 const GoogleApi = require("../google-api");
 const transformRowsInArray = require("../utils/transform-rows-in-array");
-const createComment = require("../utils/createFinanceOperationCommentDate");
-const getOpertionType = require("./utils/get-operation-type");
 const financialOperations = require("./financial-operations");
 
 class StatementGApiController extends GoogleApi {
@@ -35,43 +33,19 @@ class StatementGApiController extends GoogleApi {
       .filter((item) => item.paymentOperation?.includes(paymentOperation));
   };
 
-  addStatementOperation = async (operations, paymentOperation) => {
-    const counterparties = await this.getFinancialCounterparties();
-    const operationTypes = await this.getFinancialOperationTypes(
-      paymentOperation
-    );
+  addStatementOperation = async (operationInfo) => {
+    const { operation, type, paymentOperation, counterparty, comment } =
+      operationInfo;
 
-    const processedOperations = [];
-
-    for (let operation of operations) {
-      const counterparty = counterparties.find(
-        (item) => item.includes === operation.name
-      );
-
-      const type = await getOpertionType(operation, operationTypes);
-
-      if (!counterparty) {
-        processedOperations.push({ status: "COUNTERPARTY_FAIL", operation });
-      } else if (!type) {
-        processedOperations.push({ status: "OPERATION_FAIL", operation });
-      } else {
-        const comment = createComment(operation, type);
-
-        await financialOperations.addFinancialOperation([
-          "",
-          operation.date,
-          type,
-          paymentOperation,
-          operation.incoming || operation.expense,
-          counterparty?.counterparty,
-          comment,
-        ]);
-
-        processedOperations.push({ status: "SUCCESS", operation });
-      }
-    }
-
-    return processedOperations;
+    await financialOperations.addFinancialOperation([
+      "",
+      operation.date,
+      type,
+      paymentOperation,
+      operation.incoming || operation.expense,
+      counterparty?.counterparty,
+      comment,
+    ]);
   };
 }
 

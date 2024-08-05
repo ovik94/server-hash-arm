@@ -7,8 +7,15 @@ const createFinanceOperationCommentDate = (operation, type) => {
   const hasEquaringIp = type === "Эквайринг ИП";
   const hasEquaringOOO = type === "Эквайринг ООО";
   const hasEquaringFoodTrack = type === "Эквайринг ИП Сбер (Фудтрак)";
+  const hasQrCode = type === "Поступление QR-code";
 
-  if (!hasSbp && !hasEquaringIp && !hasEquaringOOO && !hasEquaringFoodTrack) {
+  if (
+    !hasSbp &&
+    !hasEquaringIp &&
+    !hasEquaringOOO &&
+    !hasEquaringFoodTrack &&
+    !hasQrCode
+  ) {
     return "";
   }
 
@@ -55,6 +62,12 @@ const createFinanceOperationCommentDate = (operation, type) => {
         .format("DD.MM.YYYY");
     }
 
+    return operationDate;
+  }
+
+  if (hasQrCode) {
+    const matchDate = operation.purposeOfPayment.match(/на дату (.*?).Сумма/);
+    operationDate = matchDate ? matchDate[1] : undefined;
     return operationDate;
   }
 
