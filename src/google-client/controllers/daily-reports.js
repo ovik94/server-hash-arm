@@ -55,6 +55,9 @@ class DailyReportsGApiController extends GoogleApi {
       totalCash,
       yandex,
       expenses,
+      ipNetmonet,
+      ipOnline,
+      oooNetmonet,
     } = data;
     const api = await this.apiClient;
 
@@ -73,6 +76,9 @@ class DailyReportsGApiController extends GoogleApi {
         totalCash,
         yandex,
         JSON.stringify(expenses),
+        ipNetmonet,
+        ipOnline,
+        oooNetmonet,
       ],
     });
   };
@@ -90,6 +96,9 @@ class DailyReportsGApiController extends GoogleApi {
       totalCash,
       yandex,
       expenses,
+      ipNetmonet,
+      ipOnline,
+      oooNetmonet,
     } = data;
     const api = await this.apiClient;
 
@@ -112,6 +121,9 @@ class DailyReportsGApiController extends GoogleApi {
           totalCash,
           yandex,
           JSON.stringify(expenses),
+          ipNetmonet,
+          ipOnline,
+          oooNetmonet,
         ],
       });
     }

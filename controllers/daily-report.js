@@ -46,7 +46,6 @@ async function addReport(req, res) {
   const { body } = req;
   const id = uuidv4();
   const data = { ...body, id };
-  console.log(data, "data");
   try {
     await dailyReportsController.addReport(data);
 
