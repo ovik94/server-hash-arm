@@ -118,13 +118,7 @@ module.exports = ` <html lang="en">
       }
 
       .progressBar_success {
-        width: {
-            {
-            progress
-          }
-        }
-
-        ;
+        width: {{progress}}; 
         height: 10px;
         background-color: rgb(180, 132, 132);
         border-radius: 8px;
@@ -149,26 +143,14 @@ module.exports = ` <html lang="en">
       .progressBar_current_date {
         position: absolute;
 
-        left: {
-            {
-            progress
-          }
-        }
-
-        ;
+        left: {{progress}};
         top: 16px;
       }
 
       .revenue_value {
         position: absolute;
 
-        left: {
-            {
-            progress
-          }
-        }
-
-        ;
+        left: {{progress}}; 
         top: -40px;
       }
 

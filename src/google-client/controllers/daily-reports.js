@@ -108,7 +108,7 @@ class DailyReportsGApiController extends GoogleApi {
     if (reportRowIndex) {
       await updateRow(api, {
         sheet: this.spreadsheet,
-        range: `dailyReports!A${reportRowIndex}:K${reportRowIndex}`,
+        range: `dailyReports!A${reportRowIndex}:N${reportRowIndex}`,
         values: [
           id,
           date,
