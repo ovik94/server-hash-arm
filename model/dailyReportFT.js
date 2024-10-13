@@ -7,6 +7,7 @@ const dailyReportSchema = new Schema(
     adminName: { type: String, required: true },
     cash: { type: String, required: true },
     acquiring: { type: String, required: true },
+    yandex: { type: String, required: false },
     totalSum: { type: String, required: true },
     comment: { type: String, required: false },
   },

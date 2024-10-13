@@ -1,5 +1,4 @@
 module.exports = `<html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -186,6 +185,10 @@ module.exports = `<html lang="en">
         .font16 {
             font-size: 16px;
         }
+      
+      	.font14 {
+            font-size: 14px;
+        }
 
         .font12 {
             font-size: 12px;
@@ -220,26 +223,26 @@ module.exports = `<html lang="en">
                     </div>
                     <div class="line"></div>
                     <div class="receipt">
-
-
                         <span>Наличные: <span class="primaryColor font18">{{cash}} ₽</span>
                         </span>
                         <span>Эквайринг: <span class="primaryColor font18">{{acquiring}} ₽</span>
                         </span>
-
-
+                       <span>Яндекс.Еда: <span class="primaryColor font18">{{yandex}} ₽</span>
+                        </span>
                         <span>Общая выручка: <span class="primaryColor font24">{{totalSum}} ₽</span>
                         </span>
                     </div>
                 </div>
+                <div class="line"></div>
+
                 {{#if comment}}
                 <div class="comment-block">
                     <div class="comment_title">
-                        <span class="font18">Комментарий:</span>
+                        <span class="font14">Комментарий:</span>
                     </div>
                     <div class="line"></div>
                     <div class="comment">
-                        <span class="font16">{{comment}}</span>
+                        <span class="font12">{{comment}}</span>
                     </div>
                 </div>
                 {{/if}}

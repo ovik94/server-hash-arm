@@ -3,6 +3,8 @@ const {
   startOfMonth,
   endOfMonth,
   getDate,
+  getMonth,
+  getYear,
   getDaysInMonth,
 } = require("date-fns");
 const {
@@ -20,12 +22,12 @@ const sendReportFtToTelegram = async ({ type, ...data }) => {
   const dayOfMonth = getDaysInMonth(new Date());
   const progress = Math.round((currentDay / dayOfMonth) * 100);
 
+  const currentMonth = getMonth(new Date()) + 1;
+  const currentYear = getYear(new Date());
+
   const reports = await DailyReportModel.find({
-    date: {
-      $gte: format(startOfMonth(new Date()), "dd.MM.yyyy"),
-      $lte: format(new Date(), "dd.MM.yyyy"),
-    },
-  }).sort({ date: 1 });
+    date: new RegExp(`${currentMonth}.${currentYear}`),
+  });
 
   const revenue = reports.reduce(
     (sum, current) => Math.floor(Number(sum) + Number(current.totalSum)),

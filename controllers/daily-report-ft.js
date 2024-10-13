@@ -10,7 +10,7 @@ async function getReports(req, res) {
   let reports;
   try {
     if (!from && !to) {
-      reports = await DailyReportModel.find().sort({ date: 1 });
+      reports = await DailyReportModel.find();
     }
 
     if (from || to) {
