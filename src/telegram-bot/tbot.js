@@ -6,10 +6,29 @@ class TBot {
 
     this.bot = this.createBot();
 
-    // this.bot.on("message", (msg) => {
-    //   const chatId = msg.chat.id;
-    //   console.log(msg, "msg", chatId);
-    // });
+    this.bot.on("message", (msg) => {
+      const chatId = msg.chat.id;
+      console.log(msg, "msg", chatId);
+    });
+
+    this.bot.on("polling_error", (err) => console.log(err.data));
+
+    const commands = [
+      // {
+      //   command: "start",
+      //   description: "Запуск бота",
+      // },
+      // {
+      //   command: "ref",
+      //   description: "Получить реферальную ссылку",
+      // },
+      // {
+      //   command: "help",
+      //   description: "Раздел помощи",
+      // },
+    ];
+
+    this.bot.setMyCommands(commands);
   }
 
   createBot = () => new TelegramBot(this.botToken, { polling: true });

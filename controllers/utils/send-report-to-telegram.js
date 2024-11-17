@@ -74,7 +74,7 @@ const sendReportToTelegram = async (body) => {
 
   const image = await createImageFromHtml({
     ...body,
-    expenses: body.expenses.map((item) => ({
+    expenses: (body.expenses || []).map((item) => ({
       ...item,
       title: item.category.title,
     })),

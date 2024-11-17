@@ -40,6 +40,13 @@ async function sendLunchTelegram(req, res) {
   const holiday = day === 6 || day === 7;
 
   if (!holiday) {
+    await tbot.sendMessage(
+      getTelegramChatId("test"),
+      `Меню бизнес-ланча на сегодня. Цены на фото не актуальны! 
+    Салат-140р
+    Суп-180р
+    Горячее-240р`
+    );
     await tbot.sendPhoto(
       getTelegramChatId("channel"),
       images[week % 4][day - 1]
@@ -93,7 +100,8 @@ async function sendLunchVk(req, res, next) {
         "https://broadcast.vkforms.ru/api/v2/broadcast?token=api_87768_YKQjQvoekX1ri4HGHKYRG4Wi",
         {
           message: {
-            message: "Меню бизнес-ланча на сегодня",
+            message:
+              "Меню бизнес-ланча на сегодня. Цены на фото не актуальны! Салат-140р | Суп-180р | Горячее-240р",
             attachment: images[week % 4][day - 1],
           },
           list_ids: "1179243",
