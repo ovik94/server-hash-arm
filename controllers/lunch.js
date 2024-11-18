@@ -6,32 +6,36 @@ const axios = require("axios");
 async function sendLunchTelegram(req, res) {
   const images = {
     1: [
-      "AgACAgIAAxkBAAIEkGWabJG_a32JLsvZaR736DgpSIcgAAJn0zEbGr3YSCa570T22HnxAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEkWWabLIMVOMle878XQ7d1BOT0MxHAAJp0zEbGr3YSHamOK1A3jOCAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEkmWabMPmb7a6uGFOSz2yLaCh5C3gAAJq0zEbGr3YSBnoMVONVzLJAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEk2WabNh2-PyCDNZpxzNjqNgPTpamAAJr0zEbGr3YSEz9VTPbBswdAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIElGWabOjuZl5fNVWJ91RueR7Ts1IPAAJt0zEbGr3YSHD1-dE_FycRAQADAgADeQADNAQ",
+      // 2 неделя
+      "AgACAgIAAxkBAAIE9Wc7eoUohNY7V1zG7YEI0KqdoAoyAAI66TEbG0HYSYGF65UKefqNAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE9mc7epsE2467sO1ZLhR94z2k3h0UAAI76TEbG0HYScNLk_Ou8_0qAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE8mc7ehKzzXSgbBscbA6z-c3-Y0eeAAI26TEbG0HYSd4_Rl0fxhOGAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE82c7eiMw0qHFku4wqnPTzTRLmKhDAAI36TEbG0HYSe2-Hg8SbmwgAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE9Gc7elgM1SxFajKrRxH1bnFSLCLuAAI46TEbG0HYSWiulPrBGgK_AQADAgADdwADNgQ",
     ],
     2: [
-      "AgACAgIAAxkBAAIEgWWaauwQPvGfZVAq8fJc3HyxNk1VAAJP0zEbGr3YSAbOL5_eCGpHAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEgmWaayKD75ZoMF4qBGOyZ23HFU1vAAJT0zEbGr3YSMhYAAFBuPvY6AEAAwIAA3kAAzQE",
-      "AgACAgIAAxkBAAIEg2WaazT5HaVk4njJXLQa9YfTB3NdAAJU0zEbGr3YSCDNKqj3DVyNAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEhGWaa0_YFVcUXCQmFcKm0eNIvPHFAAJZ0zEbGr3YSAQkYZTMfpbzAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEhWWaa5v5o4B-JLcgwkG3nNMkUI1UAAJa0zEbGr3YSLjTz5m6lP-AAQADAgADeQADNAQ",
+      // 3 неделя
+      "AgACAgIAAxkBAAIE9Wc7eoUohNY7V1zG7YEI0KqdoAoyAAI66TEbG0HYSYGF65UKefqNAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE9mc7epsE2467sO1ZLhR94z2k3h0UAAI76TEbG0HYScNLk_Ou8_0qAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE_Gc7e2MZLCk3fRaHVJg0i2buG9PTAAI_6TEbG0HYSdwzRy0-Pl44AQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE_Wc7e3GmZKhOwZrSiBSsJ0H_S4YzAAJA6TEbG0HYSe2FlsQroyCMAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE_mc7e39Ljdq-i4AK4LHO4vPI2ZLjAAJB6TEbG0HYSUQqXVJLzzDRAQADAgADdwADNgQ",
     ],
     3: [
-      "AgACAgIAAxkBAAIEhmWaa7XKama0EAJEYfbPHRq4n-0vAAJb0zEbGr3YSOoisFcHsFcuAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEh2Waa83DbFeUaL4Hkxx3offZWf7_AAJd0zEbGr3YSIvwPvGq3vfiAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEiGWaa-oNjtdlwup3gK5XzW6foXGSAAJe0zEbGr3YSAUqtNNR6fTtAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEiWWabBL37nJgjtujOMSRqz1IrPK-AAJf0zEbGr3YSMHgVQ0D4PzvAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEimWabCVdhWMgPDKlY-DAtI5O-7CoAAJg0zEbGr3YSDXVYdsxzwoaAQADAgADeQADNAQ",
+      // 4 неделя
+      "AgACAgIAAxkBAAIE_2c7e4-0wnoda5jngvuWvMGngaTCAAJC6TEbG0HYSddJfLSNEf8CAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIFAAFnO3uk7dJ-MEfHQcHDogABq93i3-oAAkPpMRsbQdhJNh6V6gXzKPkBAAMCAAN3AAM2BA",
+      "AgACAgIAAxkBAAIFAWc7e7d0WKLpqTkSQiarJJv_RID_AAJE6TEbG0HYSd58HpnV0iTRAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIFAmc7e8U8Dp9qz1K7-HiBqjP3K0ekAAJF6TEbG0HYSUOsofP4RqLnAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIFA2c7e9Z6MrAsZwxKmN1epV-dEmY3AAJH6TEbG0HYSZG9TQQb2M6FAQADAgADdwADNgQ",
     ],
     0: [
-      "AgACAgIAAxkBAAIEi2WabDuhFZaaaTstO9LBeSrMPPrrAAJh0zEbGr3YSG7Kze1zAsYGAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEjGWabEy4qt1njEmpoDarS8v7CHeGAAJi0zEbGr3YSJXTrvzNnSN9AQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEjWWabF_u44gpRWsiaj9FqbR2RJZoAAJj0zEbGr3YSPAmWc1Pb4K2AQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEjmWabHLoelG_x7XNc8Sdse7VGSEtAAJk0zEbGr3YSL74D58GXguEAQADAgADeQADNAQ",
-      "AgACAgIAAxkBAAIEj2WabIJornQ2WJu7MKhmP6Qd_W_wAAJl0zEbGr3YSDoso0hUoOb4AQADAgADeQADNAQ",
+      // 1 неделя
+      "AgACAgIAAxkBAAIE8Gc7edq9EIxXl2qz51DXOLGnrJbjAAIx6TEbG0HYSR3l_xG4Pm4hAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE8Wc7egKP9QOkbBmlsxGaRgs5OqB6AAIy6TEbG0HYSYmTxnk_WEHqAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE8mc7ehKzzXSgbBscbA6z-c3-Y0eeAAI26TEbG0HYSd4_Rl0fxhOGAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE82c7eiMw0qHFku4wqnPTzTRLmKhDAAI36TEbG0HYSe2-Hg8SbmwgAQADAgADdwADNgQ",
+      "AgACAgIAAxkBAAIE9Gc7elgM1SxFajKrRxH1bnFSLCLuAAI46TEbG0HYSWiulPrBGgK_AQADAgADdwADNgQ",
     ],
   };
 
@@ -40,13 +44,6 @@ async function sendLunchTelegram(req, res) {
   const holiday = day === 6 || day === 7;
 
   if (!holiday) {
-    await tbot.sendMessage(
-      getTelegramChatId("test"),
-      `Меню бизнес-ланча на сегодня. Цены на фото не актуальны! 
-    Салат-140р
-    Суп-180р
-    Горячее-240р`
-    );
     await tbot.sendPhoto(
       getTelegramChatId("channel"),
       images[week % 4][day - 1]
@@ -59,33 +56,36 @@ async function sendLunchTelegram(req, res) {
 async function sendLunchVk(req, res, next) {
   const images = {
     1: [
-      "photo-211214337_457243149",
-      "photo-211214337_457243148",
-      "photo-211214337_457243151",
-      "photo-211214337_457243152",
-      "photo-211214337_457243150",
+      // 2 неделя
+      "photo-211214337_457244379",
+      "photo-211214337_457244378",
+      "photo-211214337_457244381",
+      "photo-211214337_457244382",
+      "photo-211214337_457244380",
     ],
     2: [
-      // 1 неделя
-      "photo-211214337_457243134",
-      "photo-211214337_457243133",
-      "photo-211214337_457243136",
-      "photo-211214337_457243137",
-      "photo-211214337_457243135",
+      // 3 неделя
+      "photo-211214337_457244364",
+      "photo-211214337_457244363",
+      "photo-211214337_457244366",
+      "photo-211214337_457244367",
+      "photo-211214337_457244365",
     ],
     3: [
-      "photo-211214337_457243139",
-      "photo-211214337_457243138",
-      "photo-211214337_457243141",
-      "photo-211214337_457243142",
-      "photo-211214337_457243140",
+      // 4 неделя идет сейчас
+      "photo-211214337_457244369",
+      "photo-211214337_457244368",
+      "photo-211214337_457244371",
+      "photo-211214337_457244372",
+      "photo-211214337_457244370",
     ],
     0: [
-      "photo-211214337_457243144",
-      "photo-211214337_457243143",
-      "photo-211214337_457243146",
-      "photo-211214337_457243147",
-      "photo-211214337_457243145",
+      // 1 неделя
+      "photo-211214337_457244374",
+      "photo-211214337_457244373",
+      "photo-211214337_457244376",
+      "photo-211214337_457244377",
+      "photo-211214337_457244375",
     ],
   };
 
@@ -100,8 +100,7 @@ async function sendLunchVk(req, res, next) {
         "https://broadcast.vkforms.ru/api/v2/broadcast?token=api_87768_YKQjQvoekX1ri4HGHKYRG4Wi",
         {
           message: {
-            message:
-              "Меню бизнес-ланча на сегодня. Цены на фото не актуальны! Салат-140р | Суп-180р | Горячее-240р",
+            message: "Меню бизнес-ланча на сегодня",
             attachment: images[week % 4][day - 1],
           },
           list_ids: "1179243",
