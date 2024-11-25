@@ -50,13 +50,13 @@ async function sendLunchTelegram(req, res) {
     ],
   };
 
-  const week = getWeek();
+  const week = getWeekNumber();
   const day = moment().isoWeekday();
 
   if (!week.isHoliday) {
     await tbot.sendPhoto(
       getTelegramChatId("channel"),
-      images[week.weekNumber % 4][day - 1]
+      images[week.weekNumber][day - 1]
     );
   }
 
@@ -99,7 +99,7 @@ async function sendLunchVk(req, res, next) {
     ],
   };
 
-  const week = getWeek();
+  const week = getWeekNumber();
   const day = moment().isoWeekday();
 
   let status = "OK";
@@ -111,7 +111,7 @@ async function sendLunchVk(req, res, next) {
         {
           message: {
             message: "Меню бизнес-ланча на сегодня",
-            attachment: images[week.weekNumber % 4][day - 1],
+            attachment: images[week.weekNumber][day - 1],
           },
           list_ids: "1179243",
           run_now: 1,
