@@ -17,7 +17,7 @@ module.exports = `<html lang="en">
         .logo {
             width: 228px;
             height: 82px;
-            background-image: url("https://ru.foodsoul.pro/uploads/chains/4373/images/themes/site/6e29c555dcd399abbb1aeaf149cbc03e.png");
+            background-image: url("https://cdn.foodsoul.ru/zones/ru/chains/4373/images/themes/site/6e29c555dcd399abbb1aeaf149cbc03e.png");
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -91,4 +91,4 @@ module.exports = `<html lang="en">
 </div>
 </body>
 </html>
-`
+`;

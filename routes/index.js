@@ -7,8 +7,8 @@ router.use("/api/lunch", require("./lunch"));
 router.use("/api/wheel-of-fortune", require("./wheel-of-fortune"));
 router.use("/api/feedback", require("./feedback"));
 router.use("/api/statement", require("./statement"));
-
 router.use("/api/metrics", require("./metrics"));
+router.use("/api/gift-cards", require("./gift-cards"));
 
 // iiko
 router.use("/api/iiko", require("./iiko/iiko"));

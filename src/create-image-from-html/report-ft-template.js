@@ -17,7 +17,7 @@ module.exports = `<html lang="en">
         .logo {
             width: 200px;
             height: 50px;
-            background-image: url("https://img-api.yumapos.ru/image/crop/original/1992424e-127b-a3e3-f3a3-4dbba95fdb06.png");
+            background-image: url("https://cdn.foodsoul.ru/zones/ru/chains/4373/images/themes/site/6e29c555dcd399abbb1aeaf149cbc03e.png");
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
