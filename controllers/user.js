@@ -6,7 +6,6 @@ const transformedUsers = (users, roles) =>
     name: user.name,
     role: user.role,
     privilege: (roles.find((role) => role.name === user.role) || {}).privilege,
-    password: user.password,
     phone: user.phone,
     id: user._id,
   }));
