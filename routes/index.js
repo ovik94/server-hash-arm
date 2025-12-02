@@ -9,6 +9,7 @@ router.use("/api/feedback", require("./feedback"));
 router.use("/api/statement", require("./statement"));
 router.use("/api/metrics", require("./metrics"));
 router.use("/api/gift-cards", require("./gift-cards"));
+router.use("/api/cash-flow-statement", require("./cash-flow-statement"));
 
 // iiko
 router.use("/api/iiko", require("./iiko/iiko"));

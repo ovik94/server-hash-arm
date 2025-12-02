@@ -88,7 +88,7 @@ async function addReport(req, res) {
     await saveMetrics(body.date);
   } catch (err) {
     console.error(err, "error-add-daily-report");
-    await tbot.sendMessage(getTelegramChatId("test"), err.message);
+    await tbot.sendMessage(getTelegramChatId("balance"), err.message);
     return res.json({ status: "ERROR", message: err.message });
   }
 

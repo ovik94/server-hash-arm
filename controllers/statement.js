@@ -3,9 +3,10 @@ const { statementController } = require("../src/google-client/controllers");
 const {
   transformStatementAmount,
   getStatementOperations,
-  getOperationType,
+  getCashFlowStatement,
   createCommentDate,
 } = require("./utils");
+const CounterpartiesModel = require("../model/counterparties");
 
 const CompanyNames = {
   ipHashLavash: "БАГДАСАРЯН РАФИК СРАПИОНОВИЧ (ИП)",
@@ -14,8 +15,8 @@ const CompanyNames = {
 };
 
 const PaymentsOperations = {
-  ipHashLavash: "Альфа р/c ИП",
-  oooHashLavash: "Альфа р/c ООО",
+  ipHashLavash: "Альфа р/с ИП",
+  oooHashLavash: "Альфа р/с ООО",
   ipFoodTrack: "Сбербанк р/с",
 };
 
@@ -26,16 +27,13 @@ const parseAlfaStatement = (data, companyType) => {
     throw new Error("Выписка не соответствует выбранной компании");
   }
 
-  return data
-    .slice(12)
-    .map((item) => ({
-      date: item[0],
-      expense: transformStatementAmount(item[2]),
-      incoming: transformStatementAmount(item[3]),
-      name: item[4],
-      purposeOfPayment: item[10],
-    }))
-    .reverse();
+  return data.slice(12).map((item) => ({
+    date: item[0],
+    expense: transformStatementAmount(item[2]),
+    incoming: transformStatementAmount(item[3]),
+    name: item[4],
+    purposeOfPayment: item[10],
+  })).reverse();
 };
 
 const parseSberStatement = (data, companyType) => {
@@ -49,9 +47,7 @@ const parseSberStatement = (data, companyType) => {
     date: item[1],
     expense: transformStatementAmount(item[9]),
     incoming: transformStatementAmount(item[13]),
-    name: (item[13] ? item[4] : item[8])
-      ?.replace("\n", "")
-      .replace(/[^a-zA-ZА-Яа-яЁё ]/g, ""),
+    name: (item[13] ? item[4] : item[8])?.replace("\n", "").replace(/[^a-zA-ZА-Яа-яЁё ]/g, ""),
     purposeOfPayment: item[21],
   }));
 };
@@ -59,25 +55,21 @@ const parseSberStatement = (data, companyType) => {
 const process = async (req, res) => {
   try {
     const { operations, companyType } = req.body;
-    const counterparties =
-      await statementController.getFinancialCounterparties();
-    const operationTypes = await statementController.getFinancialOperationTypes(
-      PaymentsOperations[companyType]
-    );
+    const counterparties = await CounterpartiesModel.find({});
 
     for (let operationItem of operations) {
       const { operation } = operationItem;
-      const type = await getOperationType(operation, operationTypes);
-      const comment = createCommentDate(operation, type);
+      const cashFlowStatement = await getCashFlowStatement(operation, PaymentsOperations[companyType]);
+      const comment = createCommentDate(operation, cashFlowStatement);
 
       const counterparty = counterparties.find(
-        (item) => item.includes === operation.name
+        (item) => item.companyName === operation.name
       );
 
       await statementController.addStatementOperation({
         operation,
         counterparty,
-        type,
+        cashFlowStatement,
         paymentOperation: PaymentsOperations[companyType],
         comment,
       });
@@ -101,9 +93,9 @@ const load = async (req, res) => {
         return parseAlfaStatement(data, companyType);
       }
 
-      if (companyType === "ipFoodTrack") {
-        return parseSberStatement(data, companyType);
-      }
+      // if (companyType === "ipFoodTrack") {
+      //   return parseSberStatement(data, companyType);
+      // }
     });
 
     const result = await getStatementOperations(

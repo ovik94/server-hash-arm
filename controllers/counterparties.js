@@ -11,11 +11,11 @@ const transformedCounterparties = (data) => data.map(field => {
   }
 });
 
-async function getCounterparties (req, res, ) {
+async function getCounterparties(req, res,) {
   let counterparties;
 
   try {
-    counterparties = await CounterpartiesModel.find(req.query.type ? { type: req.query.type } : {});
+    counterparties = await CounterpartiesModel.find(req.query.type ? { type: req.query.type } : {}).sort({ type: 1 }).exec();
   } catch (err) {
     return res.json({ status: "ERROR", message: err._message });
   }
@@ -23,7 +23,7 @@ async function getCounterparties (req, res, ) {
   return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
 }
 
-async function addCounterparty (req, res) {
+async function addCounterparty(req, res) {
   const newCounterparties = new CounterpartiesModel(req.body);
 
   try {
@@ -32,12 +32,12 @@ async function addCounterparty (req, res) {
     return res.json({ status: "ERROR", message: err._message });
   }
 
-  const counterparties = await CounterpartiesModel.find();
+  const counterparties = await CounterpartiesModel.find().sort({ type: 1 }).exec();
 
   return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
 }
 
-async function editCounterparty (req, res) {
+async function editCounterparty(req, res) {
   const counterparty = await CounterpartiesModel.findById(req.body.id);
 
   counterparty.name = req.body.name;
@@ -52,7 +52,7 @@ async function editCounterparty (req, res) {
     return res.json({ status: "ERROR", message: err._message });
   }
 
-  const counterparties = await CounterpartiesModel.find();
+  const counterparties = await CounterpartiesModel.find().sort({ type: 1 }).exec();
 
   return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
 }
@@ -64,7 +64,7 @@ async function deleteCounterparty(req, res) {
     return res.json({ status: "ERROR", message: err._message });
   }
 
-  const counterparties = await CounterpartiesModel.find();
+  const counterparties = await CounterpartiesModel.find().sort({ type: 1 }).exec();
 
   return res.json({ status: "OK", data: transformedCounterparties(counterparties) });
 }

@@ -5,7 +5,7 @@ const sendReportToTelegram = require("./send-report-to-telegram");
 const saveMetrics = require("./save-metrics");
 const getStatementOperations = require("./get-statement-operations");
 const createCommentDate = require("./create-finance-operation-comment-date");
-const getOperationType = require("./get-operation-type");
+const getCashFlowStatement = require("./get-cash-flow-statement");
 
 module.exports = {
   transformDeliverySales,
@@ -15,5 +15,5 @@ module.exports = {
   saveMetrics,
   getStatementOperations,
   createCommentDate,
-  getOperationType,
+  getCashFlowStatement,
 };

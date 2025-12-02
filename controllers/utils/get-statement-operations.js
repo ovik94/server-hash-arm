@@ -1,25 +1,22 @@
-const getOperationType = require("./get-operation-type");
+const getCashFlowStatement = require("./get-cash-flow-statement");
 
-const { statementController } = require("../../src/google-client/controllers");
+const CounterpartiesModel = require("../../model/counterparties");
+const CashFlowStatementModel = require("../../model/сashFlowStatement");
 
 const getStatementOperations = async (operations, paymentOperation) => {
-  const counterparties = await statementController.getFinancialCounterparties();
-  const operationTypes = await statementController.getFinancialOperationTypes(
-    paymentOperation
-  );
-
+  const counterparties = await CounterpartiesModel.find({});
   const processedOperations = [];
 
   for (let operation of operations) {
     const counterparty = counterparties.find(
-      (item) => item.includes === operation.name
+      (item) => item.companyName === operation.name
     );
 
-    const type = await getOperationType(operation, operationTypes);
+    const cashFlowStatement = await getCashFlowStatement(operation, paymentOperation);
 
     if (!counterparty) {
       processedOperations.push({ status: "COUNTERPARTY_FAIL", operation });
-    } else if (!type) {
+    } else if (!cashFlowStatement) {
       processedOperations.push({ status: "OPERATION_FAIL", operation });
     } else {
       processedOperations.push({ status: "SUCCESS", operation });
