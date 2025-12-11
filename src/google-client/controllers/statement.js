@@ -12,7 +12,7 @@ class StatementGApiController extends GoogleApi {
       cashFlowStatement,
       paymentOperation,
       operation.incoming || operation.expense,
-      counterparty.name,
+      counterparty?.name || '',
       comment,
     ]);
   };

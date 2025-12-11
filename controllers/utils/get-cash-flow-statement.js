@@ -5,7 +5,7 @@ const getCashFlowStatement = async (operation, paymentOperation) => {
     paymentTypes: paymentOperation,
     purposeOfPayment: operation.name,
   });
-  
+
   if (cashFlowStatementByName) {
     return cashFlowStatementByName.name;
   }
@@ -15,6 +15,7 @@ const getCashFlowStatement = async (operation, paymentOperation) => {
   });
 
   let result;
+
 
   for (const item in cashFlowStatements) {
     const statementItem = cashFlowStatements[item];

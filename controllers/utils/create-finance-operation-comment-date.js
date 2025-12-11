@@ -57,9 +57,7 @@ const createFinanceOperationCommentDate = (operation, type) => {
 
     // для операций по эквайрингу (не СБП) сдвигаем дату на один день назад, т.к. сбер отправляет на следующий день
     if (merchId === "441000170828" && operationDate) {
-      operationDate = moment(operationDate, "DD.MM.YYYY")
-        .subtract(1, "days")
-        .format("DD.MM.YYYY");
+      operationDate = moment(operationDate, "DD.MM.YYYY").subtract(1, "days").format("DD.MM.YYYY");
     }
 
     return operationDate;

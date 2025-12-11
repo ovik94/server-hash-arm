@@ -55,23 +55,29 @@ const parseSberStatement = (data, companyType) => {
 const process = async (req, res) => {
   try {
     const { operations, companyType } = req.body;
-    const counterparties = await CounterpartiesModel.find({});
 
     for (let operationItem of operations) {
       const { operation } = operationItem;
       const cashFlowStatement = await getCashFlowStatement(operation, PaymentsOperations[companyType]);
-      const comment = createCommentDate(operation, cashFlowStatement);
+      // const comment = createCommentDate(operation, cashFlowStatement);
+      
+      let counterparty = await CounterpartiesModel.findOne({
+        companyName: operation.name
+      });
 
-      const counterparty = counterparties.find(
-        (item) => item.companyName === operation.name
-      );
+      if (!counterparty) {
+        const counterparties = await CounterpartiesModel.find({});
+        counterparty = counterparties.find(
+          (item) => item.companyName && operation.name.includes(item.companyName)
+        );
+      }
 
       await statementController.addStatementOperation({
         operation,
         counterparty,
         cashFlowStatement,
         paymentOperation: PaymentsOperations[companyType],
-        comment,
+        // comment: '',
       });
     }
 

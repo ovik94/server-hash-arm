@@ -8,9 +8,16 @@ const getStatementOperations = async (operations, paymentOperation) => {
   const processedOperations = [];
 
   for (let operation of operations) {
-    const counterparty = counterparties.find(
-      (item) => item.companyName === operation.name
-    );
+    let counterparty = await CounterpartiesModel.findOne({
+      companyName: operation.name
+    });
+
+    if (!counterparty) {
+      const counterparties = await CounterpartiesModel.find({});
+      counterparty = counterparties.find(
+        (item) => item.companyName && operation.name.includes(item.companyName)
+      );
+    }
 
     const cashFlowStatement = await getCashFlowStatement(operation, paymentOperation);
 
