@@ -15,8 +15,8 @@ const CompanyNames = {
 };
 
 const PaymentsOperations = {
-  ipHashLavash: "Альфа р/с ИП",
-  oooHashLavash: "Альфа р/с ООО",
+  ipHashLavash: "Альфа р/c ИП",
+  oooHashLavash: "Альфа р/c ООО",
   ipFoodTrack: "Сбербанк р/с",
 };
 
@@ -60,7 +60,7 @@ const process = async (req, res) => {
       const { operation } = operationItem;
       const cashFlowStatement = await getCashFlowStatement(operation, PaymentsOperations[companyType]);
       // const comment = createCommentDate(operation, cashFlowStatement);
-      
+
       let counterparty = await CounterpartiesModel.findOne({
         companyName: operation.name
       });
