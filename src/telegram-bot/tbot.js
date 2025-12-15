@@ -2,7 +2,7 @@ const TelegramBot = require("node-telegram-bot-api");
 
 class TBot {
   constructor() {
-    this.botToken = "1097913088:AAHQdx2MFTyT7ALFF2vLbWn9UVUVe0uQVvQ";
+    this.botToken = process.env.TG_BOT_TOKEN;
 
     this.bot = this.createBot();
 
