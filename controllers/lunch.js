@@ -7,7 +7,7 @@ const getWeekNumber = () => {
   const week = moment().isoWeek();
   const day = moment().isoWeekday();
   const holiday = day === 6 || day === 7;
-  const weekNumber = (week % 4) === 3 ? 0 : week;
+  const weekNumber = (week % 4) === 3 ? 0 : (week % 4) + 1;
   return { weekNumber, isHoliday: holiday };
 };
 
@@ -26,8 +26,6 @@ async function sendLunchTelegram(req, res) {
   const week = getWeekNumber();
   const day = moment().isoWeekday();
 
-  console.log(week, 'week');
-  console.log(day, 'day');
   if (day === 1) {
     await tbot.sendMessage(getTelegramChatId("channel"), `
 Новый бизнес-ланч в ХашЛаваш 🍽️
