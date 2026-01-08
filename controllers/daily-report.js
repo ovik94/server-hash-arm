@@ -1,44 +1,39 @@
-const { v4: uuidv4 } = require("uuid");
-
 const {
-  dailyReportsController,
-  financialOperationsController,
-  expensesController,
+  financialOperationsController, dailyReportsController,
 } = require("../src/google-client/controllers");
-const { sendReportToTelegram, saveMetrics } = require("./utils");
+const { sendReportToTelegram } = require("./utils");
 const tbot = require("../src/telegram-bot/tbot");
 const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
+const DailyReportModel = require("../model/dailyReport");
+const transformedDateString = require("../utils/transform-date-string");
 
-const receiptsOperationValues = {
-  ipCash: {
-    title: "Поступления наличные средства",
-    type: "Наличные",
-    comment: "по ИП",
-  },
-  oooCash: {
-    title: "Поступления наличные средства",
-    type: "Наличные",
-    comment: "по ООО",
-  },
-};
+
+/** Дата в запросе от клиента приходит в формате dd.MM.yyyy
+ *  В базу сохраняется в формате yyyy-MM-dd*/
 
 async function getReports(req, res) {
-  try {
-    const data = await dailyReportsController.getDailyReports(
-      req.query.from,
-      req.query.to
-    );
+  const { from, to } = req.query;
+  const findQuery = {};
 
-    return res.json({ status: "OK", data });
-  } catch (err) {
-    return res.json({ status: "ERROR", message: err.message });
+  if (from && to) {
+    findQuery.date = {
+      $gte: transformedDateString(from),
+      $lte: transformedDateString(to)
+    };
+  } else if (from) {
+    findQuery.date = {
+      $gte: transformedDateString(from)
+    };
+  } else if (to) {
+    findQuery.date = {
+      $lte: transformedDateString(to)
+    };
   }
-}
 
-async function clearReports(req, res) {
   try {
-    await dailyReportsController.clearReport();
-    return res.json({ status: "OK" });
+    const reports = await DailyReportModel.find(findQuery).sort({ date: 1 });
+
+    return res.json({ status: "OK", data: reports });
   } catch (err) {
     return res.json({ status: "ERROR", message: err.message });
   }
@@ -46,16 +41,17 @@ async function clearReports(req, res) {
 
 async function addReport(req, res) {
   const { body } = req;
-  const id = uuidv4();
-  const data = { ...body, id };
+
+  const date = transformedDateString(body.date);
+
   try {
-    await dailyReportsController.addReport(data);
+    const newReport = await DailyReportModel.create({ ...body, date });
 
     for (const expense of body.expenses) {
       await financialOperationsController.addFinancialOperation([
         expense.id,
         body.date,
-        expense.category.title,
+        expense.cashFlowStatement,
         "Наличные",
         expense.sum.replace(".", ","),
         expense.counterparty || "",
@@ -63,66 +59,50 @@ async function addReport(req, res) {
       ]);
     }
 
-    for (const receipt of Object.keys(receiptsOperationValues)) {
-      const value = receiptsOperationValues[receipt];
-
+    for (const receipt of ['ipCash', 'oooCash']) {
       if (body[receipt]) {
         await financialOperationsController.addFinancialOperation([
-          "",
+          `${newReport.id}-${receipt}`,
           body.date,
-          value.title,
-          value.type,
+          "Поступления наличные средства",
+          "Наличные",
           body[receipt].replace(".", ","),
-          value.counterparty || "",
-          value.comment || "",
+          "",
+          receipt === 'ipCash' ? "по ИП" : "по ООО",
         ]);
       }
     }
 
-    const getExpenses = await expensesController.getExpenses();
-    if (getExpenses.length) {
-      await expensesController.deleteExpense();
-    }
-
-    await sendReportToTelegram({ ...body, type: "add" });
-    await saveMetrics(body.date);
+    // await sendReportToTelegram({ ...body, type: "add" });
+    // await saveMetrics(body.date);
+    return res.json({ status: "OK", data: newReport });
   } catch (err) {
     console.error(err, "error-add-daily-report");
-    await tbot.sendMessage(getTelegramChatId("balance"), err.message);
     return res.json({ status: "ERROR", message: err.message });
   }
-
-  return res.json({ status: "OK", data });
 }
 
 async function updateReport(req, res) {
   const { body } = req;
 
   try {
-    const reports = await dailyReportsController.getDailyReports(
-      req.query.from,
-      req.query.to
-    );
-    const reportExpenses = (
-      reports.find((report) => report.id === body.id) || {}
-    ).expenses;
-    const oldExpenses =
-      typeof reportExpenses === "object"
-        ? reportExpenses
-        : JSON.parse(reportExpenses || "");
+    const report = await DailyReportModel.findOne({
+      _id: body.id
+    });
+
+    const reportExpenses = report?.expenses;
+
     const operations =
       await financialOperationsController.getFinancialOperations();
 
-    await dailyReportsController.updateReport(body);
-
     for (const expense of body.expenses) {
-      const hasExpense = oldExpenses.find((exp) => exp.id === expense.id);
+      const hasExpense = reportExpenses.find((exp) => exp.id === expense.id);
       if (hasExpense) {
         await financialOperationsController.updateFinancialOperation(
           expense.id,
           [
             body.date,
-            expense.category.title,
+            expense.cashFlowStatement,
             "Наличные",
             expense.sum.replace(".", ","),
             expense.counterparty || "",
@@ -134,7 +114,7 @@ async function updateReport(req, res) {
         await financialOperationsController.addFinancialOperation([
           expense.id,
           body.date,
-          expense.category.title,
+          expense.cashFlowStatement,
           "Наличные",
           expense.sum.replace(".", ","),
           expense.counterparty || "",
@@ -143,18 +123,17 @@ async function updateReport(req, res) {
       }
     }
 
-    for (const receipt of Object.keys(receiptsOperationValues)) {
-      const value = receiptsOperationValues[receipt];
+    for (const receipt of ['ipCash', 'oooCash']) {
       if (body[receipt]) {
         await financialOperationsController.updateFinancialOperation(
-          undefined,
+          `${report.id}-${receipt}`,
           [
             body.date,
-            value.title,
-            value.type,
+            "Поступления наличные средства",
+            "Наличные",
             body[receipt].replace(".", ","),
-            value.counterparty || "",
-            value.comment,
+            "",
+            receipt === 'ipCash' ? "по ИП" : "по ООО",
           ],
           operations
         );
@@ -162,7 +141,7 @@ async function updateReport(req, res) {
     }
 
     const idsToDelete = [];
-    oldExpenses.forEach((i) => {
+    reportExpenses.forEach((i) => {
       if (!body.expenses.find((j) => j.id === i.id)) {
         idsToDelete.push(i.id);
       }
@@ -174,13 +153,44 @@ async function updateReport(req, res) {
       }
     }
 
-    await sendReportToTelegram({ ...body, type: "update" });
-    await saveMetrics(body.date);
+    const newReport = await DailyReportModel.findOneAndUpdate(
+      { _id: body.id },
+      { ...body, date: transformedDateString(body.date) },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    // await sendReportToTelegram({ ...body, type: "update" });
+    return res.json({ status: "OK", data: newReport });
   } catch (err) {
     return res.json({ status: "ERROR", message: err.message });
   }
-
-  return res.json({ status: "OK" });
 }
 
-module.exports = { getReports, clearReports, addReport, updateReport };
+async function setNewReports(req, res) {
+  try {
+    const reports = await dailyReportsController.getDailyReports();
+
+    const transformReports = reports.map((report) => {
+      const data = { ...report };
+      const online = data.ipOnline;
+
+      delete data.id;
+      delete data.ipOnline;
+      delete data.expenses;
+
+      return { ...data, online, date: transformedDateString(data.date) };
+    });
+
+    await DailyReportModel.insertMany(transformReports);
+
+    return res.json({ status: "OK" });
+  } catch (err) {
+    return res.json({ status: "ERROR", message: err.message });
+  }
+}
+
+
+module.exports = { addReport, getReports, updateReport, setNewReports };

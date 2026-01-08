@@ -12,8 +12,7 @@ const dailyReportSchema = new Schema(
     yandex: String,
     ipNetmonet: String,
     oooNetmonet: String,
-    ipOnline: String,
-    oooOnline: String,
+    online: String,
     totalSum: { type: String, required: true },
     totalCash: { type: String, required: true },
     expenses: [

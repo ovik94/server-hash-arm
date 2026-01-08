@@ -1,11 +1,11 @@
 const { format } = require("date-fns");
-const transformedDate = require("../../src/google-client/controllers/utils/transform-date");
+const transformedDateString = require("../../utils/transform-date-string");
 const iikoServerApi = require("../../src/iiko-api/iikoServerApi");
 const { metricsController } = require("../../src/google-client/controllers");
 const transformDeliverySales = require("./transform-delivery-sales");
 
 const saveMetrics = async (date) => {
-  const currentDate = format(transformedDate(date), "yyyy-MM-dd");
+  const currentDate = transformedDateString(date);
 
   const deliverySales = await iikoServerApi.getDeliverySales(
     currentDate,

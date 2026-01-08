@@ -1,7 +1,6 @@
-const { format } = require("date-fns");
 const iikoServerApi = require("../src/iiko-api/iikoServerApi");
 const { metricsController } = require("../src/google-client/controllers");
-const transformedDate = require("../src/google-client/controllers/utils/transform-date");
+const transformedDateString = require("../utils/transform-date-string");
 
 const transformDeliverySales = (data) => {
   const serviceTypes = {
@@ -9,19 +8,17 @@ const transformDeliverySales = (data) => {
     PICKUP: "Самовывоз",
   };
 
-  return data
-    .filter((deliveryItem) => !!deliveryItem["Delivery.ServiceType"])
-    .map((item) => ({
-      source: item["Delivery.MarketingSource"] || "По звонку",
-      type: serviceTypes[item["Delivery.ServiceType"]],
-      orderCount: item.UniqOrderId,
-      sum: item.DishDiscountSumInt,
-    }));
+  return data.filter((deliveryItem) => !!deliveryItem["Delivery.ServiceType"]).map((item) => ({
+    source: item["Delivery.MarketingSource"] || "По звонку",
+    type: serviceTypes[item["Delivery.ServiceType"]],
+    orderCount: item.UniqOrderId,
+    sum: item.DishDiscountSumInt,
+  }));
 };
 
 async function saveMetrics(req, res) {
   try {
-    const currentDate = format(transformedDate(req.body.date), "yyyy-MM-dd");
+    const currentDate = transformedDateString(req.body.date);
 
     const deliverySales = await iikoServerApi.getDeliverySales(
       currentDate,
@@ -38,9 +35,9 @@ async function saveMetrics(req, res) {
       delivery: filteredDeliveriesData,
       lunch: lunchSales[0]
         ? {
-            count: lunchSales[0].UniqOrderId,
-            sum: lunchSales[0].DishDiscountSumInt,
-          }
+          count: lunchSales[0].UniqOrderId,
+          sum: lunchSales[0].DishDiscountSumInt,
+        }
         : undefined,
     };
 

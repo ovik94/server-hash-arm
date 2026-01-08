@@ -1,4 +1,3 @@
-const dailyReportsController = require("./daily-reports");
 const statementController = require("./statement");
 const metricsController = require("./metrics");
 const financialOperationsController = require("./financial-operations");
@@ -7,7 +6,6 @@ const banquetController = require("./banquet");
 const feedbackController = require("./feedback");
 
 module.exports = {
-  dailyReportsController,
   statementController,
   metricsController,
   financialOperationsController,

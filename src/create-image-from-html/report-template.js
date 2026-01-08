@@ -245,8 +245,8 @@ module.exports = ` <html lang="en">
                     {{oooNetmonet}}
                   {{else}} 0 {{/if}} ₽</div>
               </div>
-              <div class="receipt_item"> Онлайн: <div class="primaryColor">{{#if ipOnline}}
-                    {{ipOnline}}
+              <div class="receipt_item"> Онлайн: <div class="primaryColor">{{#if online}}
+                    {{online}}
                   {{else}} 0 {{/if}} ₽</div>
               </div>
             </div>

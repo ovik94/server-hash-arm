@@ -15,15 +15,12 @@ const iikoServerApi = require("../../src/iiko-api/iikoServerApi");
 const iikoCloudApi = require("../../src/iiko-api/iikoCloudApi");
 const tbot = require("../../src/telegram-bot/tbot");
 const getTelegramChatId = require("../../src/telegram-bot/get-telegram-chat-id");
-const transformedDate = require("../../src/google-client/controllers/utils/transform-date");
+const transformedDateString = require("../../utils/transform-date-string");
 const transformDeliverySales = require("./transform-delivery-sales");
 
 const sendReportToTelegram = async (body) => {
-  const currentDate = format(transformedDate(body.date), "yyyy-MM-dd");
-  const currentFormattedDate = `${format(
-    transformedDate(body.date),
-    "yyyy-MM-dd"
-  )} 00:00:00.123`;
+  const currentDate = transformedDateString(body.date);
+  const currentFormattedDate = `${transformedDateString(body.date)} 00:00:00.123`;
 
   const cashPayments = await iikoServerApi.getOlapCashPayments(currentDate,
     currentDate);
