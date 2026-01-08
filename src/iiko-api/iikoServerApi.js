@@ -9,6 +9,14 @@ const RequestConfigList = {
     method: 'post',
     pathTemplate: '/resto/api/v2/reports/olap'
   },
+  getOlapPresets: {
+    method: 'get',
+    pathTemplate: '/resto/api/v2/reports/olap/presets'
+  },
+  getOlapCashPayments: {
+    method: 'get',
+    pathTemplate: '/resto/api/v2/reports/olap/byPresetId/5ec59645-62a9-421d-92ae-49c64d72ea57' // айдишник берется из getOlapPresets
+  }
 };
 
 class iikoServerApi {
@@ -32,13 +40,11 @@ class iikoServerApi {
       ...options
     };
 
-    return this.instance.request(config)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.data;
-        }
-      })
-      .catch((error) => console.log(error));
+    return this.instance.request(config).then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      }
+    }).catch((error) => console.log(error));
   }
 
   addInterceptor = () => {
@@ -46,22 +52,25 @@ class iikoServerApi {
       const error = err.response;
 
       if (error.status === 401 && !error.config.__isRetryRequest) {
-        return this.createRequest('auth', undefined, { login: this.login, pass: this.pass })
-          .then((response) => {
-            error.config.headers = { ...error.config.headers, Cookie: `key=${response}` }
-            error.config.__isRetryRequest = true;
-            return this.instance(error.config);
-          });
+        return this.createRequest('auth', undefined, { login: this.login, pass: this.pass }).then((response) => {
+          error.config.headers = { ...error.config.headers, Cookie: `key=${response}` }
+          error.config.__isRetryRequest = true;
+          return this.instance(error.config);
+        });
       }
       return Promise.reject(error);
     });
   };
 
 
-  getOlapReport = async (data) => this.createRequest('getOlapReport', data)
-    .then(response => response.data)
-    .catch(error => console.log(error));
+  getOlapReport = async (data) => this.createRequest('getOlapReport', data).then(response => response.data).catch(error => console.log(error));
 
+
+  getOlapPresets = async () => this.createRequest('getOlapPresets').then(response => response).catch(error => console.log(error));
+
+  getOlapCashPayments = async (dateFrom) => this.createRequest('getOlapCashPayments', undefined, {
+    dateFrom,
+  }).then(response => response.data).catch(error => console.log(error));
 
   getDeliverySales = async (dateFrom, dateTo) => this.getOlapReport({
     reportType: "SALES",
@@ -85,9 +94,7 @@ class iikoServerApi {
         includeHigh: true
       }
     }
-  })
-    .then(response => response)
-    .catch(error => console.log(error));
+  }).then(response => response).catch(error => console.log(error));
 
   getLunchSales = async (dateFrom, dateTo) => this.getOlapReport({
     reportType: "SALES",
@@ -114,9 +121,7 @@ class iikoServerApi {
         values: ["Бизнес-ланч"]
       }
     }
-  })
-    .then(response => response)
-    .catch(error => console.log(error));
+  }).then(response => response).catch(error => console.log(error));
 }
 
 module.exports = new iikoServerApi();

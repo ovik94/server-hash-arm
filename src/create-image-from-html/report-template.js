@@ -45,14 +45,16 @@ module.exports = ` <html lang="en">
 
       .receipt,
       .expenses,
-      .prepays {
+      .prepays,
+      .cash-payments {
         margin-bottom: 24px;
       }
 
       .receipt_total,
       .expenses_item,
       .prepays_item,
-      .lunch_item {
+      .lunch_item,
+      .cash-payments_item {
         display: flex;
         justify-content: space-between;
         margin-bottom: 8px;
@@ -150,7 +152,7 @@ module.exports = ` <html lang="en">
       .revenue_value {
         position: absolute;
 
-        left: {{progress}}; 
+        left: clamp(0px, {{progress}}, calc(85% - 40px)); 
         top: -40px;
       }
 
@@ -226,10 +228,6 @@ module.exports = ` <html lang="en">
                     {{ipNetmonet}}
                   {{else}} 0 {{/if}} ₽</div>
               </div>
-              <div class="receipt_item"> Онлайн: <div class="primaryColor">{{#if ipOnline}}
-                    {{ipOnline}}
-                  {{else}} 0 {{/if}} ₽</div>
-              </div>
               <div class="receipt_item"> Яндекс.Еда и Деливери: <div class="primaryColor">{{#if yandex}}
                     {{yandex}}
                   {{else}} 0 {{/if}} ₽</div>
@@ -245,6 +243,10 @@ module.exports = ` <html lang="en">
               </div>
               <div class="receipt_item"> Нетмонет: <div class="primaryColor">{{#if oooNetmonet}}
                     {{oooNetmonet}}
+                  {{else}} 0 {{/if}} ₽</div>
+              </div>
+              <div class="receipt_item"> Онлайн: <div class="primaryColor">{{#if ipOnline}}
+                    {{ipOnline}}
                   {{else}} 0 {{/if}} ₽</div>
               </div>
             </div>
@@ -278,6 +280,24 @@ module.exports = ` <html lang="en">
               {{/each}}
             </div>
           {{/if}}
+          
+          {{#if cashPayments}}
+            <div class="cash-payments">
+              <div class="cash-payments_title">
+                <span class="font18">Оплата наличными:</span>
+              </div>
+              <div class="line"></div>
+              {{#each cashPayments}}
+                <div class="cash-payments_item">
+                  <div class="cash-payments_item_title">
+                    <span>{{name}}</span>
+                  </div>
+                  <span class="primaryColor">{{sum}} ₽</span>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+          
           <div class="expenses">
             <div class="expenses_title">
               <span class="font18">Расходы:</span>

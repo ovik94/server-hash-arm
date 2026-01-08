@@ -22,9 +22,9 @@ const saveMetrics = async (date) => {
     delivery: filteredDeliveriesData,
     lunch: lunchSales[0]
       ? {
-          count: lunchSales[0].UniqOrderId,
-          sum: lunchSales[0].DishDiscountSumInt,
-        }
+        count: lunchSales[0].UniqOrderId,
+        sum: lunchSales[0].DishDiscountSumInt,
+      }
       : undefined,
   });
 };

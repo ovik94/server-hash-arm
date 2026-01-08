@@ -25,6 +25,9 @@ const sendReportToTelegram = async (body) => {
     "yyyy-MM-dd"
   )} 00:00:00.123`;
 
+  const cashPayments = await iikoServerApi.getOlapCashPayments(currentDate,
+    currentDate);
+
   const deliverySales = await iikoServerApi.getDeliverySales(
     currentDate,
     currentDate
@@ -38,14 +41,16 @@ const sendReportToTelegram = async (body) => {
       currentFormattedDate,
       currentFormattedDate
     )) || [];
-  const prepays = await iikoCloudApi
-    .getCurrentPrepays(reserveIds)
-    .then((data) =>
-      data.filter((prepay) => {
-        const prepayDate = format(new Date(prepay.timestamp), "yyyy-MM-dd");
-        return prepayDate === currentDate;
-      })
-    );
+  const prepays = await iikoCloudApi.getCurrentPrepays(reserveIds).then((data) =>
+    data.filter((prepay) => {
+      const prepayDate = format(new Date(prepay.timestamp), "yyyy-MM-dd");
+      return prepayDate === currentDate;
+    })
+  );
+  const transformedCashPayments = !!cashPayments.length ? cashPayments.map(item => ({
+    name: item.CashRegisterName,
+    sum: item.DiscountSum
+  })) : undefined;
 
   const filteredDeliveriesData = transformDeliverySales(deliverySales);
 
@@ -90,9 +95,10 @@ const sendReportToTelegram = async (body) => {
     revenue,
     progress: `${progress}%`,
     prepays,
+    cashPayments: transformedCashPayments
   });
 
-  await tbot.sendPhoto(getTelegramChatId("reports"), image, undefined, {
+  await tbot.sendPhoto(getTelegramChatId("balance"), image, undefined, {
     contentType: "image/jpeg",
   });
 };
