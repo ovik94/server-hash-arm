@@ -1,0 +1,1621 @@
+openapi: 3.0.3
+info:
+  title: Hash ARM API
+  version: 1.0.0
+  description: >
+    Документация REST-эндпоинтов сервера Hash ARM.
+servers:
+  - url: http://localhost:8082
+    description: Локальный сервер разработки
+
+tags:
+  - name: User
+    description: Управление пользователями
+  - name: Lunch
+    description: Бизнес-ланчи и рассылки
+  - name: DailyReport
+    description: Ежедневные отчёты ресторана
+  - name: Expense
+    description: Управление расходами
+  - name: CashFlowStatement
+    description: Статьи ДДС
+  - name: Counterparties
+    description: Контрагенты
+  - name: Feedback
+    description: Обратная связь от гостей
+  - name: GiftCards
+    description: Подарочные карты
+  - name: WheelOfFortune
+    description: Рулетка акций
+  - name: Statement
+    description: Банковские выписки и операции
+  - name: Metrics
+    description: Метрики доставки и бизнес-ланча
+  - name: Iiko
+    description: Интеграция с iiko Web API
+  - name: IikoCloud
+    description: Интеграция с iiko Cloud API
+  - name: IikoServer
+    description: Спец-отчёты iiko Server
+
+paths:
+  /api/user/list:
+    get:
+      tags: [User]
+      summary: Получить список пользователей
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+
+  /api/user/add:
+    post:
+      tags: [User]
+      summary: Добавить пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '200':
+          description: Обновлённый список пользователей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+
+  /api/user/edit:
+    post:
+      tags: [User]
+      summary: Редактировать пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserEditRequest'
+      responses:
+        '200':
+          description: Обновлённый список пользователей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+
+  /api/user/delete:
+    post:
+      tags: [User]
+      summary: Удалить пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDeleteRequest'
+      responses:
+        '200':
+          description: Обновлённый список пользователей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+
+  /api/user/login:
+    post:
+      tags: [User]
+      summary: Логин пользователя по id и паролю
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: Результат авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /api/lunch/menu-for-today:
+    get:
+      tags: [Lunch]
+      summary: Отправить меню недели в Telegram-канал
+      description: >
+        Триггерит отправку сообщения в Telegram-канал, если сегодня понедельник.
+      responses:
+        '200':
+          description: Статус операции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /api/lunch/menu-for-today-vk:
+    get:
+      tags: [Lunch]
+      summary: Отправить меню недели в рассылку VK
+      description: >
+        Триггерит рассылку через VK Broadcast API, если сегодня понедельник.
+      responses:
+        '200':
+          description: Статус операции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /api/lunch/get-week:
+    get:
+      tags: [Lunch]
+      summary: Получить номер недели бизнес-ланча
+      responses:
+        '200':
+          description: Номер недели и флаг выходного дня
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LunchWeekResponse'
+
+  /api/app/dailyReport/reports:
+    get:
+      tags: [DailyReport]
+      summary: Получить список ежедневных отчётов
+      parameters:
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Начальная дата (dd.MM.yyyy)
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Конечная дата (dd.MM.yyyy)
+      responses:
+        '200':
+          description: Список отчётов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyReportListResponse'
+
+  /api/app/dailyReport/add:
+    post:
+      tags: [DailyReport]
+      summary: Добавить ежедневный отчёт
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DailyReport'
+      responses:
+        '200':
+          description: Созданный отчёт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyReportResponse'
+
+  /api/app/dailyReport/update:
+    post:
+      tags: [DailyReport]
+      summary: Обновить ежедневный отчёт
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/DailyReport'
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                  required:
+                    - id
+      responses:
+        '200':
+          description: Обновлённый отчёт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyReportResponse'
+
+  /api/app/dailyReport/set-reports:
+    get:
+      tags: [DailyReport]
+      summary: Импортировать отчёты из Google Sheets в MongoDB
+      responses:
+        '200':
+          description: Статус операции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /api/app/expenses:
+    get:
+      tags: [Expense]
+      summary: Получить список расходов (Google Sheets)
+      responses:
+        '200':
+          description: Список расходов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpensesFromSheetsResponse'
+    post:
+      tags: [Expense]
+      summary: Добавить расход (Google Sheets)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseFromSheets'
+      responses:
+        '200':
+          description: Статус операции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /api/app/expenses/delete:
+    post:
+      tags: [Expense]
+      summary: Удалить расход (Google Sheets)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        '200':
+          description: Статус операции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /api/v2/app/expenses:
+    get:
+      tags: [Expense]
+      summary: Получить временные расходы (MongoDB)
+      responses:
+        '200':
+          description: Список временных расходов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TempExpenseListResponse'
+    post:
+      tags: [Expense]
+      summary: Добавить временный расход (MongoDB)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TempExpense'
+      responses:
+        '200':
+          description: Список расходов после добавления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TempExpenseListResponse'
+
+  /api/v2/app/expenses/delete:
+    post:
+      tags: [Expense]
+      summary: Удалить временный расход или все
+      description: >
+        Если передан id — удаляется конкретный расход. Если id не передан —
+        удаляются все временные расходы.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Список расходов после удаления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TempExpenseListResponse'
+  /api/cash-flow-statement:
+    get:
+      tags: [CashFlowStatement]
+      summary: Получить статьи ДДС
+      parameters:
+        - in: query
+          name: type
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список статей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlowStatementListResponse'
+    post:
+      tags: [CashFlowStatement]
+      summary: Добавить статью ДДС
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashFlowStatement'
+      responses:
+        '200':
+          description: Список статей после добавления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlowStatementListResponse'
+
+  /api/cash-flow-statement/edit:
+    post:
+      tags: [CashFlowStatement]
+      summary: Редактировать статью ДДС
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CashFlowStatement'
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                  required:
+                    - id
+      responses:
+        '200':
+          description: Список статей после редактирования
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlowStatementListResponse'
+
+  /api/cash-flow-statement/delete:
+    post:
+      tags: [CashFlowStatement]
+      summary: Удалить статью ДДС
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        '200':
+          description: Список статей после удаления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlowStatementListResponse'
+
+  /api/v2/counterparties:
+    get:
+      tags: [Counterparties]
+      summary: Получить список контрагентов
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Список контрагентов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterpartyListResponse'
+    post:
+      tags: [Counterparties]
+      summary: Добавить контрагента
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Counterparty'
+      responses:
+        '200':
+          description: Список контрагентов после добавления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterpartyListResponse'
+
+  /api/v2/counterparties/edit:
+    post:
+      tags: [Counterparties]
+      summary: Редактировать контрагента
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Counterparty'
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                  required:
+                    - id
+      responses:
+        '200':
+          description: Список контрагентов после редактирования
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterpartyListResponse'
+
+  /api/v2/counterparties/delete:
+    post:
+      tags: [Counterparties]
+      summary: Удалить контрагента
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        '200':
+          description: Список контрагентов после удаления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterpartyListResponse'
+
+  /api/feedback/list:
+    get:
+      tags: [Feedback]
+      summary: Получить список полей формы обратной связи
+      responses:
+        '200':
+          description: Список полей
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackFieldListResponse'
+
+  /api/feedback/update:
+    post:
+      tags: [Feedback]
+      summary: Обновить список полей формы
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requests:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FeedbackField'
+      responses:
+        '200':
+          description: Список полей после обновления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackFieldListResponse'
+
+  /api/feedback/send:
+    post:
+      tags: [Feedback]
+      summary: Отправить заполненную форму обратной связи
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/FeedbackAnswer'
+      responses:
+        '200':
+          description: Статус отправки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /api/gift-cards:
+    get:
+      tags: [GiftCards]
+      summary: Получить список подарочных карт
+      parameters:
+        - in: query
+          name: nominal
+          schema:
+            type: number
+          required: false
+      responses:
+        '200':
+          description: Список подарочных карт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GiftCardListResponse'
+
+  /api/gift-cards/add:
+    post:
+      tags: [GiftCards]
+      summary: Сгенерировать партию подарочных карт
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+                start:
+                  type: integer
+                nominal:
+                  type: integer
+              required:
+                - count
+                - start
+                - nominal
+      responses:
+        '200':
+          description: Созданные карты
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GiftCardListResponse'
+
+  /api/gift-cards/activate:
+    post:
+      tags: [GiftCards]
+      summary: Активировать подарочную карту
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: integer
+              required:
+                - number
+      responses:
+        '200':
+          description: Карта после активации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GiftCardResponse'
+
+  /api/gift-cards/send-image:
+    post:
+      tags: [GiftCards]
+      summary: Отправить изображение подарочной карты в Telegram
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: integer
+              required:
+                - number
+      responses:
+        '200':
+          description: Изображение карты
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+
+  /api/wheel-of-fortune/list:
+    get:
+      tags: [WheelOfFortune]
+      summary: Получить список рулеток
+      responses:
+        '200':
+          description: Список рулеток
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WheelOfFortuneListResponse'
+
+  /api/wheel-of-fortune/data:
+    get:
+      tags: [WheelOfFortune]
+      summary: Получить данные рулетки по коду
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Данные рулетки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WheelOfFortuneResponse'
+
+  /api/wheel-of-fortune/add:
+    post:
+      tags: [WheelOfFortune]
+      summary: Добавить рулетку
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WheelOfFortuneInput'
+      responses:
+        '200':
+          description: Список рулеток после добавления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WheelOfFortuneListResponse'
+
+  /api/wheel-of-fortune/edit:
+    post:
+      tags: [WheelOfFortune]
+      summary: Редактировать рулетку
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/WheelOfFortuneInput'
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                  required:
+                    - id
+      responses:
+        '200':
+          description: Список рулеток после редактирования
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WheelOfFortuneListResponse'
+
+  /api/wheel-of-fortune/delete:
+    post:
+      tags: [WheelOfFortune]
+      summary: Удалить рулетку
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        '200':
+          description: Список рулеток после удаления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WheelOfFortuneListResponse'
+
+  /api/statement/load:
+    post:
+      tags: [Statement]
+      summary: Загрузить файл банковской выписки
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Список операций по выписке
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementOperationsResponse'
+
+  /api/statement/process:
+    post:
+      tags: [Statement]
+      summary: Сохранить операции выписки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      operation:
+                        $ref: '#/components/schemas/StatementOperation'
+                companyType:
+                  type: string
+                  enum: [ipHashLavash, oooHashLavash, ipFoodTrack]
+              required:
+                - operations
+                - companyType
+      responses:
+        '200':
+          description: Статус сохранения
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /api/metrics/save:
+    post:
+      tags: [Metrics]
+      summary: Сохранить метрики доставки и бизнес-ланча за день
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+              required:
+                - date
+      responses:
+        '200':
+          description: Сохранённые метрики
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
+
+  /api/iiko/menu:
+    get:
+      tags: [Iiko]
+      summary: Получить меню из iiko Web API
+      responses:
+        '200':
+          description: Меню и опции банкетов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IikoMenuResponse'
+
+  /api/iiko/menuItem:
+    get:
+      tags: [Iiko]
+      summary: Получить позицию меню по id
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Позиция меню
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IikoMenuItemResponse'
+
+  /api/iiko/bar-balance:
+    get:
+      tags: [Iiko]
+      summary: Получить остатки по бару и отправить отчёт в Telegram
+      parameters:
+        - in: query
+          name: doNotSendInTelegram
+          schema:
+            type: boolean
+          required: false
+      responses:
+        '200':
+          description: Список позиций с остатками ниже лимита
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarBalanceResponse'
+
+  /api/iiko/bar-nomenclature:
+    get:
+      tags: [Iiko]
+      summary: Получить номенклатуру бара с лимитами
+      responses:
+        '200':
+          description: Номенклатура бара
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarNomenclatureResponse'
+
+  /api/iiko/save-bar-limits:
+    post:
+      tags: [Iiko]
+      summary: Сохранить лимиты номенклатуры бара
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limits:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BarLimit'
+      responses:
+        '200':
+          description: Сохранённые лимиты
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarLimitListResponse'
+
+  /api/iiko-cloud/reserve-list:
+    get:
+      tags: [IikoCloud]
+      summary: Получить список резервов на дату
+      parameters:
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Список резервов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IikoCloudReserveListResponse'
+
+  /api/iiko-cloud/current-prepays:
+    get:
+      tags: [IikoCloud]
+      summary: Получить текущие предоплаты
+      responses:
+        '200':
+          description: Список предоплат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IikoCloudPrepaysResponse'
+
+  /api/iiko-cloud/menu-list:
+    get:
+      tags: [IikoCloud]
+      summary: Получить список меню
+      responses:
+        '200':
+          description: Список меню
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IikoCloudMenuListResponse'
+
+  /api/iiko-cloud/menu:
+    post:
+      tags: [IikoCloud]
+      summary: Получить меню по id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        '200':
+          description: Структурированное меню
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IikoCloudMenuResponse'
+
+  /api/iiko-server/get-lunch-sales:
+    post:
+      tags: [IikoServer]
+      summary: Получить продажи бизнес-ланча за период
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dateFrom:
+                  type: string
+                dateTo:
+                  type: string
+              required:
+                - dateFrom
+                - dateTo
+      responses:
+        '200':
+          description: Продажи бизнес-ланча
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LunchSalesResponse'
+
+components:
+  schemas:
+    Status:
+      type: string
+      enum:
+        - OK
+        - ERROR
+
+    BaseResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        message:
+          type: string
+          nullable: true
+      required:
+        - status
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: MongoDB ObjectId
+        name:
+          type: string
+        role:
+          type: string
+        privilege:
+          type: integer
+          description: Уровень привилегий по роли
+        phone:
+          type: string
+      required:
+        - id
+        - name
+        - role
+
+    UserListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        message:
+          type: string
+          nullable: true
+      required:
+        - status
+        - data
+
+    UserCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+      required:
+        - name
+        - role
+        - password
+
+    UserEditRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+      required:
+        - id
+        - name
+        - role
+
+    UserDeleteRequest:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+
+    UserLoginRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        password:
+          type: string
+      required:
+        - id
+        - password
+
+    LunchWeek:
+      type: object
+      properties:
+        weekNumber:
+          type: integer
+          description: Номер недели бизнес-ланча (0–4 по логике сервера)
+        isHoliday:
+          type: boolean
+          description: true, если сегодня суббота или воскресенье
+      required:
+        - weekNumber
+        - isHoliday
+
+    LunchWeekResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          $ref: '#/components/schemas/LunchWeek'
+      required:
+        - status
+        - data
+
+    DailyReport:
+      type: object
+      description: Суточный отчёт по ресторану (структура укорочена)
+      properties:
+        date:
+          type: string
+          description: Дата в формате dd.MM.yyyy
+        expenses:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              cashFlowStatement:
+                type: string
+              sum:
+                type: string
+              counterparty:
+                type: string
+              comment:
+                type: string
+        ipCash:
+          type: string
+        oooCash:
+          type: string
+
+    DailyReportResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          $ref: '#/components/schemas/DailyReport'
+
+    DailyReportListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DailyReport'
+
+    ExpenseFromSheets:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        category:
+          type: object
+        sum:
+          type: string
+        comment:
+          type: string
+
+    ExpensesFromSheetsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpenseFromSheets'
+
+    TempExpense:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        category:
+          type: string
+        sum:
+          type: number
+        comment:
+          type: string
+
+    TempExpenseListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TempExpense'
+
+    CashFlowStatement:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        paymentTypes:
+          type: array
+          items:
+            type: string
+        purposeOfPayment:
+          type: string
+
+    CashFlowStatementListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CashFlowStatement'
+
+    Counterparty:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        companyName:
+          type: string
+        phone:
+          type: string
+        description:
+          type: string
+
+    CounterpartyListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Counterparty'
+
+    FeedbackField:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        type:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        required:
+          type: boolean
+
+    FeedbackFieldListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedbackField'
+
+    FeedbackAnswer:
+      type: object
+      properties:
+        title:
+          type: string
+        response:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+
+    GiftCard:
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: integer
+        number:
+          type: integer
+        status:
+          type: string
+        activationDate:
+          type: string
+        code:
+          type: integer
+
+    GiftCardListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GiftCard'
+
+    GiftCardResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          $ref: '#/components/schemas/GiftCard'
+
+    WheelOfFortuneContentItem:
+      type: object
+      properties:
+        id:
+          type: string
+        color:
+          type: string
+        title:
+          type: string
+
+    WheelOfFortune:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        description:
+          type: string
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/WheelOfFortuneContentItem'
+
+    WheelOfFortuneInput:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              color:
+                type: string
+              title:
+                type: string
+
+    WheelOfFortuneListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WheelOfFortune'
+
+    WheelOfFortuneResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          $ref: '#/components/schemas/WheelOfFortune'
+
+    StatementOperation:
+      type: object
+      properties:
+        date:
+          type: string
+        expense:
+          type: string
+        incoming:
+          type: string
+        name:
+          type: string
+        purposeOfPayment:
+          type: string
+
+    StatementOperationsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementOperation'
+
+    MetricsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: object
+          properties:
+            date:
+              type: string
+            delivery:
+              type: array
+              items:
+                type: object
+                properties:
+                  source:
+                    type: string
+                  type:
+                    type: string
+                  orderCount:
+                    type: integer
+                  sum:
+                    type: number
+            lunch:
+              type: object
+              nullable: true
+              properties:
+                count:
+                  type: integer
+                sum:
+                  type: number
+
+    IikoMenuResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: object
+          properties:
+            options:
+              type: array
+              items:
+                type: object
+            menu:
+              type: array
+              items:
+                type: object
+
+    IikoMenuItemResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
+            portionWeightGrams:
+              type: number
+
+    BarLimit:
+      type: object
+      properties:
+        id:
+          type: string
+        limit:
+          type: number
+
+    BarLimitListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BarLimit'
+
+    BarBalanceItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        balance:
+          type: number
+
+    BarBalanceResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BarBalanceItem'
+
+    BarNomenclatureItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        limit:
+          type: number
+
+    BarNomenclatureResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BarNomenclatureItem'
+
+    IikoCloudReserveListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            type: object
+
+    IikoCloudPrepaysResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            type: object
+
+    IikoCloudMenuListResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            type: object
+
+    IikoCloudMenuResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            type: object
+
+    LunchSalesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        data:
+          type: array
+          items:
+            type: object
+

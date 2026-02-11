@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
 
@@ -21,17 +22,24 @@ const logResponseBody = (req, res, next) => {
 
   const chunks = [];
 
+  const toBuffer = (chunk) =>
+    Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk));
+
   res.write = (chunk, ...args) => {
-    chunks.push(chunk);
+    if (chunk !== undefined) {
+      chunks.push(toBuffer(chunk));
+    }
     return oldWrite.apply(res, [chunk, ...args]);
   };
 
   res.end = (chunk, ...args) => {
-    if (chunk) {
-      chunks.push(chunk);
+    if (chunk !== undefined && chunk !== null) {
+      chunks.push(toBuffer(chunk));
     }
-    const body = Buffer.concat(chunks).toString("utf8");
-    console.info("RESPONSE:", `${req.method}-${req.url}`, body);
+    if (chunks.length) {
+      const body = Buffer.concat(chunks).toString("utf8");
+      console.info("RESPONSE:", `${req.method}-${req.url}`, body);
+    }
     return oldEnd.apply(res, [chunk, ...args]);
   };
 
@@ -41,6 +49,15 @@ const logResponseBody = (req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logResponseBody);
+
+app.get("/openapi.yaml", (req, res) => {
+  res.sendFile(path.join(__dirname, "openapi.yaml"));
+});
+
+app.get("/api-docs", (req, res) => {
+  res.sendFile(path.join(__dirname, "swagger.html"));
+});
+
 app.use((req, res, next) => {
   console.info("REQUEST:", `${req.method}-${req.url}`);
   next();

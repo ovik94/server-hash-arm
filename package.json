@@ -26,7 +26,9 @@
     "node-html-to-image": "^3.3.0",
     "node-telegram-bot-api": "^0.51.0",
     "node-xlsx": "^0.23.0",
-    "uuid": "^8.3.2"
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^8.3.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^9.1.0",
