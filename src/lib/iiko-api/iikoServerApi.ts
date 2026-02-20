@@ -1,5 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 
+interface RetryConfig extends AxiosRequestConfig {
+  __isRetryRequest?: boolean;
+}
+
 interface RequestConfig {
   method: string;
   pathTemplate: string;
@@ -68,13 +72,14 @@ class IikoServerApi {
       async (err: AxiosError) => {
         const error = err.response;
 
-        if (error && error.status === 401 && error.config && !(error.config as Record<string, unknown>).__isRetryRequest) {
+        if (error && error.status === 401 && error.config && !(error.config as RetryConfig).__isRetryRequest) {
           const response = await this.createRequest('auth', undefined, { login: this.login, pass: this.pass });
-          if (error.config.headers) {
-            error.config.headers = { ...error.config.headers, Cookie: `key=${response}` };
+          const config = error.config as RetryConfig;
+          if (config.headers) {
+            config.headers = { ...config.headers, Cookie: `key=${response}` } as typeof config.headers;
           }
-          (error.config as Record<string, unknown>).__isRetryRequest = true;
-          return this.instance(error.config);
+          config.__isRetryRequest = true;
+          return this.instance(config);
         }
         return Promise.reject(error);
       }
