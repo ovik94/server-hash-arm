@@ -863,59 +863,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/IikoMenuItemResponse'
 
-  /api/iiko/bar-balance:
-    get:
-      tags: [Iiko]
-      summary: Получить остатки по бару и отправить отчёт в Telegram
-      parameters:
-        - in: query
-          name: doNotSendInTelegram
-          schema:
-            type: boolean
-          required: false
-      responses:
-        '200':
-          description: Список позиций с остатками ниже лимита
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BarBalanceResponse'
-
-  /api/iiko/bar-nomenclature:
-    get:
-      tags: [Iiko]
-      summary: Получить номенклатуру бара с лимитами
-      responses:
-        '200':
-          description: Номенклатура бара
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BarNomenclatureResponse'
-
-  /api/iiko/save-bar-limits:
-    post:
-      tags: [Iiko]
-      summary: Сохранить лимиты номенклатуры бара
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                limits:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/BarLimit'
-      responses:
-        '200':
-          description: Сохранённые лимиты
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BarLimitListResponse'
-
   /api/iiko-cloud/reserve-list:
     get:
       tags: [IikoCloud]
@@ -1506,68 +1453,6 @@ components:
               type: number
             portionWeightGrams:
               type: number
-
-    BarLimit:
-      type: object
-      properties:
-        id:
-          type: string
-        limit:
-          type: number
-
-    BarLimitListResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/Status'
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BarLimit'
-
-    BarBalanceItem:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        category:
-          type: string
-        balance:
-          type: number
-
-    BarBalanceResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/Status'
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BarBalanceItem'
-
-    BarNomenclatureItem:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        category:
-          type: string
-        limit:
-          type: number
-
-    BarNomenclatureResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/Status'
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BarNomenclatureItem'
 
     IikoCloudReserveListResponse:
       type: object
