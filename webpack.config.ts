@@ -45,6 +45,7 @@ const config: Configuration = {
     "bufferutil": "commonjs bufferutil",
     kerberos: "commonjs kerberos",
     "@mongodb-js/zstd": "commonjs @mongodb-js/zstd",
+    "supports-color": "commonjs supports-color",
     "@aws-sdk/credential-providers": "commonjs @aws-sdk/credential-providers",
     snappy: "commonjs snappy",
     "mongodb-client-encryption": "commonjs mongodb-client-encryption",

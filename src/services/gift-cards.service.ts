@@ -44,7 +44,7 @@ export async function sendImage(number: number | string) {
     { number, nominal: card.value, code: card.code },
     TemplateTypes.GIFT_CARDS,
     { selector: ".root" }
-  );
+  ) as string | Buffer;
 
   await tbot.sendPhoto(getTelegramChatId("giftCards"), image, undefined, {
     contentType: "image/jpeg",

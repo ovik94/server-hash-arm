@@ -4,7 +4,7 @@ import {
   addCashFlowStatement,
   editCashFlowStatement,
   deleteCashFlowStatement,
-} from "../controllers";
+} from "../controllers/cash-flow-statement.controller";
 
 const router = Router();
 

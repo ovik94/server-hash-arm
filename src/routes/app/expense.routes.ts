@@ -3,7 +3,7 @@ import {
   getExpenses,
   addExpense,
   deleteExpense,
-} from "../../controllers/app";
+} from "../../controllers/app/expense.controller";
 
 const router = Router();
 

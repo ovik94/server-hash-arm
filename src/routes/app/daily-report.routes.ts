@@ -4,7 +4,7 @@ import {
   addReport,
   updateReport,
   setNewReports,
-} from "../../controllers/app";
+} from "../../controllers/app/daily-report.controller";
 
 const router = Router();
 

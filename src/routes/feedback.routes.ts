@@ -3,7 +3,7 @@ import {
   getRequestsList,
   updateRequestsList,
   sendFeedback,
-} from "../controllers";
+} from "../controllers/feedback.controller";
 
 const router = Router();
 

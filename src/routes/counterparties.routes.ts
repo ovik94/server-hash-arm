@@ -4,7 +4,7 @@ import {
   addCounterparty,
   editCounterparty,
   deleteCounterparty,
-} from "../controllers";
+} from "../controllers/counterparties.controller";
 
 const router = Router();
 

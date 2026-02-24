@@ -1,12 +1,12 @@
 import { Router } from "express";
 import {
   getMenuItem,
-  iikoGetMenu,
-} from "../../controllers";
+  getMenu,
+} from "../../controllers/iiko.controller";
 
 const router = Router();
 
-router.get("/menu", iikoGetMenu);
+router.get("/menu", getMenu);
 router.get("/menuItem", getMenuItem);
 
 export default router;

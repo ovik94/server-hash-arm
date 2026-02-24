@@ -41,7 +41,7 @@ export async function sendFeedback(body: any[]) {
   const image = await createImageFromHtml(
     { data: transformedBody },
     TemplateTypes.FEEDBACK
-  );
+  ) as string | Buffer;
 
   await tbot.sendPhoto(getTelegramChatId("feedback"), image, undefined, {
     contentType: "image/jpeg",

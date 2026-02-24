@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { load, process } from "../controllers";
+import { load, process } from "../controllers/statement.controller";
 
 const router = Router();
 

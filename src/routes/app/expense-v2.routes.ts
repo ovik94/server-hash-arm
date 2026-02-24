@@ -1,15 +1,15 @@
 import { Router } from "express";
 import {
-  getExpensesV2,
-  addExpenseV2,
-  deleteExpenseV2,
-} from "../../controllers/app";
+  getExpenses,
+  addExpense,
+  deleteExpense,
+} from "../../controllers/app/expense-v2.controller";
 
 const router = Router();
 
-router.get("/", getExpensesV2);
-router.post("/add", addExpenseV2);
-router.post("/delete", deleteExpenseV2);
+router.get("/", getExpenses);
+router.post("/add", addExpense);
+router.post("/delete", deleteExpense);
 
 export default router;
 

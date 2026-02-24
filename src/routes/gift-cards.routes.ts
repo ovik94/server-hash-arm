@@ -4,7 +4,7 @@ import {
   add,
   activate,
   sendImage,
-} from "../controllers";
+} from "../controllers/gift-cards.controller";
 
 const router = Router();
 

@@ -3,7 +3,7 @@ import {
   sendLunchTelegram,
   sendLunchVk,
   getLunchWeek,
-} from "../controllers";
+} from "../controllers/lunch.controller";
 
 const router = Router();
 

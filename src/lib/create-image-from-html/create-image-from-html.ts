@@ -35,7 +35,7 @@ export const createImageFromHtml = async (
   content: unknown,
   type: TemplateTypes = TemplateTypes.REPORT,
   options?: CreateImageOptions
-): Promise<unknown> => {
+) => {
   const puppeteerArgs = {
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     executablePath: "/usr/bin/chromium-browser",

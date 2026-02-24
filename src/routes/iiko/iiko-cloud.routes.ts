@@ -4,7 +4,7 @@ import {
   getCurrentPrepays,
   getMenuList,
   getMenu,
-} from "../../controllers";
+} from "../../controllers/iiko-cloud.controller";
 
 const router = Router();
 

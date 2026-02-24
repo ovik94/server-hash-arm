@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { saveMetrics } from "../controllers";
+import { saveMetrics } from "../controllers/metrics.controller";
 
 const router = Router();
 

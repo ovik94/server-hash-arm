@@ -7,7 +7,14 @@ import {
   getYear,
   getDaysInMonth,
 } from "date-fns";
-import { createImageFromHtml, TemplateTypes, tbot, dailyReportsGApiController, iikoServerApi, iikoCloudApi } from "../lib";
+import {
+  createImageFromHtml,
+  TemplateTypes,
+  tbot,
+  dailyReportsGApiController,
+  iikoServerApi,
+  iikoCloudApi
+} from "../lib";
 import { getTelegramChatId } from "../lib/telegram-bot";
 
 import { DailyReportFTModel } from "../models";
@@ -52,7 +59,7 @@ export const sendReportFtToTelegram = async ({
       progress: `${progress}%`,
     },
     TemplateTypes.REPORT_FT
-  );
+  ) as string | Buffer;
 
   await tbot.sendPhoto(getTelegramChatId("reportsFt"), image, undefined, {
     contentType: "image/jpeg",
@@ -145,7 +152,7 @@ export const sendReportToTelegram = async (body: any) => {
       cashPayments: transformedCashPayments,
     },
     TemplateTypes.REPORT
-  );
+  ) as string | Buffer;
 
   await tbot.sendPhoto(getTelegramChatId("balance"), image, undefined, {
     contentType: "image/jpeg",

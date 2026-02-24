@@ -5,7 +5,7 @@ import {
   addWheelOfFortune,
   deleteWheelOfFortune,
   editWheelOfFortune,
-} from "../controllers";
+} from "../controllers/wheel-of-fortune.controller";
 
 const router = Router();
 

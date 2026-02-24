@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getLunchSales } from "../../controllers";
+import { getLunchSales } from "../../controllers/iiko-server.controller";
 
 const router = Router();
 
