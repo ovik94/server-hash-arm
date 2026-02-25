@@ -29,12 +29,9 @@ class LunchHandler {
   private waitingForDate: Map<number, boolean> = new Map();
 
   getLunchKeyboard(): ReplyKeyboardMarkup {
-    const currentWeek = moment().isoWeek();
-    const nextWeek = currentWeek + 1;
-
     return {
       keyboard: [
-        [{ text: `Эта неделя (${currentWeek})` }, { text: `Следующая неделя (${nextWeek})` }],
+        [{ text: 'Эта неделя' }, { text: 'Следующая неделя' }],
         [{ text: "Ввести дату начала недели" }],
       ],
       resize_keyboard: true,
@@ -84,7 +81,7 @@ class LunchHandler {
       chatId,
       date,
       botMethods,
-      replyMarkup: this.getLunchKeyboard(),
+      replyMarkup: { remove_keyboard: true },
     });
   }
 
