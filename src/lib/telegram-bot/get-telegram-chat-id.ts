@@ -1,7 +1,7 @@
 // 285450225 тестовый чат
 // -1001753909293 тестовый канал
 
-export const getTelegramChatId = (id: string) => ({
+export const getTelegramChatId = (id: string): number => ({
   banquets: -426805914,
   balance: -728262999,
   feedback: -646921975,
@@ -10,4 +10,4 @@ export const getTelegramChatId = (id: string) => ({
   test: 285450225,
   reportsFt: -1002206269223,
   giftCards: -4696230705
-}[id]);
+}[id] as number);

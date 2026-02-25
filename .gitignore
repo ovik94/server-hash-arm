@@ -5,5 +5,5 @@
 .env
 node_modules
 dist
-.yarn.lock
+yarn.lock
 package-lock.json

@@ -4,23 +4,25 @@ import Dotenv from "dotenv-webpack";
 import type { Configuration } from "webpack";
 
 const config: Configuration = {
-  target: "node",
-  entry: "./src/server.ts",
+  // Указываем, что собираем приложение для Node.js, а не для браузера
+  target: ['node', 'es2018'],
+  entry: './src/server.ts', // Точка входа вашего приложения
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "server.bundle.js",
-  },
-  resolve: {
-    extensions: [".ts", ".js"],
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'server.bundle.js',
+    clean: true, // Очищает папку dist перед каждой сборкой
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: "ts-loader",
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   plugins: [
     new CopyWebpackPlugin({
@@ -39,20 +41,6 @@ const config: Configuration = {
       ],
     }),
     new Dotenv(),
-  ],
-  externals: {
-    "utf-validate": "commonjs utf-validate",
-    "bufferutil": "commonjs bufferutil",
-    kerberos: "commonjs kerberos",
-    "@mongodb-js/zstd": "commonjs @mongodb-js/zstd",
-    "supports-color": "commonjs supports-color",
-    "@aws-sdk/credential-providers": "commonjs @aws-sdk/credential-providers",
-    snappy: "commonjs snappy",
-    "mongodb-client-encryption": "commonjs mongodb-client-encryption",
-  },
-  ignoreWarnings: [
-    /require\.extensions/,
-    /Critical dependency/,
   ],
 };
 

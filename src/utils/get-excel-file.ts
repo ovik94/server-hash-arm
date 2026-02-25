@@ -16,14 +16,18 @@ export const getExcelFile = async (
         return reject(err);
       }
 
-      const file = files.file[0];
+      const file = files.file?.[0];
+      if (!file) {
+        return reject(new Error('No file provided'));
+      }
       const fileData = xlsx.parse(fs.readFileSync(file.path), {
         cellDates: true,
         dateNF: 'dd"."mm"."yyyy',
         raw: false,
       });
 
-      resolve({ data: fileData[0].data, companyType: fields.companyType[0] });
+      const companyType = fields.companyType?.[0] || '';
+      resolve({ data: fileData[0].data, companyType });
     });
   });
 };

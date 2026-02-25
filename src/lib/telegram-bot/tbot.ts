@@ -23,7 +23,7 @@ class TBot {
       const chatId = msg.chat.id;
       const text = msg.text;
       const chatType = msg.chat.type;
-      
+
       const botMethods = {
         sendMessage: this.sendMessage,
         sendPhoto: this.sendPhoto,

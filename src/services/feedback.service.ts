@@ -43,7 +43,7 @@ export async function sendFeedback(body: any[]) {
     TemplateTypes.FEEDBACK
   ) as string | Buffer;
 
-  await tbot.sendPhoto(getTelegramChatId("feedback"), image, undefined, {
+  await tbot.sendPhoto(getTelegramChatId("feedback"), image, {}, {
     contentType: "image/jpeg",
   });
 }

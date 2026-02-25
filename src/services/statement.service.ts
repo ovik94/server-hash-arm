@@ -64,7 +64,7 @@ export const process = async (operations: any[], companyType: string) => {
     const { operation } = operationItem;
     const cashFlowStatement = await getCashFlowStatement(
       operation,
-      PaymentsOperations[companyType]
+      PaymentsOperations[companyType] || ''
     );
     // const comment = createCommentDate(operation, cashFlowStatement);
 
@@ -81,8 +81,8 @@ export const process = async (operations: any[], companyType: string) => {
     await statementGApiController.addStatementOperation({
       operation,
       counterparty,
-      cashFlowStatement,
-      paymentOperation: PaymentsOperations[companyType],
+      cashFlowStatement: cashFlowStatement || '',
+      paymentOperation: PaymentsOperations[companyType] || '',
       // comment: '',
     });
   }
@@ -109,8 +109,8 @@ export const load = async (req: any) => {
   );
 
   const result = await getStatementOperations(
-    operations,
-    companyName ? PaymentsOperations[companyName] : undefined
+    operations || [],
+    companyName ? PaymentsOperations[companyName] || '' : ''
   );
 
   return result;

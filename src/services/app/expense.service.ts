@@ -12,7 +12,9 @@ export async function addExpense(body: any) {
   await expensesGApiController.addExpense(body);
 }
 
-export async function deleteExpense(id: string) {
-  await expensesGApiController.deleteExpense(id);
+export async function deleteExpense(id?: string) {
+  if (id) {
+    await expensesGApiController.deleteExpense(id);
+  }
 }
 

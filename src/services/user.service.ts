@@ -28,6 +28,9 @@ export async function addUser(payload: any) {
 
 export async function editUser(payload: any) {
   const user = await userRepository.findUserById(payload.id);
+  if (!user) {
+    throw new Error('User not found');
+  }
 
   user.name = payload.name;
   user.role = payload.role;

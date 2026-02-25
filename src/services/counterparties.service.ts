@@ -23,6 +23,9 @@ export async function addCounterparty(payload: any) {
 
 export async function editCounterparty(payload: any) {
   const doc = await counterpartiesRepository.findById(payload.id);
+  if (!doc) {
+    throw new Error('Counterparty not found');
+  }
 
   doc.name = payload.name;
   doc.type = payload.type;

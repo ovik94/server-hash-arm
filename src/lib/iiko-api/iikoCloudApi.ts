@@ -135,7 +135,7 @@ class IikoCloudApi {
             reserve?.order &&
             reserve?.order?.payments &&
             reserve?.order?.payments[0]?.paymentType?.name,
-          sum: reserve?.order?.payments[0]?.sum,
+          sum: reserve?.order?.payments?.[0]?.sum || 0,
         }));
     });
 }

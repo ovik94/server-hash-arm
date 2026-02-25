@@ -1,5 +1,4 @@
 export * from "./wheel-of-fortune.model";
-export * from "./daily-report-ft.model";
 export * from "./temp-expenses.model";
 export * from "./feedback.model";
 export * from "./counterparties.model";

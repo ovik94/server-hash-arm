@@ -2,7 +2,7 @@ import { iikoCloudApi } from "../lib";
 import { format } from "date-fns";
 
 export async function getReserveList(date?: string) {
-  return iikoCloudApi.getReserveListIds(date);
+  return iikoCloudApi.getReserveListIds(date || '');
 }
 
 export async function getCurrentPrepays() {

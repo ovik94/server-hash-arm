@@ -53,6 +53,9 @@ export async function editWheelOfFortune(payload: {
   content: any[];
 }) {
   const fortune = await wheelOfFortuneRepository.findById(payload.id);
+  if (!fortune) {
+    throw new Error('Wheel of fortune not found');
+  }
 
   for (const fortuneContentItem of fortune.content) {
     await wheelOfFortuneRepository.deleteContentById(fortuneContentItem._id);
@@ -78,11 +81,13 @@ export async function editWheelOfFortune(payload: {
 export async function deleteWheelOfFortune(id: string) {
   const fortune = await wheelOfFortuneRepository.findById(id);
 
-  await wheelOfFortuneRepository.deleteById(id);
-
-  for (const fortuneContentItem of fortune.content) {
-    await wheelOfFortuneRepository.deleteContentById(fortuneContentItem._id);
+  if (fortune) {
+    for (const fortuneContentItem of fortune.content) {
+      await wheelOfFortuneRepository.deleteContentById(fortuneContentItem._id);
+    }
   }
+
+  await wheelOfFortuneRepository.deleteById(id);
 
   const list = await wheelOfFortuneRepository.findAll();
   return list.map((item: any) => transformWheelOfFortune(item));

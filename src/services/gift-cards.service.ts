@@ -33,6 +33,9 @@ export async function activate(number: number | string) {
 
 export async function sendImage(number: number | string) {
   const card = await giftCardsRepository.findByNumber(number);
+  if (!card) {
+    throw new Error('Gift card not found');
+  }
 
   if (card.status === "NOT_ACTIVATED") {
     const error: any = new Error("Подарочная карта не активирована");
@@ -46,7 +49,7 @@ export async function sendImage(number: number | string) {
     { selector: ".root" }
   ) as string | Buffer;
 
-  await tbot.sendPhoto(getTelegramChatId("giftCards"), image, undefined, {
+  await tbot.sendPhoto(getTelegramChatId("giftCards"), image, {}, {
     contentType: "image/jpeg",
   });
 

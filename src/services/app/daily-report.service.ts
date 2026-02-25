@@ -69,6 +69,9 @@ export async function addReport(body: any) {
 
 export async function updateReport(body: any) {
   const report = await dailyReportRepository.findReportById(body.id);
+  if (!report) {
+    throw new Error('Report not found');
+  }
   const reportExpenses = report?.expenses || [];
 
   const operations =

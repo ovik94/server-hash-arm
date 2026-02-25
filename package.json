@@ -2,6 +2,7 @@
   "name": "server-hash-arm",
   "version": "1.0.0",
   "description": "",
+  "sideEffects": false,
   "main": "dist/server.bundle.js",
   "scripts": {
     "start": "webpack --mode development && node dist/server.bundle.js",
@@ -32,12 +33,16 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
     "@types/body-parser": "^1.19.6",
     "@types/express": "^5.0.6",
     "@types/mongoose": "^5.11.97",
+    "@types/multiparty": "^4.2.1",
     "@types/node": "^25.2.3",
     "@types/node-telegram-bot-api": "^0.64.13",
     "@types/webpack": "^5.28.5",
+    "babel-loader": "^10.0.0",
     "copy-webpack-plugin": "^13.0.1",
     "dotenv-webpack": "^8.0.1",
     "i": "^0.3.7",

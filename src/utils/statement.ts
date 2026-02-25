@@ -65,7 +65,7 @@ export async function getStatementOperations(
       counterparty = counterparties.find(
         (item: any) =>
           item.companyName && operation.name.includes(item.companyName)
-      );
+      ) || null;
     }
 
     const cashFlowStatement = await getCashFlowStatement(
@@ -104,10 +104,10 @@ export function createCommentDate(operation: any, type: string) {
     return "";
   }
 
-  let operationDate: string | undefined;
-  let day: string | undefined;
-  let month: string | undefined;
-  let year: string | undefined;
+  let operationDate = '';
+  let day = '';
+  let month = '';
+  let year = '';
 
   if (hasSbp) {
     operationDate = operation.purposeOfPayment.substr(3, 6);
@@ -117,16 +117,16 @@ export function createCommentDate(operation: any, type: string) {
   }
 
   if (hasEquaringIp && !hasSbp) {
-    operationDate = operation.purposeOfPayment.match(
-      /Р.С. Р.([\s\S]*) [^К.\s]*/
-    )[1];
+    const match = operation.purposeOfPayment.match(/Р.С. Р.([\s\S]*) [^К.\s]*/);
+    operationDate = match?.[1] || '';
     year = operationDate.substr(-4, 4);
     month = operationDate.substr(-6, 2);
     day = String(Number(operationDate.substr(-8, 2)) - 1);
   }
 
   if (hasEquaringOOO && !hasSbp) {
-    operationDate = operation.purposeOfPayment.match(/Р.([\s\S]*) [^К.\s]*/)[1];
+    const match = operation.purposeOfPayment.match(/Р.([\s\S]*) [^К.\s]*/);
+    operationDate = match?.[1] || '';
     year = operationDate.substr(-4, 4);
     month = operationDate.substr(-6, 2);
     day = String(Number(operationDate.substr(-8, 2)) - 1);

@@ -22,6 +22,9 @@ export async function addCashFlowStatement(payload: any) {
 
 export async function editCashFlowStatement(payload: any) {
   const doc = await cashFlowStatementRepository.findById(payload.id);
+  if (!doc) {
+    throw new Error('Cash flow statement not found');
+  }
 
   doc.name = payload.name;
   doc.type = payload.type;

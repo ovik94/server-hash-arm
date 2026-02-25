@@ -1,7 +1,10 @@
 import { GiftCardsModel } from "../models/gift-cards.model";
 
 export async function findByNominal(nominal?: string) {
-  return GiftCardsModel.find(nominal ? { value: nominal } : undefined);
+  if (!nominal) {
+    return GiftCardsModel.find({});
+  }
+  return GiftCardsModel.find({ value: nominal });
 }
 
 export async function insertMany(values: any[]) {

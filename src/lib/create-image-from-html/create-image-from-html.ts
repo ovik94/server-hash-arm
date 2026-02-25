@@ -2,14 +2,12 @@ import nodeHtmlToImage from "node-html-to-image";
 import { reportTemplate } from "./report-template";
 import { feedbackTemplate } from "./feedback-template";
 import { banquetTemplate } from "./banquet-template";
-import { reportFtTemplate } from "./report-ft-template";
 import { giftCardsTemplate } from "./gift-cards-template";
 
 export enum TemplateTypes {
   REPORT = "REPORT",
   FEEDBACK = "FEEDBACK",
   BANQUET = "BANQUET",
-  REPORT_FT = "REPORT_FT",
   GIFT_CARDS = "GIFT_CARDS",
 }
 
@@ -17,7 +15,6 @@ const Templates: Record<TemplateTypes, string> = {
   [TemplateTypes.REPORT]: reportTemplate,
   [TemplateTypes.FEEDBACK]: feedbackTemplate,
   [TemplateTypes.BANQUET]: banquetTemplate,
-  [TemplateTypes.REPORT_FT]: reportFtTemplate,
   [TemplateTypes.GIFT_CARDS]: giftCardsTemplate,
 };
 

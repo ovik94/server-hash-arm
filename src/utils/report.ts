@@ -17,54 +17,9 @@ import {
 } from "../lib";
 import { getTelegramChatId } from "../lib/telegram-bot";
 
-import { DailyReportFTModel } from "../models";
 import { transformDateString } from "./transform-date-string";
 import { transformDeliverySales } from "./delivery";
 
-export const sendReportFtToTelegram = async ({
-  type,
-  ...data
-}: {
-  type: "add" | "update";
-  [key: string]: any;
-}) => {
-  const progressBarStartDate = format(startOfMonth(new Date()), "dd.MM");
-  const progressBarEndDate = format(endOfMonth(new Date()), "dd.MM");
-  const progressBarCurrentDate = format(new Date(), "dd.MM");
-  const currentDay = getDate(new Date());
-  const dayOfMonth = getDaysInMonth(new Date());
-  const progress = Math.round((currentDay / dayOfMonth) * 100);
-
-  const currentMonth = getMonth(new Date()) + 1;
-  const currentYear = getYear(new Date());
-
-  const reports = await DailyReportFTModel.find({
-    date: new RegExp(`${currentMonth}.${currentYear}`),
-  });
-
-  const revenue = reports.reduce(
-    (sum: number, current: any) =>
-      Math.floor(Number(sum) + Number(current.totalSum)),
-    0
-  );
-
-  const image = await createImageFromHtml(
-    {
-      ...data,
-      type: type === "add" ? "Отчет" : "Обновление отчета",
-      progressBarStartDate,
-      progressBarCurrentDate,
-      progressBarEndDate,
-      revenue,
-      progress: `${progress}%`,
-    },
-    TemplateTypes.REPORT_FT
-  ) as string | Buffer;
-
-  await tbot.sendPhoto(getTelegramChatId("reportsFt"), image, undefined, {
-    contentType: "image/jpeg",
-  });
-};
 
 export const sendReportToTelegram = async (body: any) => {
   const currentDate = transformDateString(body.date);
@@ -154,7 +109,7 @@ export const sendReportToTelegram = async (body: any) => {
     TemplateTypes.REPORT
   ) as string | Buffer;
 
-  await tbot.sendPhoto(getTelegramChatId("balance"), image, undefined, {
+  await tbot.sendPhoto(getTelegramChatId("balance"), image, {}, {
     contentType: "image/jpeg",
   });
 };
