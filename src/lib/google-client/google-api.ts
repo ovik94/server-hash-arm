@@ -15,9 +15,9 @@ export class GoogleApi {
 
   getApiClient = async (): Promise<TableTransformApi> => {
     const authClient = await getAuthClient();
-    const sheets = google.sheets({ version: 'v4', auth: authClient as string });
+    const { spreadsheets } = google.sheets({ version: 'v4', auth: authClient as string });
 
-    return sheets as unknown as TableTransformApi;
+    return spreadsheets as unknown as TableTransformApi;
   };
 
   getSpreadsheetId = (): string => {

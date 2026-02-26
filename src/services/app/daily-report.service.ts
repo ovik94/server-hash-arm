@@ -1,9 +1,12 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import * as dailyReportRepository from "../../repositories/daily-report.repository";
 import {
   financialOperationsGApiController,
   dailyReportsGApiController,
 } from "../../lib";
 import { transformDateString } from "../../utils";
+import { type DailyReport } from "../../models";
 
 export async function getReports(params: { from?: string; to?: string }) {
   const { from, to } = params;
@@ -148,7 +151,7 @@ export async function updateReport(body: any) {
 export async function setNewReports() {
   const reports = await dailyReportsGApiController.getDailyReports();
 
-  const transformReports = reports.map((report: any) => {
+  const transformReports: DailyReport[] = reports.map((report: any) => {
     const data = { ...report };
     const online = (data as any).ipOnline;
 
@@ -160,6 +163,13 @@ export async function setNewReports() {
       ...data,
       online,
       date: transformDateString((data as any).date),
+      expenses: report.expenses.map((exp ) => ({
+        id: exp.id || uuidv4(),
+        sum: exp.sum,
+        cashFlowStatement: exp.category.title,
+        comment: exp.comment,
+        counterparty: exp.counterparty
+      })),
     };
   });
 
