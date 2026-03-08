@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: server-hash-arm
+    ports:
+      - '8082:8082'
+    environment:
+      - NODE_ENV=production
+      - MONGO_LOGIN=${MONGO_LOGIN}
+      - MONGO_PWD=${MONGO_PWD}
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_PORT=27017
+      - MONGO_DB=${MONGO_DB}
+      - IIKO_LOGIN=${IIKO_LOGIN}
+      - IIKO_PASS=${IIKO_PASS}
+      - IIKO_API_LOGIN=${IIKO_API_LOGIN}
+      - IIKO_SERVER_LOGIN=${IIKO_SERVER_LOGIN}
+      - IIKO_SERVER_PASS=${IIKO_SERVER_PASS}
+      - TG_BOT_TOKEN=${TG_BOT_TOKEN}
+      - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:7
+    container_name: server-hash-arm-mongo
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_LOGIN}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PWD}
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
+    volumes:
+      - mongo-data:/data/db
+      - ./init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    name: mongodb_production_data

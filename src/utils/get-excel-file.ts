@@ -1,6 +1,6 @@
-import fs from "fs";
-import multiparty from "multiparty";
-import xlsx from "node-xlsx";
+import fs from 'fs';
+import multiparty from 'multiparty';
+import xlsx from 'node-xlsx';
 
 /**
  * Возвращает данные из xlsx файла в виде массива
@@ -31,4 +31,3 @@ export const getExcelFile = async (
     });
   });
 };
-

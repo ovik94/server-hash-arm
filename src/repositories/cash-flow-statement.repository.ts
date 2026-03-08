@@ -1,4 +1,4 @@
-import { CashFlowStatementModel } from "../models/cash-flow-statement.model";
+import { CashFlowStatementModel } from '../models/cash-flow-statement.model';
 
 export async function findByType(type?: string) {
   const query = type ? { type } : {};
@@ -21,4 +21,3 @@ export async function save(doc: any) {
 export async function deleteById(id: string) {
   return CashFlowStatementModel.deleteOne({ _id: id });
 }
-

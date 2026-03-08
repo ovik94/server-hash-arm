@@ -1,15 +1,14 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   sendLunchTelegram,
   sendLunchVk,
   getLunchWeek,
-} from "../controllers/lunch.controller";
+} from '../controllers/lunch.controller';
 
 const router = Router();
 
-router.get("/menu-for-today", sendLunchTelegram);
-router.get("/menu-for-today-vk", sendLunchVk);
-router.get("/get-week", getLunchWeek);
+router.get('/menu-for-today', sendLunchTelegram);
+router.get('/menu-for-today-vk', sendLunchVk);
+router.get('/get-week', getLunchWeek);
 
 export default router;
-

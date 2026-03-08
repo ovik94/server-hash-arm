@@ -1,4 +1,4 @@
-import { UserModel } from "../models/user.model";
+import { UserModel } from '../models/user.model';
 
 export async function findAllUsers() {
   return UserModel.find();
@@ -20,4 +20,3 @@ export async function saveUser(user: any) {
 export async function deleteUserById(id: string) {
   return UserModel.deleteOne({ _id: id });
 }
-

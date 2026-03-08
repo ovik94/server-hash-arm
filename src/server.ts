@@ -1,31 +1,24 @@
-import mongoose from "mongoose";
-import app from "./app";
+import mongoose from 'mongoose';
+import app from './app';
+import { logger } from './utils';
+import { config } from './config';
 
-const mongoLogin = process.env.MONGO_LOGIN;
-const mongoPwd = process.env.MONGO_PWD;
-const mongoHost = process.env.MONGO_HOST;
-const mongoPort = process.env.MONGO_PORT;
-const mongoDb = process.env.MONGO_DB;
-
-if (!mongoLogin || !mongoPwd || !mongoHost || !mongoPort || !mongoDb) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    "MongoDB connection variables are not fully defined. Check MONGO_LOGIN/MONGO_PWD/MONGO_HOST/MONGO_PORT/MONGO_DB."
-  );
-}
-
-if (mongoLogin && mongoPwd && mongoHost && mongoPort && mongoDb) {
+if (
+  config.mongo.login &&
+  config.mongo.password &&
+  config.mongo.host &&
+  config.mongo.port &&
+  config.mongo.database
+) {
   mongoose.connect(
-    `mongodb://${mongoLogin}:${mongoPwd}@${mongoHost}:${mongoPort}/${mongoDb}`
+    `mongodb://${config.mongo.login}:${config.mongo.password}@${config.mongo.host}:${config.mongo.port}/${config.mongo.database}`
+  );
+} else {
+  logger.warn(
+    'MongoDB connection variables are not fully defined. Check MONGO_LOGIN/MONGO_PWD/MONGO_HOST/MONGO_PORT/MONGO_DB.'
   );
 }
 
-const port = process.env.PORT || 8082;
-
-const server = app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log("Listening on port " + (server.address() as any).port);
+export default app.listen(config.app.port, () => {
+  logger.info('Listening on port ' + config.app.port);
 });
-
-export default server;
-

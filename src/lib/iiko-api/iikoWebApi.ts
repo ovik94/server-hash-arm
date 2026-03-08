@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { config } from '../../config';
 
 interface RequestConfig {
   method: string;
@@ -36,8 +37,8 @@ class IikoWebApi {
 
   constructor() {
     this.sessionCookie = null;
-    this.loginName = process.env.IIKO_LOGIN || '';
-    this.password = process.env.IIKO_PASS || '';
+    this.loginName = config.iiko.apiLogin || '';
+    this.password = config.iiko.password || '';
     this.host = 'ip-bagdasaryan.iikoweb.ru';
   }
 

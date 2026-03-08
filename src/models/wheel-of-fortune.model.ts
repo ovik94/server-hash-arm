@@ -1,4 +1,4 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
 export interface WheelOfFortuneContent {
   title: string;
@@ -6,8 +6,7 @@ export interface WheelOfFortuneContent {
 }
 
 export interface WheelOfFortuneContentDocument
-  extends WheelOfFortuneContent,
-  Document { }
+  extends WheelOfFortuneContent, Document {}
 
 export interface WheelOfFortune {
   code: string;
@@ -17,9 +16,7 @@ export interface WheelOfFortune {
   content: any[];
 }
 
-export interface WheelOfFortuneDocument
-  extends WheelOfFortune,
-  Document { }
+export interface WheelOfFortuneDocument extends WheelOfFortune, Document {}
 
 const wheelOfFortuneContentSchema = new Schema<WheelOfFortuneContentDocument>(
   {
@@ -31,7 +28,7 @@ const wheelOfFortuneContentSchema = new Schema<WheelOfFortuneContentDocument>(
 
 export const WheelOfFortuneContentModel: Model<WheelOfFortuneContentDocument> =
   model<WheelOfFortuneContentDocument>(
-    "WheelOfFortuneContent",
+    'WheelOfFortuneContent',
     wheelOfFortuneContentSchema
   );
 
@@ -42,7 +39,7 @@ const wheelOfFortuneSchema = new Schema<WheelOfFortuneDocument>(
     content: [
       {
         type: Schema.Types.ObjectId,
-        ref: "WheelOfFortuneContent",
+        ref: 'WheelOfFortuneContent',
       },
     ],
   } as any,
@@ -50,5 +47,4 @@ const wheelOfFortuneSchema = new Schema<WheelOfFortuneDocument>(
 );
 
 export const WheelOfFortuneModel: Model<WheelOfFortuneDocument> =
-  model<WheelOfFortuneDocument>("WheelOfFortune", wheelOfFortuneSchema);
-
+  model<WheelOfFortuneDocument>('WheelOfFortune', wheelOfFortuneSchema);

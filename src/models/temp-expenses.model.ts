@@ -1,4 +1,4 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
 export interface TempExpenseCategory {
   title: string;
@@ -44,5 +44,4 @@ const tempExpensesSchema = new Schema<TempExpenseDocument>(
 );
 
 export const TempExpensesModel: Model<TempExpenseDocument> =
-  model<TempExpenseDocument>("TempExpenses", tempExpensesSchema);
-
+  model<TempExpenseDocument>('TempExpenses', tempExpensesSchema);

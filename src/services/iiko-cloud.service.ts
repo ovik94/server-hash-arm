@@ -1,12 +1,12 @@
-import { iikoCloudApi } from "../lib";
-import { format } from "date-fns";
+import { iikoCloudApi } from '../lib';
+import { format } from 'date-fns';
 
 export async function getReserveList(date?: string) {
   return iikoCloudApi.getReserveListIds(date || '');
 }
 
 export async function getCurrentPrepays() {
-  const currentFormattedDate = `${format(new Date(), "yyyy-MM-dd")} 00:00:00.123`;
+  const currentFormattedDate = `${format(new Date(), 'yyyy-MM-dd')} 00:00:00.123`;
   const reserveIds =
     (await iikoCloudApi.getReserveListIds(currentFormattedDate)) || [];
   return iikoCloudApi.getCurrentPrepays(reserveIds);
@@ -30,7 +30,7 @@ export async function getMenu(id: string) {
         description: menuItem.description,
         size: {
           weight: itemSize?.portionWeightGrams,
-          sizeName: itemSize?.sizeName || "гр.",
+          sizeName: itemSize?.sizeName || 'гр.',
         },
         price: itemSize?.prices[0]?.price,
         image: itemSize?.buttonImageUrl,
@@ -38,4 +38,3 @@ export async function getMenu(id: string) {
     }),
   }));
 }
-

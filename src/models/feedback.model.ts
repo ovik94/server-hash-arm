@@ -1,13 +1,13 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
 export type FeedbackType =
-  | "textInput"
-  | "textArea"
-  | "select"
-  | "rating"
-  | "selectOtherVariant"
-  | "selectGroupString"
-  | "selectGroupNumber";
+  | 'textInput'
+  | 'textArea'
+  | 'select'
+  | 'rating'
+  | 'selectOtherVariant'
+  | 'selectGroupString'
+  | 'selectGroupNumber';
 
 export interface Feedback {
   title: string;
@@ -27,13 +27,13 @@ const feedbackSchema = new Schema<FeedbackDocument>(
       type: String,
       required: true,
       enum: [
-        "textInput",
-        "textArea",
-        "select",
-        "rating",
-        "selectOtherVariant",
-        "selectGroupString",
-        "selectGroupNumber",
+        'textInput',
+        'textArea',
+        'select',
+        'rating',
+        'selectOtherVariant',
+        'selectGroupString',
+        'selectGroupNumber',
       ],
     },
     options: [String],
@@ -43,7 +43,6 @@ const feedbackSchema = new Schema<FeedbackDocument>(
 );
 
 export const FeedbackModel: Model<FeedbackDocument> = model<FeedbackDocument>(
-  "Feedback",
+  'Feedback',
   feedbackSchema
 );
-

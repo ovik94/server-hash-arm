@@ -1,4 +1,4 @@
-import * as cashFlowStatementRepository from "../repositories/cash-flow-statement.repository";
+import * as cashFlowStatementRepository from '../repositories/cash-flow-statement.repository';
 
 const transform = (data: any[]) =>
   data.map((field) => ({
@@ -42,4 +42,3 @@ export async function deleteCashFlowStatement(id: string) {
   const all = await cashFlowStatementRepository.findByType(undefined);
   return transform(all);
 }
-

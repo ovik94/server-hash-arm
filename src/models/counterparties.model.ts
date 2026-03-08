@@ -1,6 +1,6 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
-export type CounterpartyType = "kitchen" | "service" | "manager" | "provider";
+export type CounterpartyType = 'kitchen' | 'service' | 'manager' | 'provider';
 
 export interface Counterparty {
   name: string;
@@ -18,7 +18,7 @@ const counterpartiesSchema = new Schema<CounterpartyDocument>(
     type: {
       type: String,
       required: true,
-      enum: ["kitchen", "service", "manager", "provider"],
+      enum: ['kitchen', 'service', 'manager', 'provider'],
     },
     companyName: String,
     phone: String,
@@ -28,5 +28,4 @@ const counterpartiesSchema = new Schema<CounterpartyDocument>(
 );
 
 export const CounterpartiesModel: Model<CounterpartyDocument> =
-  model<CounterpartyDocument>("Counterparties", counterpartiesSchema);
-
+  model<CounterpartyDocument>('Counterparties', counterpartiesSchema);

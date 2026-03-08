@@ -1,6 +1,12 @@
-import * as feedbackRepository from "../repositories/feedback.repository";
+import * as feedbackRepository from '../repositories/feedback.repository';
 
-import { feedbackGApiController, createImageFromHtml, TemplateTypes, tbot, getTelegramChatId } from "../lib";
+import {
+  feedbackGApiController,
+  createImageFromHtml,
+  TemplateTypes,
+  tbot,
+  getTelegramChatId,
+} from '../lib';
 
 const transformFeedback = (data: any[]) =>
   data.map((item) => ({
@@ -38,13 +44,17 @@ export async function sendFeedback(body: any[]) {
   });
 
   await feedbackGApiController.sendFeedback(transformedBody);
-  const image = await createImageFromHtml(
+  const image = (await createImageFromHtml(
     { data: transformedBody },
     TemplateTypes.FEEDBACK
-  ) as string | Buffer;
+  )) as string | Buffer;
 
-  await tbot.sendPhoto(getTelegramChatId("feedback"), image, {}, {
-    contentType: "image/jpeg",
-  });
+  await tbot.sendPhoto(
+    getTelegramChatId('feedback'),
+    image,
+    {},
+    {
+      contentType: 'image/jpeg',
+    }
+  );
 }
-

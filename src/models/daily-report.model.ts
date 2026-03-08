@@ -1,4 +1,4 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
 export interface DailyReportExpense {
   id: string;
@@ -66,5 +66,4 @@ const dailyReportSchema = new Schema<DailyReportDocument>(
 );
 
 export const DailyReportModel: Model<DailyReportDocument> =
-  model<DailyReportDocument>("DailyReport", dailyReportSchema);
-
+  model<DailyReportDocument>('DailyReport', dailyReportSchema);

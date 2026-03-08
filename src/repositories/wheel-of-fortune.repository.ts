@@ -1,14 +1,14 @@
 import {
   WheelOfFortuneModel,
   WheelOfFortuneContentModel,
-} from "../models/wheel-of-fortune.model";
+} from '../models/wheel-of-fortune.model';
 
 export async function findAll() {
-  return WheelOfFortuneModel.find().populate("content");
+  return WheelOfFortuneModel.find().populate('content');
 }
 
 export async function findByCode(code: string) {
-  return WheelOfFortuneModel.findOne({ code }).populate("content");
+  return WheelOfFortuneModel.findOne({ code }).populate('content');
 }
 
 export async function findById(id: string) {
@@ -38,4 +38,3 @@ export async function createContentItem(data: any) {
   await doc.save();
   return doc;
 }
-

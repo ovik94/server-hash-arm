@@ -1,6 +1,6 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
-export type CashFlowType = "receipts" | "expenses" | "info";
+export type CashFlowType = 'receipts' | 'expenses' | 'info';
 
 export interface CashFlowStatement {
   name: string;
@@ -10,8 +10,7 @@ export interface CashFlowStatement {
 }
 
 export interface CashFlowStatementDocument
-  extends CashFlowStatement,
-    Document {}
+  extends CashFlowStatement, Document {}
 
 const cashFlowStatementSchema = new Schema<CashFlowStatementDocument>(
   {
@@ -19,7 +18,7 @@ const cashFlowStatementSchema = new Schema<CashFlowStatementDocument>(
     type: {
       type: String,
       required: true,
-      enum: ["receipts", "expenses", "info"],
+      enum: ['receipts', 'expenses', 'info'],
     },
     paymentTypes: {
       type: [String],
@@ -35,7 +34,6 @@ const cashFlowStatementSchema = new Schema<CashFlowStatementDocument>(
 
 export const CashFlowStatementModel: Model<CashFlowStatementDocument> =
   model<CashFlowStatementDocument>(
-    "CashFlowStatement",
+    'CashFlowStatement',
     cashFlowStatementSchema
   );
-

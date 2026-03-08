@@ -1,4 +1,4 @@
-import { CounterpartiesModel } from "../models/counterparties.model";
+import { CounterpartiesModel } from '../models/counterparties.model';
 
 export async function findByType(type?: string): Promise<any[]> {
   const query = type ? { type } : {};
@@ -25,4 +25,3 @@ export async function deleteById(id: string) {
 export async function findAll(): Promise<any[]> {
   return CounterpartiesModel.find({}).exec();
 }
-

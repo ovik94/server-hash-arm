@@ -1,6 +1,6 @@
-import { iikoServerApi, metricsGApiController } from "../lib";
-import { transformDateString } from "../utils/transform-date-string";
-import { transformDeliverySales } from "../utils/delivery";
+import { iikoServerApi, metricsGApiController } from '../lib';
+import { transformDateString } from '../utils/transform-date-string';
+import { transformDeliverySales } from '../utils/delivery';
 
 export async function saveMetrics(date: string) {
   const currentDate = transformDateString(date);
@@ -30,4 +30,3 @@ export async function saveMetrics(date: string) {
 
   return data;
 }
-

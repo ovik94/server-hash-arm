@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const giftCardsListQuerySchema = z.object({
   nominal: z.string().optional(),
@@ -17,4 +17,3 @@ export const giftCardNumberSchema = z.object({
 export type GiftCardsListQueryDto = z.infer<typeof giftCardsListQuerySchema>;
 export type GiftCardsAddDto = z.infer<typeof giftCardsAddSchema>;
 export type GiftCardNumberDto = z.infer<typeof giftCardNumberSchema>;
-

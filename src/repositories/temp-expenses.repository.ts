@@ -1,4 +1,4 @@
-import { TempExpensesModel } from "../models/temp-expenses.model";
+import { TempExpensesModel } from '../models/temp-expenses.model';
 
 export async function findAll() {
   return TempExpensesModel.find();
@@ -16,4 +16,3 @@ export async function deleteById(id: string) {
 export async function deleteAll() {
   return TempExpensesModel.deleteMany();
 }
-

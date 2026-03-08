@@ -1,18 +1,17 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   getList,
   add,
   activate,
   sendImage,
-} from "../controllers/gift-cards.controller";
+} from '../controllers/gift-cards.controller';
 
 const router = Router();
 
-router.get("/", getList);
+router.get('/', getList);
 // метод не для фронта
-router.post("/add", add);
-router.post("/activate", activate);
-router.post("/send-image", sendImage);
+router.post('/add', add);
+router.post('/activate', activate);
+router.post('/send-image', sendImage);
 
 export default router;
-

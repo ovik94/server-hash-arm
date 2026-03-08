@@ -1,4 +1,4 @@
-import * as counterpartiesRepository from "../repositories/counterparties.repository";
+import * as counterpartiesRepository from '../repositories/counterparties.repository';
 
 const transform = (data: any[]) =>
   data.map((field) => ({
@@ -44,4 +44,3 @@ export async function deleteCounterparty(id: string) {
   const docs = await counterpartiesRepository.findByType(undefined);
   return transform(docs);
 }
-

@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2018",
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "rootDir": "src",
@@ -14,23 +12,9 @@
     "skipLibCheck": true,
     "allowJs": true,
     "resolveJsonModule": true,
-    "types": [
-      "node",
-      "express"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "src/*"
-      ]
-    }
+    "types": ["node", "express"],
+    "baseUrl": "."
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }
-

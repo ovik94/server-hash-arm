@@ -2,26 +2,26 @@
   "name": "server-hash-arm",
   "version": "1.0.0",
   "description": "",
-  "sideEffects": false,
-  "main": "dist/server.bundle.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "webpack --mode development && node dist/server.bundle.js",
-    "build": "webpack --mode production"
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn src/server.ts",
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "prettier": "prettier --write src/**/*.ts",
+    "docker": "docker-compose build --no-cache"
   },
-  "author": "",
+  "author": "Ovik Bagdasaryan",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.13.5",
     "body-parser": "^1.19.0",
     "date-fns": "^2.26.0",
-    "date-fns-tz": "^3.2.0",
-    "easy-table": "^1.2.0",
+    "dotenv": "^17.3.1",
     "express": "^4.17.1",
     "googleapis": "^66.0.0",
-    "jsonschema": "^1.4.0",
-    "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.43",
     "mongoose": "^7.6.1",
     "multiparty": "^4.2.3",
     "node-html-to-image": "^5.0.0",
@@ -29,7 +29,6 @@
     "node-xlsx": "^0.24.0",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^8.3.2",
-    "ws": "^8.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -41,20 +40,12 @@
     "@types/multiparty": "^4.2.1",
     "@types/node": "^25.2.3",
     "@types/node-telegram-bot-api": "^0.64.13",
-    "@types/webpack": "^5.28.5",
-    "babel-loader": "^10.0.0",
-    "copy-webpack-plugin": "^13.0.1",
-    "dotenv-webpack": "^8.0.1",
-    "i": "^0.3.7",
-    "npm": "^11.10.1",
-    "ts-loader": "^9.5.4",
-    "ts-node": "^10.9.2",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^8.57.1",
+    "prettier": "^3.8.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3",
-    "webpack": "^5.64.0",
-    "webpack-cli": "^4.9.1"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.1.0",
-    "utf-8-validate": "^6.0.6"
+    "typescript-eslint": "^8.56.1"
   }
 }

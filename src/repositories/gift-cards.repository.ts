@@ -1,4 +1,4 @@
-import { GiftCardsModel } from "../models/gift-cards.model";
+import { GiftCardsModel } from '../models/gift-cards.model';
 
 export async function findByNominal(nominal?: string) {
   if (!nominal) {
@@ -11,14 +11,16 @@ export async function insertMany(values: any[]) {
   return GiftCardsModel.insertMany(values);
 }
 
-export async function updateStatusToActivated(number: number | string, date: string) {
+export async function updateStatusToActivated(
+  number: number | string,
+  date: string
+) {
   return GiftCardsModel.updateOne(
     { number },
-    { status: "ACTIVATED", activationDate: date }
+    { status: 'ACTIVATED', activationDate: date }
   );
 }
 
 export async function findByNumber(number: number | string) {
   return GiftCardsModel.findOne({ number });
 }
-

@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
+import { config } from '../../config';
 
 interface RetryConfig extends AxiosRequestConfig {
   __isRetryRequest?: boolean;
@@ -40,7 +41,7 @@ class IikoCloudApi {
   private instance: AxiosInstance;
 
   constructor() {
-    this.apiLogin = process.env.IIKO_API_LOGIN || '';
+    this.apiLogin = config.iiko.apiLogin || '';
     this.host = "api-ru.iiko.services";
     this.organizationId = "dd2e6895-5b76-44fd-ac21-5a5f8ecf5f9d";
     this.restaurantSectionId = "69f18ace-efac-4318-87bf-0572a17c17fd";

@@ -1,4 +1,4 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
 export interface Role {
   name: string;
@@ -16,7 +16,6 @@ const rolesSchema = new Schema<RoleDocument>(
 );
 
 export const RoleModel: Model<RoleDocument> = model<RoleDocument>(
-  "Roles",
+  'Roles',
   rolesSchema
 );
-

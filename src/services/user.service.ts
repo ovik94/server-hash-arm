@@ -1,5 +1,5 @@
-import * as userRepository from "../repositories/user.repository";
-import * as rolesRepository from "../repositories/roles.repository";
+import * as userRepository from '../repositories/user.repository';
+import * as rolesRepository from '../repositories/roles.repository';
 
 const transformUsers = (users: any[], roles: any[]) =>
   users.map((user) => ({
@@ -58,17 +58,16 @@ export async function login(payload: { id: string; password: string }) {
   const user = await userRepository.findUserById(payload.id);
 
   if (!user) {
-    const error: any = new Error("Пользователь не найден");
-    error.code = "USER_NOT_FOUND";
+    const error: any = new Error('Пользователь не найден');
+    error.code = 'USER_NOT_FOUND';
     throw error;
   }
 
   if (user.password !== payload.password) {
-    const error: any = new Error("Неправильный пароль");
-    error.code = "WRONG_PASSWORD";
+    const error: any = new Error('Неправильный пароль');
+    error.code = 'WRONG_PASSWORD';
     throw error;
   }
 
   return true;
 }
-

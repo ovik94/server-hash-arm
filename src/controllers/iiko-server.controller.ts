@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import * as iikoServerService from "../services";
+import { Request, Response } from 'express';
+import * as iikoServerService from '../services';
 
 export async function getLunchSales(req: Request, res: Response) {
   try {
@@ -8,9 +8,8 @@ export async function getLunchSales(req: Request, res: Response) {
       req.body.dateTo
     );
 
-    return res.json({ status: "OK", data: result });
+    return res.json({ status: 'OK', data: result });
   } catch (err: any) {
-    return res.json({ status: "ERROR", message: err.data || err.message });
+    return res.json({ status: 'ERROR', message: err.data || err.message });
   }
 }
-

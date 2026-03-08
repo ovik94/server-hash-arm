@@ -1,17 +1,16 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   getCashFlowStatement,
   addCashFlowStatement,
   editCashFlowStatement,
   deleteCashFlowStatement,
-} from "../controllers/cash-flow-statement.controller";
+} from '../controllers/cash-flow-statement.controller';
 
 const router = Router();
 
-router.get("/", getCashFlowStatement);
-router.post("/add", addCashFlowStatement);
-router.post("/edit", editCashFlowStatement);
-router.post("/delete", deleteCashFlowStatement);
+router.get('/', getCashFlowStatement);
+router.post('/add', addCashFlowStatement);
+router.post('/edit', editCashFlowStatement);
+router.post('/delete', deleteCashFlowStatement);
 
 export default router;
-

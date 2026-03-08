@@ -1,9 +1,9 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const statementCompanyTypeSchema = z.enum([
-  "ipHashLavash",
-  "oooHashLavash",
-  "ipFoodTrack",
+  'ipHashLavash',
+  'oooHashLavash',
+  'ipFoodTrack',
 ]);
 
 export const statementProcessSchema = z.object({
@@ -18,4 +18,3 @@ export const statementProcessSchema = z.object({
 });
 
 export type StatementProcessDto = z.infer<typeof statementProcessSchema>;
-

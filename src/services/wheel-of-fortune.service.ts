@@ -1,4 +1,4 @@
-import * as wheelOfFortuneRepository from "../repositories/wheel-of-fortune.repository";
+import * as wheelOfFortuneRepository from '../repositories/wheel-of-fortune.repository';
 
 const transformWheelOfFortune = (data: any) => ({
   id: data._id,
@@ -34,9 +34,8 @@ export async function addWheelOfFortune(payload: {
   );
 
   for (const contentItem of content) {
-    const newContentItem = await wheelOfFortuneRepository.createContentItem(
-      contentItem
-    );
+    const newContentItem =
+      await wheelOfFortuneRepository.createContentItem(contentItem);
     fortune.content.push(newContentItem);
   }
 
@@ -66,9 +65,8 @@ export async function editWheelOfFortune(payload: {
   fortune.content = [];
 
   for (const contentItem of payload.content) {
-    const newContentItem = await wheelOfFortuneRepository.createContentItem(
-      contentItem
-    );
+    const newContentItem =
+      await wheelOfFortuneRepository.createContentItem(contentItem);
     fortune.content.push(newContentItem);
   }
 
@@ -92,4 +90,3 @@ export async function deleteWheelOfFortune(id: string) {
   const list = await wheelOfFortuneRepository.findAll();
   return list.map((item: any) => transformWheelOfFortune(item));
 }
-

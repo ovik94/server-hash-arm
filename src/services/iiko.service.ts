@@ -1,4 +1,4 @@
-import { banquetGApiController, iikoWebApi } from "../lib";
+import { banquetGApiController, iikoWebApi } from '../lib';
 
 export async function getWebMenu() {
   const menu = await iikoWebApi.getMenu();
@@ -32,6 +32,3 @@ export async function getMenuItem(id: string) {
     portionWeightGrams: menuItem.itemSizes[0].portionWeightGrams,
   };
 }
-
-
-

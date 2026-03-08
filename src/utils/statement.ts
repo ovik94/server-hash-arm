@@ -1,10 +1,9 @@
 // Утилиты для работы с банковскими выписками и ДДС
-
-import moment from "moment";
-import { CashFlowStatementModel, CounterpartiesModel } from "../models";
+import moment from 'moment';
+import { CashFlowStatementModel, CounterpartiesModel } from '../models';
 
 export const transformStatementAmount = (amount?: string | null) =>
-  amount?.replace(",", "").replace(".", ",");
+  amount?.replace(',', '').replace('.', ',');
 
 export async function getCashFlowStatement(
   operation: any,
@@ -62,10 +61,11 @@ export async function getStatementOperations(
 
     if (!counterparty) {
       const counterparties = await CounterpartiesModel.find({});
-      counterparty = counterparties.find(
-        (item: any) =>
-          item.companyName && operation.name.includes(item.companyName)
-      ) || null;
+      counterparty =
+        counterparties.find(
+          (item: any) =>
+            item.companyName && operation.name.includes(item.companyName)
+        ) || null;
     }
 
     const cashFlowStatement = await getCashFlowStatement(
@@ -74,11 +74,11 @@ export async function getStatementOperations(
     );
 
     if (!counterparty) {
-      processedOperations.push({ status: "COUNTERPARTY_FAIL", operation });
+      processedOperations.push({ status: 'COUNTERPARTY_FAIL', operation });
     } else if (!cashFlowStatement) {
-      processedOperations.push({ status: "OPERATION_FAIL", operation });
+      processedOperations.push({ status: 'OPERATION_FAIL', operation });
     } else {
-      processedOperations.push({ status: "SUCCESS", operation });
+      processedOperations.push({ status: 'SUCCESS', operation });
     }
   }
 
@@ -87,12 +87,12 @@ export async function getStatementOperations(
 
 export function createCommentDate(operation: any, type: string) {
   const hasSbp =
-    operation.purposeOfPayment.includes("СБП") &&
-    operation.purposeOfPayment.includes("Возм. по согл.");
-  const hasEquaringIp = type === "Эквайринг ИП";
-  const hasEquaringOOO = type === "Эквайринг ООО";
-  const hasEquaringFoodTrack = type === "Эквайринг ИП Сбер (Фудтрак)";
-  const hasQrCode = type === "Поступление QR-code";
+    operation.purposeOfPayment.includes('СБП') &&
+    operation.purposeOfPayment.includes('Возм. по согл.');
+  const hasEquaringIp = type === 'Эквайринг ИП';
+  const hasEquaringOOO = type === 'Эквайринг ООО';
+  const hasEquaringFoodTrack = type === 'Эквайринг ИП Сбер (Фудтрак)';
+  const hasQrCode = type === 'Поступление QR-code';
 
   if (
     !hasSbp &&
@@ -101,7 +101,7 @@ export function createCommentDate(operation: any, type: string) {
     !hasEquaringFoodTrack &&
     !hasQrCode
   ) {
-    return "";
+    return '';
   }
 
   let operationDate = '';
@@ -141,10 +141,10 @@ export function createCommentDate(operation: any, type: string) {
     operationDate = matchDate ? matchDate[1] : undefined;
 
     // для операций по эквайрингу (не СБП) сдвигаем дату на один день назад, т.к. сбер отправляет на следующий день
-    if (merchId === "441000170828" && operationDate) {
-      operationDate = moment(operationDate, "DD.MM.YYYY")
-      .subtract(1, "days")
-      .format("DD.MM.YYYY");
+    if (merchId === '441000170828' && operationDate) {
+      operationDate = moment(operationDate, 'DD.MM.YYYY')
+        .subtract(1, 'days')
+        .format('DD.MM.YYYY');
     }
 
     return operationDate;
@@ -157,13 +157,12 @@ export function createCommentDate(operation: any, type: string) {
   }
 
   if (operationDate && operationDate.length === 7) {
-    operationDate = "0" + operationDate;
+    operationDate = '0' + operationDate;
   }
 
   if (operationDate) {
     return `${day}.${month}.${year}`;
   }
 
-  return "";
+  return '';
 }
-

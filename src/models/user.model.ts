@@ -1,8 +1,8 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
 export interface User {
   name: string;
-  role: "admin" | "waiter" | "supervisor" | "teller";
+  role: 'admin' | 'waiter' | 'supervisor' | 'teller';
   phone?: string;
   password?: string;
 }
@@ -15,7 +15,7 @@ const usersSchema = new Schema<UserDocument>(
     role: {
       type: String,
       required: true,
-      enum: ["admin", "waiter", "supervisor", "teller"],
+      enum: ['admin', 'waiter', 'supervisor', 'teller'],
     },
     phone: { type: String, required: false },
     password: { type: String, required: false },
@@ -24,7 +24,6 @@ const usersSchema = new Schema<UserDocument>(
 );
 
 export const UserModel: Model<UserDocument> = model<UserDocument>(
-  "Users",
+  'Users',
   usersSchema
 );
-

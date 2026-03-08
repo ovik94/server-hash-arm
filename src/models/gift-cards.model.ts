@@ -1,6 +1,6 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from 'mongoose';
 
-export type GiftCardStatus = "NOT_ACTIVATED" | "ACTIVATED";
+export type GiftCardStatus = 'NOT_ACTIVATED' | 'ACTIVATED';
 
 export interface GiftCard {
   value: number;
@@ -21,7 +21,7 @@ const giftCardsSchema = new Schema<GiftCardDocument>(
     status: {
       type: String,
       required: true,
-      enum: ["NOT_ACTIVATED", "ACTIVATED"],
+      enum: ['NOT_ACTIVATED', 'ACTIVATED'],
     },
   },
   {
@@ -29,6 +29,7 @@ const giftCardsSchema = new Schema<GiftCardDocument>(
   }
 );
 
-export const GiftCardsModel: Model<GiftCardDocument> =
-  model<GiftCardDocument>("GiftCards", giftCardsSchema);
-
+export const GiftCardsModel: Model<GiftCardDocument> = model<GiftCardDocument>(
+  'GiftCards',
+  giftCardsSchema
+);
