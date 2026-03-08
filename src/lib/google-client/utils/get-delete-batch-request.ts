@@ -33,7 +33,7 @@ export const getDeleteBatchRequest = ({
         deleteDimension: {
           range: {
             sheetId,
-            dimension: "ROWS",
+            dimension: 'ROWS',
             startIndex,
             endIndex,
           },

@@ -24,12 +24,14 @@ export class FeedbackGApiController extends GoogleApi {
         );
         values[index] = requestData.response as string;
       } else {
-        (requestData.response as { label: string; value: string }[]).forEach((option) => {
-          const columnIndex = columnsValues.findIndex(
-            (item) => item === option.label
-          );
-          values[columnIndex] = option.value;
-        });
+        (requestData.response as { label: string; value: string }[]).forEach(
+          (option) => {
+            const columnIndex = columnsValues.findIndex(
+              (item) => item === option.label
+            );
+            values[columnIndex] = option.value;
+          }
+        );
       }
     }
 

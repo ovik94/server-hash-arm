@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const dailyReportExpenseSchema = z.object({
   id: z.string().min(1),
@@ -38,4 +38,3 @@ export const getReportsQuerySchema = z.object({
 export type AddDailyReportDto = z.infer<typeof addDailyReportSchema>;
 export type UpdateDailyReportDto = z.infer<typeof updateDailyReportSchema>;
 export type GetReportsQueryDto = z.infer<typeof getReportsQuerySchema>;
-

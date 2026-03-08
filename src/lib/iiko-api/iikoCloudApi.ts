@@ -12,24 +12,24 @@ interface RequestConfig {
 
 const RequestConfigList: Record<string, RequestConfig> = {
   accessToken: {
-    method: "post",
-    pathTemplate: "/api/1/access_token",
+    method: 'post',
+    pathTemplate: '/api/1/access_token',
   },
   reservesList: {
-    method: "post",
-    pathTemplate: "/api/1/reserve/restaurant_sections_workload",
+    method: 'post',
+    pathTemplate: '/api/1/reserve/restaurant_sections_workload',
   },
   reserveDataById: {
-    method: "post",
-    pathTemplate: "/api/1/reserve/status_by_id",
+    method: 'post',
+    pathTemplate: '/api/1/reserve/status_by_id',
   },
   getExternalMenus: {
-    method: "post",
-    pathTemplate: "/api/2/menu",
+    method: 'post',
+    pathTemplate: '/api/2/menu',
   },
   getMenuById: {
-    method: "post",
-    pathTemplate: "/api/2/menu/by_id",
+    method: 'post',
+    pathTemplate: '/api/2/menu/by_id',
   },
 };
 
@@ -42,15 +42,20 @@ class IikoCloudApi {
 
   constructor() {
     this.apiLogin = config.iiko.apiLogin || '';
-    this.host = "api-ru.iiko.services";
-    this.organizationId = "dd2e6895-5b76-44fd-ac21-5a5f8ecf5f9d";
-    this.restaurantSectionId = "69f18ace-efac-4318-87bf-0572a17c17fd";
+    this.host = 'api-ru.iiko.services';
+    this.organizationId = 'dd2e6895-5b76-44fd-ac21-5a5f8ecf5f9d';
+    this.restaurantSectionId = '69f18ace-efac-4318-87bf-0572a17c17fd';
     this.instance = axios.create();
 
     this.addInterceptor();
   }
 
-  private createRequest = async (name: string, data?: unknown, params?: Record<string, unknown>, options?: AxiosRequestConfig) => {
+  private createRequest = async (
+    name: string,
+    data?: unknown,
+    params?: Record<string, unknown>,
+    options?: AxiosRequestConfig
+  ) => {
     const url = `https://${this.host}${RequestConfigList[name].pathTemplate}`;
 
     const config: AxiosRequestConfig = {
@@ -59,7 +64,7 @@ class IikoCloudApi {
       params,
       data,
       withCredentials: true,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       ...options,
     };
 
@@ -79,8 +84,13 @@ class IikoCloudApi {
       async (err: AxiosError) => {
         const error = err.response;
 
-        if (error && error.status === 401 && error.config && !(error.config as RetryConfig).__isRetryRequest) {
-          const response = await this.createRequest("accessToken", {
+        if (
+          error &&
+          error.status === 401 &&
+          error.config &&
+          !(error.config as RetryConfig).__isRetryRequest
+        ) {
+          const response = await this.createRequest('accessToken', {
             apiLogin: this.apiLogin,
           });
           const config = error.config as RetryConfig;
@@ -99,45 +109,76 @@ class IikoCloudApi {
   };
 
   getMenuList = async () =>
-    this.createRequest("getExternalMenus").then(
+    this.createRequest('getExternalMenus').then(
       (response) => response?.externalMenus
     );
 
   getMenuById = async (id: string) =>
-    this.createRequest("getMenuById", {
+    this.createRequest('getMenuById', {
       externalMenuId: id,
       organizationIds: [this.organizationId],
     }).then((response) => response);
 
   getReserveListIds = async (dateFrom: string, dateTo?: string) =>
-    this.createRequest("reservesList", {
+    this.createRequest('reservesList', {
       restaurantSectionIds: [this.restaurantSectionId],
       dateFrom: dateFrom,
       dateTo: dateTo,
-    }).then((response) => response?.reserves?.map((item: { id: string }) => item.id) || []);
+    }).then(
+      (response) =>
+        response?.reserves?.map((item: { id: string }) => item.id) || []
+    );
 
   getCurrentPrepays = async (reserveIds: string[]) =>
-    this.createRequest("reserveDataById", {
+    this.createRequest('reserveDataById', {
       organizationId: this.organizationId,
       reserveIds,
     }).then((response) => {
       return (response?.reserves || [])
         .filter(
-          (item: { reserve: { order?: { guestsInfo?: { count: number }; payments?: Array<{ isPrepay: boolean; paymentType?: { name?: string }; sum?: number }> } } }) =>
+          (item: {
+            reserve: {
+              order?: {
+                guestsInfo?: { count: number };
+                payments?: Array<{
+                  isPrepay: boolean;
+                  paymentType?: { name?: string };
+                  sum?: number;
+                }>;
+              };
+            };
+          }) =>
             item.reserve?.order &&
             item.reserve?.order?.payments &&
             item.reserve?.order?.payments?.length &&
             item.reserve?.order?.payments[0]?.isPrepay
         )
-        .map(({ reserve, timestamp }: { reserve: { order?: { guestsInfo?: { count: number }; payments?: Array<{ isPrepay: boolean; paymentType?: { name?: string }; sum?: number }> } }; timestamp: string }) => ({
-          timestamp,
-          guestsCount: reserve?.order?.guestsInfo?.count,
-          paymentType:
-            reserve?.order &&
-            reserve?.order?.payments &&
-            reserve?.order?.payments[0]?.paymentType?.name,
-          sum: reserve?.order?.payments?.[0]?.sum || 0,
-        }));
+        .map(
+          ({
+            reserve,
+            timestamp,
+          }: {
+            reserve: {
+              order?: {
+                guestsInfo?: { count: number };
+                payments?: Array<{
+                  isPrepay: boolean;
+                  paymentType?: { name?: string };
+                  sum?: number;
+                }>;
+              };
+            };
+            timestamp: string;
+          }) => ({
+            timestamp,
+            guestsCount: reserve?.order?.guestsInfo?.count,
+            paymentType:
+              reserve?.order &&
+              reserve?.order?.payments &&
+              reserve?.order?.payments[0]?.paymentType?.name,
+            sum: reserve?.order?.payments?.[0]?.sum || 0,
+          })
+        );
     });
 }
 

@@ -1,6 +1,11 @@
 import { isAfter, isBefore } from 'date-fns';
 import { GoogleApi } from '../google-api';
-import { appendRow, deleteRows, updateRow, transformRowsInArray } from '../utils';
+import {
+  appendRow,
+  deleteRows,
+  updateRow,
+  transformRowsInArray,
+} from '../utils';
 
 const transformedDate = (date: string): Date => {
   const dateArray = date.split('.');
@@ -28,7 +33,10 @@ interface DailyReport {
 }
 
 export class DailyReportsGApiController extends GoogleApi {
-  getDailyReports = async (from?: string, to?: string): Promise<DailyReport[]> => {
+  getDailyReports = async (
+    from?: string,
+    to?: string
+  ): Promise<DailyReport[]> => {
     const api = await this.apiClient;
     const { data } = await api.values.get({
       spreadsheetId: this.spreadsheet,

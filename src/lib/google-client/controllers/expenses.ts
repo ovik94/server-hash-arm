@@ -10,7 +10,9 @@ interface Expense {
 }
 
 export class ExpensesGApiController extends GoogleApi {
-  getExpenses = async (): Promise<Record<string, boolean | string | undefined>[]> => {
+  getExpenses = async (): Promise<
+    Record<string, boolean | string | undefined>[]
+  > => {
     const api = await this.apiClient;
     const { data } = await api.values.get({
       spreadsheetId: this.spreadsheet,
@@ -30,7 +32,13 @@ export class ExpensesGApiController extends GoogleApi {
     return data.values;
   };
 
-  addExpense = async ({ id, sum, comment, category, counterparty }: Expense): Promise<void> => {
+  addExpense = async ({
+    id,
+    sum,
+    comment,
+    category,
+    counterparty,
+  }: Expense): Promise<void> => {
     const api = await this.apiClient;
 
     await appendRow(api, {

@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import * as dailyReportRepository from "../../repositories/daily-report.repository";
+import * as dailyReportRepository from '../../repositories/daily-report.repository';
 import {
   financialOperationsGApiController,
   dailyReportsGApiController,
-} from "../../lib";
-import { transformDateString } from "../../utils";
-import { type DailyReport } from "../../models";
+} from '../../lib';
+import { transformDateString } from '../../utils';
+import { type DailyReport } from '../../models';
 
 export async function getReports(params: { from?: string; to?: string }) {
   const { from, to } = params;
@@ -27,9 +27,7 @@ export async function getReports(params: { from?: string; to?: string }) {
     };
   }
 
-  const reports = await dailyReportRepository.findReportsByDateRange(
-    findQuery
-  );
+  const reports = await dailyReportRepository.findReportsByDateRange(findQuery);
   return reports;
 }
 
@@ -46,23 +44,23 @@ export async function addReport(body: any) {
       expense.id,
       body.date,
       expense.cashFlowStatement,
-      "Наличные",
-      expense.sum.replace(".", ","),
-      expense.counterparty || "",
-      expense.comment || "",
+      'Наличные',
+      expense.sum.replace('.', ','),
+      expense.counterparty || '',
+      expense.comment || '',
     ]);
   }
 
-  for (const receipt of ["ipCash", "oooCash"] as const) {
+  for (const receipt of ['ipCash', 'oooCash'] as const) {
     if (body[receipt]) {
       await financialOperationsGApiController.addFinancialOperation([
         `${newReport.id}-${receipt}`,
         body.date,
-        "Поступления наличные средства",
-        "Наличные",
-        body[receipt].replace(".", ","),
-        "",
-        receipt === "ipCash" ? "по ИП" : "по ООО",
+        'Поступления наличные средства',
+        'Наличные',
+        body[receipt].replace('.', ','),
+        '',
+        receipt === 'ipCash' ? 'по ИП' : 'по ООО',
       ]);
     }
   }
@@ -81,18 +79,16 @@ export async function updateReport(body: any) {
     await financialOperationsGApiController.getFinancialOperations();
 
   for (const expense of body.expenses) {
-    const hasExpense = reportExpenses.find(
-      (exp: any) => exp.id === expense.id
-    );
+    const hasExpense = reportExpenses.find((exp: any) => exp.id === expense.id);
     if (hasExpense) {
       await financialOperationsGApiController.updateFinancialOperation(
         expense.id,
         [
           body.date,
           expense.cashFlowStatement,
-          "Наличные",
-          expense.sum.replace(".", ","),
-          expense.counterparty || "",
+          'Наличные',
+          expense.sum.replace('.', ','),
+          expense.counterparty || '',
           expense.comment,
         ],
         operations
@@ -102,25 +98,25 @@ export async function updateReport(body: any) {
         expense.id,
         body.date,
         expense.cashFlowStatement,
-        "Наличные",
-        expense.sum.replace(".", ","),
-        expense.counterparty || "",
+        'Наличные',
+        expense.sum.replace('.', ','),
+        expense.counterparty || '',
         expense.comment,
       ]);
     }
   }
 
-  for (const receipt of ["ipCash", "oooCash"] as const) {
+  for (const receipt of ['ipCash', 'oooCash'] as const) {
     if (body[receipt]) {
       await financialOperationsGApiController.updateFinancialOperation(
         `${report.id}-${receipt}`,
         [
           body.date,
-          "Поступления наличные средства",
-          "Наличные",
-          body[receipt].replace(".", ","),
-          "",
-          receipt === "ipCash" ? "по ИП" : "по ООО",
+          'Поступления наличные средства',
+          'Наличные',
+          body[receipt].replace('.', ','),
+          '',
+          receipt === 'ipCash' ? 'по ИП' : 'по ООО',
         ],
         operations
       );
@@ -163,12 +159,12 @@ export async function setNewReports() {
       ...data,
       online,
       date: transformDateString((data as any).date),
-      expenses: report.expenses.map((exp ) => ({
+      expenses: report.expenses.map((exp) => ({
         id: exp.id || uuidv4(),
         sum: exp.sum,
         cashFlowStatement: exp.category.title,
         comment: exp.comment,
-        counterparty: exp.counterparty
+        counterparty: exp.counterparty,
       })),
     };
   });
@@ -177,4 +173,3 @@ export async function setNewReports() {
 
   return true;
 }
-

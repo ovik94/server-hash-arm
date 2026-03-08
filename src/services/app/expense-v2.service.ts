@@ -1,4 +1,4 @@
-import * as tempExpensesRepository from "../../repositories/temp-expenses.repository";
+import * as tempExpensesRepository from '../../repositories/temp-expenses.repository';
 
 export async function getExpenses() {
   return tempExpensesRepository.findAll();
@@ -18,4 +18,3 @@ export async function deleteExpense(id?: string) {
 
   return tempExpensesRepository.findAll();
 }
-

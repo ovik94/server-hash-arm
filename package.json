@@ -8,8 +8,8 @@
     "dev": "ts-node-dev --respawn src/server.ts",
     "build": "tsc",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
-    "prettier": "prettier --write src/**/*.ts",
+    "lint": "eslint src --ext .ts --fix",
+    "prettier": "prettier --write src",
     "docker": "docker-compose build --no-cache"
   },
   "author": "Ovik Bagdasaryan",

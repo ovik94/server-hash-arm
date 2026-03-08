@@ -1,4 +1,4 @@
-import { expensesGApiController } from "../../lib";
+import { expensesGApiController } from '../../lib';
 
 export async function getExpenses() {
   const reports = await expensesGApiController.getExpenses();
@@ -17,4 +17,3 @@ export async function deleteExpense(id?: string) {
     await expensesGApiController.deleteExpense(id);
   }
 }
-

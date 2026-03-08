@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const expenseV2CategorySchema = z.object({
   title: z.string().min(1),
@@ -19,4 +19,3 @@ export const deleteExpenseV2Schema = z.object({
 
 export type AddExpenseV2Dto = z.infer<typeof addExpenseV2Schema>;
 export type DeleteExpenseV2Dto = z.infer<typeof deleteExpenseV2Schema>;
-

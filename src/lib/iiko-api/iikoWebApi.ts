@@ -9,24 +9,24 @@ interface RequestConfig {
 const RequestConfigList: Record<string, RequestConfig> = {
   auth: {
     method: 'get',
-    pathTemplate: '/api/auth'
+    pathTemplate: '/api/auth',
   },
   login: {
     method: 'post',
-    pathTemplate: '/api/auth/login'
+    pathTemplate: '/api/auth/login',
   },
   storeBalance: {
     method: 'get',
-    pathTemplate: '/api/lite-stock/store-balance'
+    pathTemplate: '/api/lite-stock/store-balance',
   },
   menu: {
     method: 'get',
-    pathTemplate: '/api/external-menu/3341'
+    pathTemplate: '/api/external-menu/3341',
   },
   menuItem: {
     method: 'get',
-    pathTemplate: '/api/external-menu/item/{id}'
-  }
+    pathTemplate: '/api/external-menu/item/{id}',
+  },
 };
 
 class IikoWebApi {
@@ -42,10 +42,15 @@ class IikoWebApi {
     this.host = 'ip-bagdasaryan.iikoweb.ru';
   }
 
-  private createRequest = async (request: {
-    name: string;
-    urlParams?: Record<string, string>
-  }, params?: Record<string, unknown>, data?: Record<string, unknown>, options?: AxiosRequestConfig) => {
+  private createRequest = async (
+    request: {
+      name: string;
+      urlParams?: Record<string, string>;
+    },
+    params?: Record<string, unknown>,
+    data?: Record<string, unknown>,
+    options?: AxiosRequestConfig
+  ) => {
     let url = `https://${this.host}:${RequestConfigList[request.name].pathTemplate}`;
 
     if (request.urlParams) {
@@ -60,42 +65,45 @@ class IikoWebApi {
       params,
       data,
       withCredentials: true,
-      ...options
+      ...options,
     };
 
     if (this.sessionCookie) {
       config.headers = {
-        cookie: this.sessionCookie
+        cookie: this.sessionCookie,
       };
     }
 
     return axios(config)
-    .then((response) => {
-      if (response.status === 200) {
-        if (response.headers["set-cookie"]) {
-          this.sessionCookie = response.headers["set-cookie"][0];
-        }
+      .then((response) => {
+        if (response.status === 200) {
+          if (response.headers['set-cookie']) {
+            this.sessionCookie = response.headers['set-cookie'][0];
+          }
 
-        return response.data;
-      }
-    })
-    .catch((error) => console.log(error));
-  }
+          return response.data;
+        }
+      })
+      .catch((error) => console.log(error));
+  };
 
   login = async () =>
-    this.createRequest({ name: 'login' }, {}, { login: this.loginName, password: this.password })
-    .then(response => response)
-    .catch(error => console.log(error));
+    this.createRequest(
+      { name: 'login' },
+      {},
+      { login: this.loginName, password: this.password }
+    )
+      .then((response) => response)
+      .catch((error) => console.log(error));
 
   isAuthorized = async () =>
     this.createRequest({ name: 'auth' })
-    .then(response => {
-      if (response) {
-        return response.authorized;
-      }
-    })
-    .catch(error => console.log(error));
-
+      .then((response) => {
+        if (response) {
+          return response.authorized;
+        }
+      })
+      .catch((error) => console.log(error));
 
   getMenu = async () => {
     const authorized = await this.isAuthorized();
@@ -104,11 +112,10 @@ class IikoWebApi {
       await this.login();
     }
 
-    return await this.createRequest({ name: 'menu' })
-    .then((response) => {
-      return response?.data?.itemCategories
+    return await this.createRequest({ name: 'menu' }).then((response) => {
+      return response?.data?.itemCategories;
     });
-  }
+  };
 
   getMenuItem = async (id: string) => {
     const authorized = await this.isAuthorized();
@@ -117,9 +124,11 @@ class IikoWebApi {
       await this.login();
     }
 
-    return await this.createRequest({ name: 'menuItem', urlParams: { id } })
-    .then((response) => response?.data);
-  }
+    return await this.createRequest({
+      name: 'menuItem',
+      urlParams: { id },
+    }).then((response) => response?.data);
+  };
 }
 
 export default new IikoWebApi();

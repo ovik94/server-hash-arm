@@ -2,7 +2,9 @@ import { GoogleApi } from '../google-api';
 import { appendRow, updateRow, deleteRows } from '../utils';
 
 export class FinancialOperationsGApiController extends GoogleApi {
-  static addFinancialOperation = async (values: (string | number | undefined)[]): Promise<void> => {
+  static addFinancialOperation = async (
+    values: (string | number | undefined)[]
+  ): Promise<void> => {
     const api = await this.prototype.apiClient;
     const spreadsheetId = this.prototype.getSpreadsheetId();
 
@@ -26,7 +28,9 @@ export class FinancialOperationsGApiController extends GoogleApi {
     return data.values;
   };
 
-  addFinancialOperation = async (values: (string | number | undefined)[]): Promise<void> => {
+  addFinancialOperation = async (
+    values: (string | number | undefined)[]
+  ): Promise<void> => {
     const api = await this.apiClient;
 
     await appendRow(api, {
@@ -99,4 +103,5 @@ export class FinancialOperationsGApiController extends GoogleApi {
   };
 }
 
-export const financialOperationsGApiController = new FinancialOperationsGApiController();
+export const financialOperationsGApiController =
+  new FinancialOperationsGApiController();

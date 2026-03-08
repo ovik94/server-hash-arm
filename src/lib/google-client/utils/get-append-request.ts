@@ -13,11 +13,15 @@ export interface AppendRequest {
   };
 }
 
-export const getAppendRequest = ({ sheet, range, values }: AppendRequestOptions): AppendRequest => ({
+export const getAppendRequest = ({
+  sheet,
+  range,
+  values,
+}: AppendRequestOptions): AppendRequest => ({
   spreadsheetId: sheet,
   range,
   valueInputOption: 'USER_ENTERED',
   resource: {
-    values: [values]
-  }
+    values: [values],
+  },
 });
