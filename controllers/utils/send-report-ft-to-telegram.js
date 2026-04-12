@@ -10,8 +10,8 @@ const {
 const {
   createImageFromHtml,
 } = require("../../src/create-image-from-html/create-image-from-html");
-const tbot = require("../../src/telegram-bot/tbot");
-const getTelegramChatId = require("../../src/telegram-bot/get-telegram-chat-id");
+const maxbot = require("../../src/max-bot/max-bot");
+const getMaxChatId = require("../../src/max-bot/get-max-chat-id");
 const DailyReportModel = require("../../model/dailyReportFT");
 
 const sendReportFtToTelegram = async ({ type, ...data }) => {
@@ -47,7 +47,7 @@ const sendReportFtToTelegram = async ({ type, ...data }) => {
     "REPORT_FT"
   );
 
-  await tbot.sendPhoto(getTelegramChatId("reportsFt"), image, undefined, {
+  await maxbot.sendPhoto(getMaxChatId("reportsFt"), image, undefined, {
     contentType: "image/jpeg",
   });
 };

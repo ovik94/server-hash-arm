@@ -2,8 +2,8 @@ const { feedbackController } = require("../src/google-client/controllers");
 const {
   createImageFromHtml,
 } = require("../src/create-image-from-html/create-image-from-html");
-const tbot = require("../src/telegram-bot/tbot");
-const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
+const maxbot = require("../src/max-bot/max-bot");
+const getMaxChatId = require("../src/max-bot/get-max-chat-id");
 const FeedbackModel = require("../model/feedback");
 
 const transformedFeedback = (data) =>
@@ -64,7 +64,7 @@ async function sendFeedback(req, res) {
       "FEEDBACK"
     );
 
-    await tbot.sendPhoto(getTelegramChatId("feedback"), image, undefined, {
+    await maxbot.sendPhoto(getMaxChatId("feedback"), image, undefined, {
       contentType: "image/jpeg",
     });
   } catch (err) {

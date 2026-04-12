@@ -13,8 +13,8 @@ const {
 } = require("../../src/google-client/controllers");
 const iikoServerApi = require("../../src/iiko-api/iikoServerApi");
 const iikoCloudApi = require("../../src/iiko-api/iikoCloudApi");
-const tbot = require("../../src/telegram-bot/tbot");
-const getTelegramChatId = require("../../src/telegram-bot/get-telegram-chat-id");
+const maxbot = require("../../src/max-bot/max-bot");
+const getMaxChatId = require("../../src/max-bot/get-max-chat-id");
 const transformedDate = require("../../src/google-client/controllers/utils/transform-date");
 const transformDeliverySales = require("./transform-delivery-sales");
 
@@ -92,7 +92,7 @@ const sendReportToTelegram = async (body) => {
     prepays,
   });
 
-  await tbot.sendPhoto(getTelegramChatId("reports"), image, undefined, {
+  await maxbot.sendPhoto(getMaxChatId("reports"), image, undefined, {
     contentType: "image/jpeg",
   });
 };

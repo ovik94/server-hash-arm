@@ -1,7 +1,7 @@
 const { format } = require("date-fns");
 const { createImageFromHtml } = require("../src/create-image-from-html/create-image-from-html");
-const tbot = require("../src/telegram-bot/tbot");
-const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
+const maxbot = require("../src/max-bot/max-bot");
+const getMaxChatId = require("../src/max-bot/get-max-chat-id");
 const BanquetsModel = require("../model/banquets");
 
 const transformedData = (data) => {
@@ -32,7 +32,7 @@ async function saveBanquet (req, res) {
     await newBanquetReserve.save();
 
     const image = await createImageFromHtml(transformedData({ ...body, title: 'Новый резерв банкета' }), 'BANQUET');
-    await tbot.sendPhoto(getTelegramChatId("banquets"), image, undefined, { contentType: 'image/jpeg' });
+    await maxbot.sendPhoto(getMaxChatId("banquets"), image, undefined, { contentType: 'image/jpeg' });
 
     const allReserves =  await BanquetsModel.find();
 
@@ -54,7 +54,7 @@ async function editBanquet (req, res) {
     await newBanquetReserve.save();
 
     const image = await createImageFromHtml(transformedData({ ...body, title: 'Обновление резерва банкета' }), 'BANQUET');
-    await tbot.sendPhoto(getTelegramChatId("banquets"), image, undefined, { contentType: 'image/jpeg' });
+    await maxbot.sendPhoto(getMaxChatId("banquets"), image, undefined, { contentType: 'image/jpeg' });
 
   } catch (err) {
     return res.json({ status: "ERROR", message: err._message });

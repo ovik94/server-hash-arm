@@ -1,8 +1,8 @@
 const { banquetController } = require("../src/google-client/controllers");
 const iikoWebApi = require("../src/iiko-api/iikoWebApi");
 const easyTable = require("easy-table");
-const tbot = require("../src/telegram-bot/tbot");
-const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
+const maxbot = require("../src/max-bot/max-bot");
+const getMaxChatId = require("../src/max-bot/get-max-chat-id");
 const BarLimitsModel = require("../model/barLimits");
 
 async function getMenu(req, res) {
@@ -144,8 +144,8 @@ async function getBarBalance(req, res) {
       });
     }
 
-    await tbot.sendMessage(
-      getTelegramChatId("balance"),
+    await maxbot.sendMessage(
+      getMaxChatId("balance"),
       `<pre>${table.toString()}</pre>`,
       { parse_mode: "HTML" }
     );

@@ -3,8 +3,8 @@ const GiftCardsModel = require("../model/giftCards");
 const {
   createImageFromHtml,
 } = require("../src/create-image-from-html/create-image-from-html");
-const tbot = require("../src/telegram-bot/tbot");
-const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
+const maxbot = require("../src/max-bot/max-bot");
+const getMaxChatId = require("../src/max-bot/get-max-chat-id");
 
 async function getList(req, res) {
   try {
@@ -63,6 +63,7 @@ async function sendImage(req, res) {
   try {
     const number = req.body.number;
     const card = await GiftCardsModel.findOne({ number: req.body.number });
+    console.log(card, 'card');
     if (card.status === "NOT_ACTIVATED") {
       return res.json({
         status: "ERROR",
@@ -76,11 +77,11 @@ async function sendImage(req, res) {
       { selector: ".root" }
     );
 
-    await tbot.sendPhoto(getTelegramChatId("giftCards"), image, undefined, {
+    await maxbot.sendPhoto(getMaxChatId("giftCards"), image, undefined, {
       contentType: "image/jpeg",
     });
   } catch (err) {
-    return res.json({ status: "ERROR", message: err._message });
+    return res.json({ status: "ERROR", message: err });
   }
 
   res.writeHead(200, { "Content-Type": "image/png" });

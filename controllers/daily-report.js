@@ -6,8 +6,8 @@ const {
   expensesController,
 } = require("../src/google-client/controllers");
 const { sendReportToTelegram, saveMetrics } = require("./utils");
-const tbot = require("../src/telegram-bot/tbot");
-const getTelegramChatId = require("../src/telegram-bot/get-telegram-chat-id");
+const maxbot = require("../src/max-bot/max-bot");
+const getMaxChatId = require("../src/max-bot/get-max-chat-id");
 
 const receiptsOperationValues = {
   ipCash: {
@@ -88,7 +88,7 @@ async function addReport(req, res) {
     await saveMetrics(body.date);
   } catch (err) {
     console.error(err, "error-add-daily-report");
-    await tbot.sendMessage(getTelegramChatId("balance"), err.message);
+    await maxbot.sendMessage(getMaxChatId("reports"), err.message);
     return res.json({ status: "ERROR", message: err.message });
   }
 
