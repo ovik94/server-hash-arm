@@ -1,4 +1,4 @@
-import { DailyReportModel } from '../models/daily-report.model';
+import { DailyReportModel } from '../models';
 
 export async function findReportsByDateRange(query: any) {
   return DailyReportModel.find(query).sort({ date: 1 });

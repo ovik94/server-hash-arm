@@ -12,8 +12,6 @@ import cashFlowStatementRoutes from './cash-flow-statement.routes';
 import iikoRoutes from './iiko/iiko.routes';
 import iikoCloudRoutes from './iiko/iiko-cloud.routes';
 import iikoServerRoutes from './iiko/iiko-server.routes';
-import appExpenseRoutes from './app/expense.routes';
-import appExpenseV2Routes from './app/expense-v2.routes';
 
 const router = Router();
 
@@ -34,7 +32,5 @@ router.use('/api/iiko-server', iikoServerRoutes);
 
 // app
 router.use('/api/app/dailyReport', appDailyReportRoutes);
-router.use('/api/app/expenses', appExpenseRoutes);
-router.use('/api/v2/app/expenses', appExpenseV2Routes);
 
 export default router;

@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import * as dailyReportRepository from '../../repositories/daily-report.repository';
 import {
-  financialOperationsGApiController,
   dailyReportsGApiController,
+  financialOperationsGApiController,
 } from '../../lib';
 import { transformDateString } from '../../utils';
 import { type DailyReport } from '../../models';
@@ -14,16 +14,16 @@ export async function getReports(params: { from?: string; to?: string }) {
 
   if (from && to) {
     findQuery.date = {
-      $gte: transformDateString(from),
-      $lte: transformDateString(to),
+      $gte: from,
+      $lte: to,
     };
   } else if (from) {
     findQuery.date = {
-      $gte: transformDateString(from),
+      $gte: from,
     };
   } else if (to) {
     findQuery.date = {
-      $lte: transformDateString(to),
+      $lte: to,
     };
   }
 
@@ -32,12 +32,7 @@ export async function getReports(params: { from?: string; to?: string }) {
 }
 
 export async function addReport(body: any) {
-  const date = transformDateString(body.date);
-
-  const newReport = await dailyReportRepository.createReport({
-    ...body,
-    date,
-  });
+  const newReport = await dailyReportRepository.createReport(body);
 
   for (const expense of body.expenses) {
     await financialOperationsGApiController.addFinancialOperation([
@@ -136,10 +131,7 @@ export async function updateReport(body: any) {
     }
   }
 
-  const newReport = await dailyReportRepository.updateReportById(body.id, {
-    ...body,
-    date: transformDateString(body.date),
-  });
+  const newReport = await dailyReportRepository.updateReportById(body.id, body);
 
   return newReport;
 }
