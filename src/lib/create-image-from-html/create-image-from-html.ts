@@ -34,8 +34,8 @@ export const createImageFromHtml = async (
   options?: CreateImageOptions
 ) => {
   const puppeteerArgs = {
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    executablePath: '/usr/bin/chromium-browser',
+    //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    //   executablePath: '/usr/bin/chromium-browser',
   };
 
   return await nodeHtmlToImage({

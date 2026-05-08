@@ -1,22 +1,15 @@
 import { iikoServerApi, metricsGApiController } from '../lib';
-import { transformDateString } from '../utils/transform-date-string';
-import { transformDeliverySales } from '../utils/delivery';
+import { transformDateString, transformDeliverySales } from '../utils';
 
 export async function saveMetrics(date: string) {
-  const currentDate = transformDateString(date);
+  // const currentDate = transformDateString(date);
 
-  const deliverySales = await iikoServerApi.getDeliverySales(
-    currentDate,
-    currentDate
-  );
+  const deliverySales = await iikoServerApi.getDeliverySales(date, date);
   const filteredDeliveriesData = transformDeliverySales(deliverySales);
-  const lunchSales = await iikoServerApi.getLunchSales(
-    currentDate,
-    currentDate
-  );
+  const lunchSales = await iikoServerApi.getLunchSales(date, date);
 
   const data: any = {
-    date: currentDate,
+    date,
     delivery: filteredDeliveriesData,
     lunch: lunchSales[0]
       ? {

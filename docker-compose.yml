@@ -23,6 +23,7 @@ services:
       - TG_BOT_TOKEN=${TG_BOT_TOKEN}
       - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
       - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
+      - MAX_BOT_TOKEN=${MAX_BOT_TOKEN}
     depends_on:
       mongo:
         condition: service_healthy

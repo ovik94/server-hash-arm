@@ -5,8 +5,9 @@ import {
   dailyReportsGApiController,
   financialOperationsGApiController,
 } from '../../lib';
-import { transformDateString } from '../../utils';
-import { type DailyReport } from '../../models';
+import { sendReportToMax, transformDateString } from '../../utils';
+import { type DailyReport, DailyReportDocument } from '../../models';
+import { saveMetrics } from '../metrics.service';
 
 export async function getReports(params: { from?: string; to?: string }) {
   const { from, to } = params;
@@ -31,7 +32,7 @@ export async function getReports(params: { from?: string; to?: string }) {
   return reports;
 }
 
-export async function addReport(body: any) {
+export async function addReport(body: DailyReport) {
   const newReport = await dailyReportRepository.createReport(body);
 
   for (const expense of body.expenses) {
@@ -60,10 +61,13 @@ export async function addReport(body: any) {
     }
   }
 
+  await sendReportToMax(body, 'add');
+  await saveMetrics(body.date);
+
   return newReport;
 }
 
-export async function updateReport(body: any) {
+export async function updateReport(body: DailyReportDocument) {
   const report = await dailyReportRepository.findReportById(body.id);
   if (!report) {
     throw new Error('Report not found');
@@ -132,6 +136,9 @@ export async function updateReport(body: any) {
   }
 
   const newReport = await dailyReportRepository.updateReportById(body.id, body);
+
+  await sendReportToMax(body, 'update');
+  await saveMetrics(body.date);
 
   return newReport;
 }

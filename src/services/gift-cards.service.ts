@@ -1,10 +1,10 @@
 import * as giftCardsRepository from '../repositories/gift-cards.repository';
 import { format } from 'date-fns';
 import {
-  getTelegramChatId,
   createImageFromHtml,
-  tbot,
   TemplateTypes,
+  maxBot,
+  getTMaxBotChatId,
 } from '../lib';
 
 export async function getList(nominal?: string) {
@@ -58,14 +58,7 @@ export async function sendImage(number: number | string) {
     { selector: '.root' }
   )) as string | Buffer;
 
-  await tbot.sendPhoto(
-    getTelegramChatId('giftCards'),
-    image,
-    {},
-    {
-      contentType: 'image/jpeg',
-    }
-  );
+  await maxBot.sendPhoto(getTMaxBotChatId('giftCards'), image);
 
   return image;
 }

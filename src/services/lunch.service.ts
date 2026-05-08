@@ -1,6 +1,5 @@
 import moment from 'moment';
 import axios from 'axios';
-import { getTelegramChatId, tbot } from '../lib/telegram-bot';
 
 export const getWeekNumber = () => {
   const week = moment().isoWeek();
@@ -10,35 +9,35 @@ export const getWeekNumber = () => {
   return { weekNumber, isHoliday: holiday };
 };
 
-export async function sendLunchTelegram() {
-  const images = [
-    'AgACAgIAAxkBAAIFuWklHuRpl9HMuaLK6M5BGXjZguHcAAIVC2sbrQMxSec1HxL-mJ8VAQADAgADeAADNgQ', // куриный, базук 4
-    'AgACAgIAAxkBAAIFumklHxFrIa-YE5hLCdZW1JhE9IdbAAIWC2sbrQMxSfF-2OitDe4mAQADAgADeAADNgQ', // по корейски, греческий 1
-    'AgACAgIAAxkBAAIFvGklHzX4wfLL9Jg2_V_G8ZaYmMAIAAIYC2sbrQMxSdtDntclh6bdAQADAgADeAADNgQ', // армения, оливье 2
-    'AgACAgIAAxkBAAIFu2klHyLfVALUkJxp5pSW9GrKFbuSAAIXC2sbrQMxSYBcm5JOi37eAQADAgADeAADNgQ', // блинный, винегрет 3
-  ];
-
-  const week = getWeekNumber();
-  const day = moment().isoWeekday();
-
-  if (day === 1) {
-    await tbot.sendMessage(
-      getTelegramChatId('channel'),
-      `
- Дорогие гости!
-
- Мы решили обновить наш интерьер, поэтому сейчас мы бросаем все силы на то, чтобы вскоре встретить вас в обновленном пространстве.
- Ресторан «ХашЛаваш» будет закрыт на ремонт с 19.01.2025 года.
- Вы можете заказать свои любимые блюда на доставку или самовывоз
- www.hash-lavash.ru
- +7-960-795-96-33
-    `,
-      { parse_mode: 'Markdown' }
-    );
-
-    await tbot.sendPhoto(getTelegramChatId('channel'), images[week.weekNumber]);
-  }
-}
+// export async function sendLunchTelegram() {
+//   const images = [
+//     'AgACAgIAAxkBAAIFuWklHuRpl9HMuaLK6M5BGXjZguHcAAIVC2sbrQMxSec1HxL-mJ8VAQADAgADeAADNgQ', // куриный, базук 4
+//     'AgACAgIAAxkBAAIFumklHxFrIa-YE5hLCdZW1JhE9IdbAAIWC2sbrQMxSfF-2OitDe4mAQADAgADeAADNgQ', // по корейски, греческий 1
+//     'AgACAgIAAxkBAAIFvGklHzX4wfLL9Jg2_V_G8ZaYmMAIAAIYC2sbrQMxSdtDntclh6bdAQADAgADeAADNgQ', // армения, оливье 2
+//     'AgACAgIAAxkBAAIFu2klHyLfVALUkJxp5pSW9GrKFbuSAAIXC2sbrQMxSYBcm5JOi37eAQADAgADeAADNgQ', // блинный, винегрет 3
+//   ];
+//
+//   const week = getWeekNumber();
+//   const day = moment().isoWeekday();
+//
+//   if (day === 1) {
+//     await tbot.sendMessage(
+//       getTelegramChatId('channel'),
+//       `
+//  Дорогие гости!
+//
+//  Мы решили обновить наш интерьер, поэтому сейчас мы бросаем все силы на то, чтобы вскоре встретить вас в обновленном пространстве.
+//  Ресторан «ХашЛаваш» будет закрыт на ремонт с 19.01.2025 года.
+//  Вы можете заказать свои любимые блюда на доставку или самовывоз
+//  www.hash-lavash.ru
+//  +7-960-795-96-33
+//     `,
+//       { parse_mode: 'Markdown' }
+//     );
+//
+//     await tbot.sendPhoto(getTelegramChatId('channel'), images[week.weekNumber]);
+//   }
+// }
 
 export async function sendLunchVk() {
   const images = [

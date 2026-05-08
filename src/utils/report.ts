@@ -8,19 +8,19 @@ import {
 import {
   createImageFromHtml,
   TemplateTypes,
-  tbot,
   dailyReportsGApiController,
   iikoServerApi,
   iikoCloudApi,
+  maxBot,
+  getTMaxBotChatId,
 } from '../lib';
-import { getTelegramChatId } from '../lib';
 
-import { transformDateString } from './transform-date-string';
 import { transformDeliverySales } from './delivery';
+import { DailyReport } from '../models';
 
-export const sendReportToTelegram = async (body: any) => {
-  const currentDate = transformDateString(body.date);
-  const currentFormattedDate = `${transformDateString(body.date)} 00:00:00.123`;
+export const sendReportToMax = async (body: DailyReport, type: string) => {
+  const currentDate = body.date;
+  const currentFormattedDate = `${body.date} 00:00:00.123`;
 
   const cashPayments = await iikoServerApi.getOlapCashPayments(currentDate);
 
@@ -81,11 +81,11 @@ export const sendReportToTelegram = async (body: any) => {
   const image = (await createImageFromHtml(
     {
       ...body,
-      expenses: (body.expenses || []).map((item: any) => ({
+      expenses: (body.expenses || []).map((item) => ({
         ...item,
-        title: item.category.title,
+        title: item.cashFlowStatement,
       })),
-      type: body.type === 'add' ? 'Отчет' : 'Обновление отчета',
+      type: type === 'add' ? 'Отчет' : 'Обновление отчета',
       yandex: body.yandex || '0',
       deliveries: filteredDeliveriesData,
       totalDeliveries: total,
@@ -102,12 +102,5 @@ export const sendReportToTelegram = async (body: any) => {
     TemplateTypes.REPORT
   )) as string | Buffer;
 
-  await tbot.sendPhoto(
-    getTelegramChatId('balance'),
-    image,
-    {},
-    {
-      contentType: 'image/jpeg',
-    }
-  );
+  await maxBot.sendPhoto(getTMaxBotChatId('reports'), image);
 };

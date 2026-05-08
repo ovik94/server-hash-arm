@@ -40,8 +40,6 @@ export async function addReport(req: Request, res: Response) {
     if (err.name === 'ZodError') {
       return res.json({ status: 'ERROR', message: formatZodError(err) });
     }
-    // eslint-disable-next-line no-console
-    console.error(err, 'error-add-daily-report');
     return res.json({ status: 'ERROR', message: err.message });
   }
 }

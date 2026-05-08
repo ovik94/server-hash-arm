@@ -4,8 +4,8 @@ import {
   feedbackGApiController,
   createImageFromHtml,
   TemplateTypes,
-  tbot,
-  getTelegramChatId,
+  maxBot,
+  getTMaxBotChatId,
 } from '../lib';
 
 const transformFeedback = (data: any[]) =>
@@ -49,12 +49,5 @@ export async function sendFeedback(body: any[]) {
     TemplateTypes.FEEDBACK
   )) as string | Buffer;
 
-  await tbot.sendPhoto(
-    getTelegramChatId('feedback'),
-    image,
-    {},
-    {
-      contentType: 'image/jpeg',
-    }
-  );
+  await maxBot.sendPhoto(getTMaxBotChatId('feedback'), image);
 }

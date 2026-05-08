@@ -1,4 +1,4 @@
 export * from './create-image-from-html';
 export * from './google-client';
 export * from './iiko-api';
-export * from './telegram-bot';
+export * from './max-bot';

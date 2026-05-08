@@ -2,10 +2,10 @@ import moment from 'moment';
 import { ReplyKeyboardMarkup } from 'node-telegram-bot-api';
 
 const images = [
-  'AgACAgIAAxkBAAIFuWklHuRpl9HMuaLK6M5BGXjZguHcAAIVC2sbrQMxSec1HxL-mJ8VAQADAgADeAADNgQ', // куриный, базук 4
-  'AgACAgIAAxkBAAIFumklHxFrIa-YE5hLCdZW1JhE9IdbAAIWC2sbrQMxSfF-2OitDe4mAQADAgADeAADNgQ', // по корейски, греческий 1
-  'AgACAgIAAxkBAAIFvGklHzX4wfLL9Jg2_V_G8ZaYmMAIAAIYC2sbrQMxSdtDntclh6bdAQADAgADeAADNgQ', // армения, оливье 2
-  'AgACAgIAAxkBAAIFu2klHyLfVALUkJxp5pSW9GrKFbuSAAIXC2sbrQMxSYBcm5JOi37eAQADAgADeAADNgQ', // блинный, винегрет 3
+  'RRF/a+25MDjppMsrYcf6Gw4nDH7+we0Cs9qRIJJwnFIKXCKJjVabjvWwt+H5I0+VZo6CuhBmcYm2QAwEXfuosroom8nNSsO5YiMz57eNi3Tfm4vGi6+nETU2escO8ff0', // куриный, базук 4
+  'qPJJ0AhnPrNK4B2EcXxbsEmxehEboRvLdBCrHpXvD0sLJih6RDtY1UV8sW6cP7ms84e6BbFMtSbEULsAk4ZmWrzrZcnZ4aYIiDm9wn4g6YlejS2a13aXFBifNa6wuFjA', // по корейски, греческий 1
+  'oLx7pxXAqbg+l+yW5I8haHiaPQBAsfPP9cQQ1OsXy7qL4mZe7U0XNVQc4IUxQDvYj46V0XHfnInz/NBI3Gl8wPkRCWWCyHyer9zk1gRgCMmK7b/iBuRp0gVO6TNYU6BR', // армения, оливье 2
+  'F4ac7w5am1CANRGL94HSSxwZ0xBQa9zOOQshWI55igPs9sykj7yp2LXTEoMmJe2c/2DBs+cWGsHdcxdgGqA8qU0bettaQ9TN8S0r4ulVRyQUs7FFJRCc4mvQ01s1fwlb', // блинный, винегрет 3
 ];
 
 const getWeekNumberForDate = (date: moment.Moment) => {
