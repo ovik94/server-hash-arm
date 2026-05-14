@@ -4,13 +4,12 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn src/server.ts",
     "build": "tsc",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts --fix",
     "prettier": "prettier --write src",
-    "docker": "docker-compose build --no-cache"
+    "docker": "docker compose build --no-cache"
   },
   "author": "Ovik Bagdasaryan",
   "license": "ISC",

@@ -11,7 +11,7 @@ if (
   config.mongo.database
 ) {
   mongoose.connect(
-    `mongodb://${config.mongo.login}:${config.mongo.password}@${config.mongo.host}:${config.mongo.port}/${config.mongo.database}`
+    `mongodb://${config.mongo.login}:${config.mongo.password}@${config.mongo.host}:${config.mongo.port}/${config.mongo.database}?authSource=admin`
   );
 } else {
   logger.warn(

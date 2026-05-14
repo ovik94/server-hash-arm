@@ -5,6 +5,7 @@ import {
   getReportsQuerySchema,
   updateDailyReportSchema,
 } from '../../dto';
+import { DailyReportDocument } from '../../models';
 
 /**
  * Дата в запросе от клиента приходит в формате dd.MM.yyyy
@@ -46,7 +47,7 @@ export async function addReport(req: Request, res: Response) {
 
 export async function updateReport(req: Request, res: Response) {
   try {
-    const body = updateDailyReportSchema.parse(req.body);
+    const body = updateDailyReportSchema.parse(req.body) as DailyReportDocument;
     const newReport = await dailyReportService.updateReport(body);
     return res.json({ status: 'OK', data: newReport });
   } catch (err: any) {
