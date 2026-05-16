@@ -27,8 +27,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use(apiRouter);
-
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -54,5 +52,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use((err: any, req: Request, res: Response) => {
   res.json({ status: 'ERROR', message: err.message });
 });
+
+app.use(apiRouter);
 
 export default app;

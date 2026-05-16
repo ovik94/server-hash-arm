@@ -2,10 +2,10 @@ export const giftCardsTemplate = `<html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         .root {
-            font-family: Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-                'Liberation Sans', sans-serif;
+            font-family: 'Roboto', sans-serif;
             width: 1200px;
             height: 500px;
             padding: 24px;
@@ -25,8 +25,6 @@ export const giftCardsTemplate = `<html lang="en">
         }
 
         .info {
-            font-family: DaxlinePro, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-                'Liberation Sans', sans-serif;
             font-size: 18px;
             position: absolute;
             bottom: 8px;

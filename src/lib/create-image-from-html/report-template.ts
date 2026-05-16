@@ -1,7 +1,7 @@
 export const reportTemplate = `<html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
       .root {
         display: flex;
@@ -9,8 +9,7 @@ export const reportTemplate = `<html lang="en">
         align-items: center;
         width: 774px;
         overflow: hidden;
-        font-family: DaxlinePro, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-          'Liberation Sans', sans-serif;
+        font-family: 'Roboto', sans-serif;
       }
 
       .logo {

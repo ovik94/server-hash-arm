@@ -34,13 +34,14 @@ export const createImageFromHtml = async (
   options?: CreateImageOptions
 ) => {
   const puppeteerArgs = {
-      args: [
-        '--no-sandbox',          // Обязателен в Docker/Linux
-        '--disable-setuid-sandbox', // Обязателен в Docker/Linux
-        '--disable-dev-shm-usage',  // Полезно для Docker
-        '--disable-gpu'            // Обычно полезно для серверов
+    args: [
+      '--no-sandbox', // Обязателен в Docker/Linux
+      '--disable-setuid-sandbox', // Обязателен в Docker/Linux
+      '--disable-dev-shm-usage', // Полезно для Docker
+      '--disable-gpu', // Обычно полезно для серверов
     ],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+    executablePath:
+      process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
   };
 
   return await nodeHtmlToImage({
@@ -49,6 +50,7 @@ export const createImageFromHtml = async (
     content: content as Parameters<typeof nodeHtmlToImage>[0]['content'],
     type: 'jpeg',
     quality: 100,
+    timeout: 60000,
     ...options,
   });
 };
