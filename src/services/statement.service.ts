@@ -97,10 +97,6 @@ export const load = async (req: any) => {
       if (companyType === 'ipHashLavash' || companyType === 'oooHashLavash') {
         return parseAlfaStatement(data, companyType);
       }
-
-      // if (companyType === "ipFoodTrack") {
-      //   return parseSberStatement(data, companyType);
-      // }
     }
   );
 

@@ -8,7 +8,6 @@ import {
 import {
   createImageFromHtml,
   TemplateTypes,
-  dailyReportsGApiController,
   iikoServerApi,
   iikoCloudApi,
   maxBot,
@@ -17,6 +16,7 @@ import {
 
 import { transformDeliverySales } from './delivery';
 import { DailyReport } from '../models';
+import { findTotalSumReports } from '../repositories/daily-report.repository';
 
 export const sendReportToMax = async (body: DailyReport, type: string) => {
   const currentDate = body.date;
@@ -68,14 +68,17 @@ export const sendReportToMax = async (body: DailyReport, type: string) => {
   const currentDay = getDate(new Date());
   const dayOfMonth = getDaysInMonth(new Date());
   const progress = Math.round((currentDay / dayOfMonth) * 100);
-  const reports = await dailyReportsGApiController.getDailyReports(
-    format(startOfMonth(new Date()), 'dd.MM.yyyy'),
-    format(new Date(), 'dd.MM.yyyy')
-  );
-  const revenue = reports.reduce(
-    (sum: number, current: any) =>
-      Math.floor(Number(sum) + Number(current.totalSum)),
-    0
+
+  const revenueTotalSum = await findTotalSumReports({
+    $gte: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+    $lte: format(new Date(), 'yyyy-MM-dd'),
+  });
+
+  const revenueValue =
+    revenueTotalSum.length > 0 ? revenueTotalSum[0].totalSum : 0;
+
+  const formattedTotalSum = new Intl.NumberFormat('ru-RU').format(
+    Number(revenueValue)
   );
 
   const image = (await createImageFromHtml(
@@ -94,7 +97,7 @@ export const sendReportToMax = async (body: DailyReport, type: string) => {
       progressBarStartDate,
       progressBarCurrentDate,
       progressBarEndDate,
-      revenue,
+      revenue: formattedTotalSum,
       progress: `${progress}%`,
       prepays,
       cashPayments: transformedCashPayments,

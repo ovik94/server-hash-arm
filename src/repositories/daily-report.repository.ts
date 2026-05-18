@@ -4,6 +4,22 @@ export async function findReportsByDateRange(query: any) {
   return DailyReportModel.find(query).sort({ date: 1 });
 }
 
+export async function findTotalSumReports(query: any) {
+  return DailyReportModel.aggregate<{ totalSum: number }>([
+    {
+      $match: {
+        date: query,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSum: { $sum: { $toDouble: '$totalSum' } }, // преобразуем строку в число
+      },
+    },
+  ]);
+}
+
 export async function createReport(data: DailyReport) {
   return DailyReportModel.create(data);
 }

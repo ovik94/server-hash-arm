@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as statementService from '../services';
 import { statementProcessSchema } from '../dto';
+import { logger } from '../utils';
 
 export const process = async (req: Request, res: Response) => {
   try {
@@ -10,8 +11,8 @@ export const process = async (req: Request, res: Response) => {
 
     return res.json({ status: 'OK' });
   } catch (err: any) {
-    // eslint-disable-next-line no-console
-    console.log(err, 'err');
+    logger.error('Process statements error', err);
+
     if (err.name === 'ZodError') {
       return res.json({
         status: 'ERROR',
@@ -28,8 +29,7 @@ export const load = async (req: Request, res: Response) => {
 
     return res.json({ status: 'OK', data: result });
   } catch (err: any) {
-    // eslint-disable-next-line no-console
-    console.log(err, 'err');
+    logger.error('Process load error', err);
     return res.json({ status: 'ERROR', message: err.message });
   }
 };

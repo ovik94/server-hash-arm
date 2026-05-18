@@ -41,18 +41,24 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// catch 404 and forward to error handler
+app.use(apiRouter);
+
 app.use((req: Request, res: Response, next: NextFunction) => {
-  const err: any = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  // Для корневого маршрута - ничего не делаем
+  if (req.path === '/') {
+    return res.status(200).end();
+  }
+
+  // Для несуществующих роутов - просто 404 без ошибки
+  res.status(404).json({
+    error: 'Not Found',
+    path: req.path,
+  });
 });
 
 // Error handling
 app.use((err: any, req: Request, res: Response) => {
   res.json({ status: 'ERROR', message: err.message });
 });
-
-app.use(apiRouter);
 
 export default app;
