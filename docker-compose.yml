@@ -3,14 +3,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
     container_name: server-hash-arm
     ports:
       - '8082:8082'
+    network_mode: host
+    shm_size: 2gb
     environment:
       - NODE_ENV=production
       - MONGO_LOGIN=${MONGO_LOGIN}
       - MONGO_PWD=${MONGO_PWD}
-      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_HOST=127.0.0.1
       - MONGO_PORT=${MONGO_PORT}
       - MONGO_DB=${MONGO_DB}
       - IIKO_LOGIN=${IIKO_LOGIN}
@@ -22,16 +25,17 @@ services:
       - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
       - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
       - MAX_BOT_TOKEN=${MAX_BOT_TOKEN}
+      - IMAGE_RENDER_SERVICE_HOST=${IMAGE_RENDER_SERVICE_HOST}
+      - IMAGE_RENDER_SERVICE_PORT=${IMAGE_RENDER_SERVICE_PORT}
     depends_on:
       mongo:
         condition: service_healthy
     restart: unless-stopped
-    networks:
-      - app-network
 
   mongo:
     image: mongo:7
     container_name: server-hash-arm-mongo
+    network_mode: host
     ports:
       - '27017:27017'
     environment:
@@ -43,17 +47,11 @@ services:
       - ./backup:/backup
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      test: ['CMD', 'mongosh', '--host', '127.0.0.1', '--eval', "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
 
 volumes:
   mongo-data:

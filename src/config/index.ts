@@ -51,6 +51,10 @@ export const config = {
     clientEmail: process.env.GOOGLE_CLIENT_EMAIL,
     privateKey: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
   },
+  imageRender: {
+    host: process.env.IMAGE_RENDER_SERVICE_HOST,
+    port: process.env.IMAGE_RENDER_SERVICE_PORT,
+  },
 };
 
 logger.info('Configuration loaded');

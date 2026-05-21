@@ -24,7 +24,6 @@
     "moment": "^2.29.1",
     "mongoose": "^7.6.1",
     "multiparty": "^4.2.3",
-    "node-html-to-image": "^5.0.0",
     "node-telegram-bot-api": "^0.67.0",
     "node-xlsx": "^0.24.0",
     "swagger-ui-express": "^5.0.1",

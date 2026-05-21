@@ -1,23 +1,15 @@
-FROM node:20-alpine
-
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    procps
-
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+FROM node:22-alpine
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN yarn install --production
+COPY package.json yarn.lock ./
+
+RUN yarn config set registry https://npmjs.org
+
+RUN --mount=type=cache,target=/root/.yarn \
+    yarn install --production --frozen-lockfile --no-progress
 
 COPY dist ./dist
 

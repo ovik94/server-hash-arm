@@ -54,8 +54,7 @@ export async function sendImage(number: number | string) {
 
   const image = (await createImageFromHtml(
     { number, nominal: card.value, code: card.code },
-    TemplateTypes.GIFT_CARDS,
-    { selector: '.root' }
+    TemplateTypes.GIFT_CARDS
   )) as string | Buffer;
 
   await maxBot.sendPhoto(getTMaxBotChatId('giftCards'), image);
