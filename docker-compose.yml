@@ -27,6 +27,7 @@ services:
       - MAX_BOT_TOKEN=${MAX_BOT_TOKEN}
       - IMAGE_RENDER_SERVICE_HOST=${IMAGE_RENDER_SERVICE_HOST}
       - IMAGE_RENDER_SERVICE_PORT=${IMAGE_RENDER_SERVICE_PORT}
+      - NODE_EXTRA_CA_CERTS=/certs/russian_trusted_ca_bundle.pem
     depends_on:
       mongo:
         condition: service_healthy

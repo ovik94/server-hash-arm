@@ -52,9 +52,7 @@ export async function getStatementOperations(
 ) {
   const processedOperations: any[] = [];
 
-  for (const operationItem of operations) {
-    const { operation } = operationItem;
-
+  for (const operation of operations) {
     let counterparty = await CounterpartiesModel.findOne({
       companyName: operation.name,
     });

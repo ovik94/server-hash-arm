@@ -14,7 +14,7 @@
   "author": "Ovik Bagdasaryan",
   "license": "ISC",
   "dependencies": {
-    "@maxhub/max-bot-api": "^0.2.2",
+    "@maxhub/max-bot-api": "^0.2.5",
     "axios": "^1.13.5",
     "body-parser": "^1.19.0",
     "date-fns": "^2.26.0",

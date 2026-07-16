@@ -3,6 +3,8 @@ FROM node:22-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
+# Указываем Node.js использовать сертификаты Минцифры как доверенные
+ENV NODE_EXTRA_CA_CERTS=/certs/russian_trusted_ca_bundle.pem
 
 COPY package.json yarn.lock ./
 
@@ -11,6 +13,7 @@ RUN yarn config set registry https://npmjs.org
 RUN --mount=type=cache,target=/root/.yarn \
     yarn install --production --frozen-lockfile --no-progress
 
+COPY certs /certs/
 COPY dist ./dist
 
 EXPOSE 8082
